@@ -64,8 +64,8 @@ export const BudgetTable: React.FC<BudgetTableProps> = ({
           </p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-2 self-start sm:self-center">
+        {/* Filter Pills & Tombol Tambah Item Modal */}
+        <div className="flex items-center gap-2.5 flex-wrap self-start sm:self-center">
           <div className="inline-flex p-1 bg-stone-200/80 rounded-xl text-xs font-medium">
             <button
               type="button"
@@ -91,6 +91,15 @@ export const BudgetTable: React.FC<BudgetTableProps> = ({
               <span>Tanpa Kategori</span>
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={() => onAddItem?.('')}
+            className="min-h-[36px] inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tambah Item</span>
+          </button>
         </div>
       </div>
 

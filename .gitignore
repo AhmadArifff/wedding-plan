@@ -50,3 +50,6 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+
+# TypeScript Build Cache
+*.tsbuildinfo

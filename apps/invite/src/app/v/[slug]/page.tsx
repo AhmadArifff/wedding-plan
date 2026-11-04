@@ -11,8 +11,9 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import {
-  CoverGateBlock,
+  WaxSealEnvelopeCover,
   DigitalEnvelopeBlock,
+  FigmaPartyCursors,
 } from '@nikahplan/invitation-blocks';
 import {
   DUMMY_INVITATION,
@@ -75,8 +76,8 @@ export default function PublicInvitationPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 selection:bg-teal-100 relative">
-      {/* 1. Cover Gate Block (Reveal Layer) */}
-      <CoverGateBlock
+      {/* 1. Wax Seal Physical Envelope Cover (Cinematic Flap Unfold & Fade Out) */}
+      <WaxSealEnvelopeCover
         groomNick={DUMMY_INVITATION.groomNick}
         brideNick={DUMMY_INVITATION.brideNick}
         weddingDateFormatted={formatDateIndo(DUMMY_INVITATION.akadDatetime)}
@@ -85,8 +86,15 @@ export default function PublicInvitationPage() {
         onOpen={() => setIsCoverOpen(true)}
       />
 
-      {/* 2. Main Invitation Content (Tampil setelah Cover Gate dibuka) */}
-      <main className="max-w-md mx-auto shadow-xl bg-white min-h-screen overflow-hidden flex flex-col">
+      {/* 2. Figma Multiplayer Live Presence Cursors & Floating Reactions */}
+      {isCoverOpen && <FigmaPartyCursors />}
+
+      {/* 3. Main Invitation Content (Tampil dengan animasi Fade In setelah Amplop Dibuka) */}
+      <main
+        className={`max-w-md mx-auto shadow-2xl bg-white min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
+          isCoverOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
+        }`}
+      >
         {/* Hero Section dengan Cover Tema Ter-generate */}
         <section className="relative h-96 w-full overflow-hidden bg-stone-900">
           <img
@@ -238,14 +246,14 @@ export default function PublicInvitationPage() {
           </div>
         </section>
 
-        {/* 3. Digital Envelope Block (BCA, Mandiri, QRIS) */}
+        {/* 4. Digital Envelope Block (BCA, Mandiri, QRIS) */}
         <DigitalEnvelopeBlock
           bankAccounts={bankAccountsList}
           qrisImageUrl="/generated/qris-merchant-dummy.svg"
           qrisHolderName="Arif &amp; Siti Wedding"
         />
 
-        {/* 4. RSVP Konfirmasi Kehadiran */}
+        {/* 5. RSVP Konfirmasi Kehadiran */}
         <section className="p-6 border-t border-stone-100 bg-stone-50/70 space-y-4">
           <div className="text-center">
             <h2 className="text-xl font-serif font-bold text-stone-900">Konfirmasi Kehadiran</h2>
@@ -332,7 +340,7 @@ export default function PublicInvitationPage() {
           )}
         </section>
 
-        {/* 5. Doa Restu & Buku Tamu */}
+        {/* 6. Doa Restu & Buku Tamu */}
         <section className="p-6 space-y-4 flex-1">
           <div className="text-center">
             <h2 className="text-xl font-serif font-bold text-stone-900">Ucapan &amp; Doa Restu</h2>
