@@ -17,6 +17,8 @@ import {
   DigitalEnvelopeBlock,
   FigmaPartyCursors,
   FigmaCraftingCanvas,
+  InvitationLiveCrafting,
+  type CraftingState,
 } from '@nikahplan/invitation-blocks';
 import {
   DUMMY_INVITATION,
@@ -28,7 +30,9 @@ import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
-  const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('crafting');
+  const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('invitation');
+  const [craftingState, setCraftingState] = React.useState<CraftingState | null>(null);
+  const mainContainerRef = React.useRef<HTMLElement | null>(null);
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
   const [senderName, setSenderName] = React.useState('');
   const [senderMessage, setSenderMessage] = React.useState('');
@@ -90,8 +94,8 @@ export default function PublicInvitationPage() {
         onOpen={() => setIsCoverOpen(true)}
       />
 
-      {/* 2. Figma Multiplayer Live Presence Cursors & Floating Reactions (Hanya aktif di mode undangan) */}
-      {isCoverOpen && viewMode === 'invitation' && <FigmaPartyCursors />}
+      {/* 2. Figma Multiplayer Live Presence Cursors (Hadir setelah proses crafting selesai dirakit) */}
+      {isCoverOpen && viewMode === 'invitation' && craftingState?.isFinished && <FigmaPartyCursors />}
 
       {/* Floating Toggle Mode di Bagian Atas Kanan */}
       {isCoverOpen && (
@@ -148,13 +152,21 @@ export default function PublicInvitationPage() {
         </div>
       )}
 
-      {/* Mode 2: Main Invitation Content (Tampil dengan animasi Fade In setelah Amplop Dibuka) */}
+      {/* Mode 2: Main Invitation Content (Dengan Live Crafting Animation Berdua oleh Arif & Windi) */}
       {isCoverOpen && viewMode === 'invitation' && (
         <main
-          className={`max-w-md mx-auto shadow-2xl bg-white min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
+          ref={mainContainerRef}
+          className={`relative max-w-md mx-auto shadow-2xl bg-white min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
             isCoverOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
+          {/* Live Crafting Animation Overlay (Zero offset, 100% tepat pada elemen DOM asli) */}
+          <InvitationLiveCrafting
+            containerRef={mainContainerRef}
+            enabled={isCoverOpen && viewMode === 'invitation'}
+            onStateChange={setCraftingState}
+          />
+
           {/* Hero Section dengan Cover Tema Ter-generate */}
           <section className="relative h-96 w-full overflow-hidden bg-stone-900">
             <img
@@ -163,25 +175,76 @@ export default function PublicInvitationPage() {
               className="w-full h-full object-cover opacity-85"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent flex flex-col justify-end p-6 text-white text-center">
-              <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold mb-2">
-                Walimatul 'Urs
-              </span>
-              <h1 className="font-serif italic text-4xl sm:text-5xl font-bold tracking-tight">
-                {DUMMY_INVITATION.groomNick} &amp; {DUMMY_INVITATION.brideNick}
-              </h1>
-              <p className="text-xs text-stone-300 mt-2 font-mono">
-                Minggu, 14 November 2027
-              </p>
+              {/* Element 1: Walimatul 'Urs Header */}
+              <div data-craft-id="hero-header" className="relative min-h-[28px] flex items-center justify-center">
+                <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold mb-2">
+                  {craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'typing'
+                    ? craftingState.typedText
+                    : craftingState?.completedStepIds.includes('hero-header') || !craftingState
+                    ? "Walimatul 'Urs"
+                    : craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'settling'
+                    ? "[Kotak Header Walimatul 'Urs]"
+                    : "Walimatul 'Urs"}
+                </span>
+                {craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'typing' && (
+                  <span className="inline-block w-1.5 h-3 bg-teal-300 ml-1 animate-pulse" />
+                )}
+              </div>
+
+              {/* Element 2: Nama Mempelai Hero + Font Cormorant Garamond */}
+              <div data-craft-id="hero-names" className="relative min-h-[56px] flex items-center justify-center">
+                <h1
+                  className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-300 ${
+                    craftingState?.isSpecialFontActive || craftingState?.completedStepIds.includes('hero-names') || !craftingState
+                      ? 'font-serif italic text-white'
+                      : 'font-sans text-stone-200'
+                  }`}
+                >
+                  {craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'typing'
+                    ? craftingState.typedText
+                    : craftingState?.completedStepIds.includes('hero-names') || !craftingState
+                    ? `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`
+                    : craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'settling'
+                    ? "[Kotak Nama Mempelai]"
+                    : `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`}
+                </h1>
+                {craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'typing' && (
+                  <span className="inline-block w-2 h-8 bg-amber-400 ml-1 animate-pulse" />
+                )}
+              </div>
+
+              {/* Element 3: Tanggal Akad & Resepsi */}
+              <div data-craft-id="hero-date" className="relative min-h-[22px] flex items-center justify-center mt-2">
+                <p className="text-xs text-stone-300 font-mono">
+                  {craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'typing'
+                    ? craftingState.typedText
+                    : craftingState?.completedStepIds.includes('hero-date') || !craftingState
+                    ? "Minggu, 14 November 2027"
+                    : craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'settling'
+                    ? "[Tanggal Akad & Resepsi]"
+                    : "Minggu, 14 November 2027"}
+                </p>
+                {craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'typing' && (
+                  <span className="inline-block w-1.5 h-3 bg-stone-300 ml-1 animate-pulse" />
+                )}
+              </div>
             </div>
           </section>
 
-          {/* Ayat Suci & Mukadimah */}
-          <section className="p-6 text-center space-y-4 border-b border-stone-100">
+          {/* Element 4: Ayat Suci & Mukadimah */}
+          <section
+            data-craft-id="verse-box"
+            className={`p-6 text-center space-y-4 border-b border-stone-100 transition-all duration-500 ${
+              craftingState && !craftingState.completedStepIds.includes('verse-box') && craftingState.activeStepId !== 'verse-box'
+                ? 'opacity-40 border-dashed border-stone-300 bg-stone-50/50'
+                : 'opacity-100'
+            }`}
+          >
             <div className="w-8 h-8 rounded-full bg-teal-50 text-teal-800 flex items-center justify-center mx-auto">
               <Heart className="w-4 h-4 text-teal-700" />
             </div>
             <p className="font-serif italic text-sm text-stone-700 leading-relaxed max-w-xs mx-auto">
-              "Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang."
+              &ldquo;Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
             </p>
             <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest block">
               QS. AR-RUM: 21
@@ -198,8 +261,15 @@ export default function PublicInvitationPage() {
             </div>
 
             <div className="space-y-6">
-              {/* Pengantin Pria */}
-              <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs">
+              {/* Element 5: Pengantin Pria (Arif) */}
+              <div
+                data-craft-id="groom-card"
+                className={`bg-white p-5 rounded-2xl border transition-all duration-500 text-center shadow-xs ${
+                  craftingState && !craftingState.completedStepIds.includes('groom-card') && craftingState.activeStepId !== 'groom-card'
+                    ? 'opacity-40 border-dashed border-teal-300'
+                    : 'opacity-100 border-stone-200'
+                }`}
+              >
                 <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-teal-700 bg-teal-50 mb-3">
                   <img
                     src="/generated/avatar-groom.svg"
@@ -215,8 +285,15 @@ export default function PublicInvitationPage() {
                 </p>
               </div>
 
-              {/* Pengantin Wanita */}
-              <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs">
+              {/* Element 6: Pengantin Wanita (Windi) */}
+              <div
+                data-craft-id="bride-card"
+                className={`bg-white p-5 rounded-2xl border transition-all duration-500 text-center shadow-xs ${
+                  craftingState && !craftingState.completedStepIds.includes('bride-card') && craftingState.activeStepId !== 'bride-card'
+                    ? 'opacity-40 border-dashed border-amber-300'
+                    : 'opacity-100 border-stone-200'
+                }`}
+              >
                 <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-amber-600 bg-amber-50 mb-3">
                   <img
                     src="/generated/avatar-bride.svg"
@@ -244,8 +321,15 @@ export default function PublicInvitationPage() {
             </div>
 
             <div className="space-y-4">
-              {/* Akad Nikah */}
-              <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 space-y-2">
+              {/* Element 7: Akad Nikah */}
+              <div
+                data-craft-id="agenda-akad"
+                className={`rounded-2xl p-4 border transition-all duration-500 space-y-2 ${
+                  craftingState && !craftingState.completedStepIds.includes('agenda-akad') && craftingState.activeStepId !== 'agenda-akad'
+                    ? 'opacity-40 border-dashed border-stone-300 bg-stone-50/50'
+                    : 'opacity-100 bg-stone-50 border-stone-200'
+                }`}
+              >
                 <div className="flex items-center justify-between">
                   <span className="font-serif font-bold text-base text-stone-900">Akad Nikah</span>
                   <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800">
@@ -268,8 +352,15 @@ export default function PublicInvitationPage() {
                 </div>
               </div>
 
-              {/* Resepsi Pernikahan */}
-              <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-200 space-y-2">
+              {/* Element 8: Resepsi Pernikahan */}
+              <div
+                data-craft-id="agenda-resepsi"
+                className={`rounded-2xl p-4 border transition-all duration-500 space-y-2 ${
+                  craftingState && !craftingState.completedStepIds.includes('agenda-resepsi') && craftingState.activeStepId !== 'agenda-resepsi'
+                    ? 'opacity-40 border-dashed border-amber-300 bg-amber-50/20'
+                    : 'opacity-100 bg-amber-50/50 border-amber-200'
+                }`}
+              >
                 <div className="flex items-center justify-between">
                   <span className="font-serif font-bold text-base text-stone-900">Resepsi Pernikahan</span>
                   <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
@@ -292,25 +383,33 @@ export default function PublicInvitationPage() {
                 </div>
               </div>
 
-              {/* Tombol Buka Google Maps */}
-              <a
-                href={DUMMY_INVITATION.googleMapsUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95"
-              >
-                <MapPin className="w-4 h-4 text-amber-400" />
-                <span>Petunjuk Arah Google Maps</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+              {/* Element 9: Tombol Buka Google Maps */}
+              <div data-craft-id="maps-button">
+                <a
+                  href={DUMMY_INVITATION.googleMapsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95"
+                >
+                  <MapPin className="w-4 h-4 text-amber-400" />
+                  <span>
+                    {craftingState?.activeStepId === 'maps-button' && craftingState.subPhase === 'typing'
+                      ? craftingState.typedText
+                      : 'Petunjuk Arah Google Maps'}
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
           </section>
 
-          {/* 4. Digital Envelope Block (BCA, Mandiri, QRIS) */}
+          {/* Element 10 & 11: Digital Envelope Block (BCA, Mandiri, QRIS) */}
           <DigitalEnvelopeBlock
             bankAccounts={bankAccountsList}
             qrisImageUrl="/generated/qris-merchant-dummy.svg"
             qrisHolderName="Arif &amp; Windi Wedding"
+            bankCardCraftId="bank-card"
+            qrisCardCraftId="qris-card"
           />
 
           {/* 5. RSVP Konfirmasi Kehadiran */}

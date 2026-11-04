@@ -225,6 +225,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic",
     "result": "approved",
-    "note": "Penyederhanaan kolaborasi ke 2 kursor (Arif & Windi) berhasil disempurnakan dengan unhurried settle pauses (0.8s - 1.5s setelah drag pojok kiri atas ke kanan bawah sebelum klik edit), deliberate click-to-edit dengan ripple, ketenangan mutlak saat mengetik (typing stillness), inspect pauses untuk proofreading, serta smart guide magnet hold saat QRIS auto-center."
+    "note": "Animasi kolaboratif 2 kursor (Arif & Windi) berhasil diintegrasikan langsung ke tab 'Undangan Jadi' pada seluruh 11 elemen kartu tanpa terkecuali menggunakan koordinat DOM presisi (zero drift, no skew), tanpa kontrol player berlebih, tempo manusiawi santai (settle pause, typing stillness, inspect pause, auto-scroll), serta otomatis me-restart dari awal saat halaman di-refresh."
   }
 }

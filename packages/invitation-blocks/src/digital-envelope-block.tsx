@@ -13,12 +13,16 @@ export interface DigitalEnvelopeBlockProps {
   bankAccounts: BankAccountItem[];
   qrisImageUrl?: string;
   qrisHolderName?: string;
+  bankCardCraftId?: string;
+  qrisCardCraftId?: string;
 }
 
 export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
   bankAccounts,
   qrisImageUrl,
   qrisHolderName = 'Arif & Windi Wedding',
+  bankCardCraftId,
+  qrisCardCraftId,
 }) => {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
@@ -51,7 +55,7 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
       </div>
 
       {/* Daftar Rekening Bank */}
-      <div className="space-y-3.5">
+      <div className="space-y-3.5" data-craft-id={bankCardCraftId}>
         {bankAccounts.map((account) => {
           const isCopied = copiedId === account.id;
           return (
@@ -108,7 +112,7 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
 
       {/* Bagian QRIS Merchant */}
       {qrisImageUrl && (
-        <div className="mt-5 bg-gradient-to-b from-stone-50 to-white rounded-2xl p-4 border border-stone-200 shadow-xs text-center">
+        <div data-craft-id={qrisCardCraftId} className="mt-5 bg-gradient-to-b from-stone-50 to-white rounded-2xl p-4 border border-stone-200 shadow-xs text-center">
           <div className="inline-flex items-center gap-1 text-xs font-semibold text-stone-700 mb-3">
             <QrCode className="w-4 h-4 text-teal-700" />
             <span>Pindai QRIS (Semua Bank &amp; E-Wallet)</span>
