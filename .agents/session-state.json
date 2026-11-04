@@ -182,6 +182,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic",
     "result": "approved",
-    "note": "Resolusi vendor-chunks lucide-react telah tuntas dengan menambahkan lucide-react ke transpilePackages di apps/invite & apps/web, membersihkan cache .next, serta mengintegrasikan auto-kill proses lama pada port 3000/3001 di seluruh script batch."
+    "note": "Perilaku kursor telah diperbaiki secara realistis: kursor diam saat mengetik (tanpa jitter), drag-to-size interaktif, klik luar untuk deselect focus, serta komposisi multi-elemen kaya (Teks, Frame Foto, Button Maps, QRIS, & Divider)."
   }
 }

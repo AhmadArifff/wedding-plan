@@ -7,18 +7,16 @@ import {
   RotateCcw,
   FastForward,
   Type,
-  Move,
-  Sparkles,
+  MousePointer,
+  LayoutGrid,
   CheckCircle,
   CreditCard,
-  QrCode,
   Heart,
-  Sliders,
-  Layers,
-  LayoutGrid,
-  Maximize2,
-  Share2,
-  MousePointer,
+  Calendar,
+  MapPin,
+  ExternalLink,
+  Copy,
+  Sparkles,
 } from 'lucide-react';
 
 export interface FigmaCraftingCanvasProps {
@@ -38,10 +36,10 @@ interface Collaborator {
 }
 
 const COLLABORATORS: Collaborator[] = [
-  { id: 'arif', name: 'Arif (Mempelai)', role: 'Header & Schedule', color: '#0F766E', avatarBg: 'bg-teal-700' },
-  { id: 'windi', name: 'Windi (Mempelai)', role: 'Hero Typography', color: '#D97706', avatarBg: 'bg-amber-600' },
-  { id: 'budi', name: 'Budi Santoso', role: 'Digital Envelope & QRIS', color: '#7C3AED', avatarBg: 'bg-purple-600' },
-  { id: 'reza', name: 'Reza Pratama', role: 'Verse & Auto-Layout', color: '#2563EB', avatarBg: 'bg-blue-600' },
+  { id: 'arif', name: 'Arif (Mempelai)', role: 'Header, Jadwal & Button Maps', color: '#0F766E', avatarBg: 'bg-teal-700' },
+  { id: 'windi', name: 'Windi (Mempelai)', role: 'Tipografi Hero & Divider Sage', color: '#D97706', avatarBg: 'bg-amber-600' },
+  { id: 'reza', name: 'Reza Pratama', role: 'Avatar Foto, Ayat Ar-Rum & Auto-Layout', color: '#2563EB', avatarBg: 'bg-blue-600' },
+  { id: 'budi', name: 'Budi Santoso', role: 'Amplop Digital, Bank & QRIS', color: '#7C3AED', avatarBg: 'bg-purple-600' },
 ];
 
 export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
@@ -55,22 +53,18 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
   const [progress, setProgress] = React.useState<number>(0);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(true);
   const [speedMultiplier, setSpeedMultiplier] = React.useState<number>(1);
-  const [viewStyle, setViewStyle] = React.useState<'studio' | 'clean'>('studio');
 
   // Animation frame / timer loop
   React.useEffect(() => {
     if (!isPlaying) return;
 
-    // Loop duration: approx 15 seconds at 1x speed
+    // Total duration: 16 seconds at 1x speed
     const stepDuration = 50; // ms
-    const increment = (stepDuration / (14000 / speedMultiplier)) * 100;
+    const increment = (stepDuration / (16000 / speedMultiplier)) * 100;
 
     const interval = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
-          // Stay at 100% for celebration, then loop or pause
-          return 100;
-        }
+        if (prev >= 100) return 100;
         return Math.min(100, prev + increment);
       });
     }, stepDuration);
@@ -78,230 +72,252 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
     return () => clearInterval(interval);
   }, [isPlaying, speedMultiplier]);
 
-  // Derived state values based on timeline progress (0 - 100)
+  // =========================================================================
+  // MULTI-ELEMENT STATE DERIVATION (TEXT, SHAPE, IMAGE, ICON, BUTTON, QRIS)
+  // =========================================================================
 
-  // 1. Arif's Track (Header & Schedule)
-  // 0% - 22%: Types Walimatul 'Urs
-  // 22% - 48%: Types Date & Venue
-  // 48% - 75%: Aligns center
-  // 75% - 100%: Finished & celebration
-  const walimatulFull = "WALIMATUL 'URS";
-  const walimatulProgress = Math.min(1, Math.max(0, progress / 20));
-  const walimatulChars = Math.floor(walimatulProgress * walimatulFull.length);
-  const textWalimatul = walimatulFull.slice(0, walimatulChars);
+  // 1. Arif's Track (Header -> Schedule Pill -> Google Maps Button)
+  // 1a. Header Text: Drag box (3-7%), Typing STILL (7-16%), Click out (16-18%)
+  const isArifDraggingHeader = progress >= 3 && progress < 7;
+  const showHeaderBox = progress >= 7;
+  const walimatulTarget = "WALIMATUL 'URS";
+  const walimatulProgress = Math.min(1, Math.max(0, (progress - 7) / 9));
+  const walimatulText = walimatulTarget.slice(0, Math.floor(walimatulProgress * walimatulTarget.length));
+  const isHeaderFocused = progress >= 7 && progress < 17;
 
-  const detailsFull = `${weddingDateFormatted} · ${venueName}`;
-  const detailsProgress = Math.min(1, Math.max(0, (progress - 24) / 24));
-  const detailsChars = Math.floor(detailsProgress * detailsFull.length);
-  const textDetails = detailsFull.slice(0, detailsChars);
+  // 1b. Schedule Pill: Drag box (22-26%), Typing STILL (26-40%), Click out (40-42%)
+  const isArifDraggingSchedule = progress >= 22 && progress < 26;
+  const showScheduleBox = progress >= 26;
+  const scheduleTarget = `${weddingDateFormatted} · ${venueName}`;
+  const scheduleProgress = Math.min(1, Math.max(0, (progress - 26) / 14));
+  const scheduleText = scheduleTarget.slice(0, Math.floor(scheduleProgress * scheduleTarget.length));
+  const isScheduleFocused = progress >= 26 && progress < 41;
 
-  // 2. Windi's Track (Hero Names & Divider)
-  // 0% - 22%: Types "Arif & Windi" in sans
-  // 22% - 50%: Changes font to Cormorant Garamond, Italic, 52px
-  // 50% - 75%: Drops botanical divider dot
-  // 75% - 100%: Finished & celebration
-  const namesFull = `${groomNick} & ${brideNick}`;
-  const namesProgress = Math.min(1, Math.max(0, progress / 22));
-  const namesChars = Math.floor(namesProgress * namesFull.length);
-  const textNames = namesFull.slice(0, namesChars);
-  const isCormorantFont = progress >= 26;
+  // 1c. Maps Button: Drag box (48-53%), Drop MapPin Icon (53-56%), Typing label STILL (56-66%), Click out (66-68%)
+  const isArifDraggingButton = progress >= 48 && progress < 53;
+  const showButtonBox = progress >= 53;
+  const showButtonIcon = progress >= 55;
+  const buttonLabelTarget = 'Buka Peta Lokasi (Google Maps)';
+  const buttonLabelProgress = Math.min(1, Math.max(0, (progress - 56) / 10));
+  const buttonLabelText = buttonLabelTarget.slice(0, Math.floor(buttonLabelProgress * buttonLabelTarget.length));
+  const isButtonFocused = progress >= 53 && progress < 67;
+
+  // 2. Windi's Track (Hero Names -> Font Dropdown -> Botanical Sage Divider)
+  // 2a. Names: Drag box (4-9%), Typing STILL in Inter Sans (9-20%), Font dropdown pick (24-34%), Click out (42-44%)
+  const isWindiDraggingNames = progress >= 4 && progress < 9;
+  const showNamesBox = progress >= 9;
+  const namesTarget = `${groomNick} & ${brideNick}`;
+  const namesProgress = Math.min(1, Math.max(0, (progress - 9) / 11));
+  const namesText = namesTarget.slice(0, Math.floor(namesProgress * namesTarget.length));
+  const isNamesFocused = progress >= 9 && progress < 43;
+  const showFontDropdown = progress >= 24 && progress < 35;
+  const isCormorantFont = progress >= 29;
   const isItalicFont = progress >= 34;
-  const showDividerDot = progress >= 48;
 
-  // 3. Reza's Track (Sacred Verse & Auto-Layout)
-  // 0% - 22%: Creates verse container card
-  // 22% - 50%: Types Quran Ar-Rum: 21 quote
-  // 50% - 75%: Triggers Auto-Layout [Shift+A]
-  // 75% - 100%: Finished & celebration
-  const showVerseCard = progress >= 8;
-  const verseFull =
-    'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri agar kamu merasa tenteram.';
-  const verseProgress = Math.min(1, Math.max(0, (progress - 20) / 28));
-  const verseChars = Math.floor(verseProgress * verseFull.length);
-  const textVerse = verseFull.slice(0, verseChars);
-  const isAutoLayoutActive = progress >= 62 && progress <= 82;
+  // 2b. Botanical Sage Divider Dot & Flanking Lines (48-66%)
+  const isWindiDraggingDivider = progress >= 48 && progress < 53;
+  const showDividerDot = progress >= 53;
+  const showDividerLines = progress >= 58;
+  const isDividerFocused = progress >= 53 && progress < 67;
 
-  // 4. Budi's Track (Digital Envelope & QRIS)
-  // 0% - 22%: Drags Digital Envelope container from sidebar to canvas
-  // 22% - 50%: Sets border-radius 16px, adds bank accounts
-  // 50% - 75%: Drops and centers QRIS merchant barcode
-  // 75% - 100%: Finished & celebration
-  const isDraggingEnvelope = progress >= 4 && progress < 24;
-  const showEnvelopeCard = progress >= 22;
-  const showQrisBarcode = progress >= 52;
+  // 3. Reza's Track (Avatar Photo Frame -> Verse Card with Heart -> Auto-Layout)
+  // 3a. Avatar Frame: Drag Circle (4-9%), Set Image & Gold Ring (9-18%), Click out (18-20%)
+  const isRezaDraggingAvatar = progress >= 4 && progress < 9;
+  const showAvatarFrame = progress >= 9;
+  const showAvatarImage = progress >= 13;
+  const isAvatarFocused = progress >= 9 && progress < 19;
 
-  // Dynamic Cursor Coordinates & Action Labels (Simultaneous for all 4!)
-  // Arif Cursor
+  // 3b. Verse Card: Drag Rect (24-29%), Drop Heart Icon (29-33%), Typing STILL (33-48%), Click out (48-50%)
+  const isRezaDraggingVerse = progress >= 24 && progress < 29;
+  const showVerseCard = progress >= 29;
+  const showVerseHeart = progress >= 32;
+  const verseTarget =
+    'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu tenteram kepadanya.';
+  const verseProgress = Math.min(1, Math.max(0, (progress - 33) / 15));
+  const verseText = verseTarget.slice(0, Math.floor(verseProgress * verseTarget.length));
+  const isVerseFocused = progress >= 29 && progress < 49;
+
+  // 3c. Auto-Layout Trigger on Canvas (56-72%)
+  const isAutoLayoutActive = progress >= 56 && progress < 72;
+
+  // 4. Budi's Track (Digital Envelope Frame -> Bank Badges -> QRIS Barcode & Snap)
+  // 4a. Envelope Card: Drag Rect (5-12%), Style R:16px & Shadow (12-22%), Click out (22-24%)
+  const isBudiDraggingEnvelope = progress >= 5 && progress < 12;
+  const showEnvelopeCard = progress >= 12;
+  const isEnvelopeFocused = progress >= 12 && progress < 23;
+
+  // 4b. Bank Badges: Drop BCA & Mandiri (26-44%), Click out (44-46%)
+  const showBankBadges = progress >= 26;
+  const isBankFocused = progress >= 26 && progress < 45;
+
+  // 4c. QRIS Barcode & Alignment: Drag QRIS (50-56%), Snap center (56-68%), Click out (68-70%)
+  const isBudiDraggingQris = progress >= 50 && progress < 56;
+  const showQrisBarcode = progress >= 56;
+  const isQrisFocused = progress >= 56 && progress < 69;
+
+  // =========================================================================
+  // REALISTIC CURSOR MOTION LOGIC (STAY STILL WHILE TYPING, CLICK OUT TO BLUR)
+  // =========================================================================
+
+  // 1. Arif Cursor (Teal)
   const arifCursor = React.useMemo(() => {
-    if (progress < 22) {
-      // Typing Walimatul header
-      const t = progress / 22;
-      return {
-        x: 35 + t * 20,
-        y: 12 + Math.sin(t * Math.PI) * 2,
-        action: 'T Text: 11px · Tracking 0.25em · #0F766E',
-        isClicking: progress % 5 < 1.5,
-        isActiveOnElement: 'header',
-      };
-    } else if (progress < 50) {
-      // Typing Date & Venue
-      const t = (progress - 22) / 28;
-      return {
-        x: 25 + t * 45,
-        y: 45 + Math.sin(t * Math.PI) * 2,
-        action: '📅 Date & Venue Card · Auto-fit',
-        isClicking: (progress - 22) % 6 < 1.5,
-        isActiveOnElement: 'schedule',
-      };
-    } else if (progress < 75) {
-      // Center aligning
-      return {
-        x: 50,
-        y: 47,
-        action: '↔️ Text Align: Center · Snapped',
-        isClicking: progress >= 60 && progress <= 65,
-        isActiveOnElement: 'schedule',
-      };
+    if (progress < 3) {
+      // Moves from top toolbar to header start
+      const t = progress / 3;
+      return { x: 22 + t * 16, y: 3 + t * 4, action: 'Memilih Tool Teks [T]', isClicking: false, isStill: false };
+    } else if (progress < 7) {
+      // Dragging text box: moves from (38, 7) to (62, 10)
+      const t = (progress - 3) / 4;
+      return { x: 38 + t * 24, y: 7 + t * 3, action: 'Drag Ukuran: 240 x 24px', isClicking: true, isStill: false };
+    } else if (progress < 17) {
+      // TYPING: STAYS STILL at the end of the text box!
+      return { x: 63, y: 8.5, action: 'Mengetik "WALIMATUL \'URS"...', isClicking: false, isStill: true };
+    } else if (progress < 22) {
+      // Clicks outside onto canvas background to blur focus
+      return { x: 74, y: 14, action: 'Klik Luar: Deselect Focus', isClicking: progress >= 17 && progress <= 19, isStill: false };
+    } else if (progress < 26) {
+      // Moves down to schedule zone & drags container
+      const t = (progress - 22) / 4;
+      return { x: 32 + t * 36, y: 55 + t * 4, action: 'Drag Frame: Jadwal & Lokasi', isClicking: true, isStill: false };
+    } else if (progress < 41) {
+      // TYPING: STAYS STILL at the right side of schedule pill!
+      return { x: 69, y: 57, action: 'Mengetik Tanggal & Gedung...', isClicking: false, isStill: true };
+    } else if (progress < 48) {
+      // Clicks outside to blur focus
+      return { x: 78, y: 53, action: 'Klik Luar: Deselect Focus', isClicking: progress >= 41 && progress <= 43, isStill: false };
+    } else if (progress < 53) {
+      // Drags button container
+      const t = (progress - 48) / 5;
+      return { x: 36 + t * 28, y: 64 + t * 3, action: 'Drag Tombol: 220 x 38px', isClicking: true, isStill: false };
+    } else if (progress < 67) {
+      // TYPING: STAYS STILL at button label edge!
+      return { x: 65, y: 65.5, action: 'Mengetik Label: "Buka Google Maps"', isClicking: false, isStill: true };
+    } else if (progress < 74) {
+      // Clicks outside to finalize button
+      return { x: 76, y: 62, action: 'Selesai & Deselect', isClicking: progress >= 67 && progress <= 69, isStill: false };
     } else {
-      // Idle & celebration
-      return {
-        x: 18,
-        y: 8,
-        action: '❤️ Jadwal akad fix! 🌿',
-        isClicking: false,
-        isActiveOnElement: null,
-      };
+      // Finished / idle celebration
+      return { x: 18, y: 8, action: 'Jadwal & Tombol Lokasi Siap! ❤️', isClicking: false, isStill: true };
     }
   }, [progress]);
 
-  // Windi Cursor
+  // 2. Windi Cursor (Amber)
   const windiCursor = React.useMemo(() => {
-    if (progress < 24) {
-      // Typing Names
-      const t = progress / 24;
-      return {
-        x: 30 + t * 38,
-        y: 22 + Math.sin(t * Math.PI) * 1.5,
-        action: 'T Type: Arif & Windi · 36px',
-        isClicking: progress % 4 < 1.2,
-        isActiveOnElement: 'names',
-      };
-    } else if (progress < 50) {
-      // Changing font to Cormorant Garamond & Italic
-      const t = (progress - 24) / 26;
-      return {
-        x: 58 + Math.cos(t * Math.PI * 2) * 6,
-        y: 19 + Math.sin(t * Math.PI) * 4,
-        action: isCormorantFont ? '✨ Cormorant Garamond · Italic · 50px' : 'Dropdown: Selecting Font...',
-        isClicking: (progress >= 26 && progress <= 29) || (progress >= 34 && progress <= 37),
-        isActiveOnElement: 'names',
-      };
-    } else if (progress < 75) {
-      // Dropping botanical sage dot
-      const t = (progress - 50) / 25;
-      return {
-        x: 50 + (1 - t) * 12,
-        y: 31 + t * 2,
-        action: '🎨 Dot Divider · 10px · Fill #047857',
-        isClicking: progress >= 52 && progress <= 56,
-        isActiveOnElement: 'dot',
-      };
+    if (progress < 4) {
+      // Moving to hero typography area
+      const t = progress / 4;
+      return { x: 42 + t * 6, y: 18 + t * 6, action: 'Memilih Area Nama Mempelai', isClicking: false, isStill: false };
+    } else if (progress < 9) {
+      // Dragging text box for names
+      const t = (progress - 4) / 5;
+      return { x: 36 + t * 28, y: 24 + t * 5, action: 'Drag Ukuran: 260 x 54px', isClicking: true, isStill: false };
+    } else if (progress < 22) {
+      // TYPING: STAYS STILL while typing couple names!
+      return { x: 65, y: 26.5, action: 'Mengetik "Arif & Windi"...', isClicking: false, isStill: true };
+    } else if (progress < 26) {
+      // Moving to floating font inspector panel
+      const t = (progress - 22) / 4;
+      return { x: 65 + t * 8, y: 26 - t * 4, action: 'Membuka Dropdown Font...', isClicking: progress >= 24, isStill: false };
+    } else if (progress < 36) {
+      // Selecting Cormorant Garamond & Italic toggle
+      return { x: 74, y: 21, action: 'Memilih Cormorant Garamond Italic', isClicking: progress >= 28 && progress <= 31, isStill: true };
+    } else if (progress < 44) {
+      // Dragging size slider to 50px
+      const t = (progress - 36) / 8;
+      return { x: 74 + t * 5, y: 25, action: 'Slider Ukuran: 50px', isClicking: true, isStill: false };
+    } else if (progress < 48) {
+      // Clicks outside on canvas to confirm font
+      return { x: 80, y: 32, action: 'Klik Luar: Konfirmasi Tipografi', isClicking: progress >= 44 && progress <= 46, isStill: false };
+    } else if (progress < 54) {
+      // Drops Botanical Sage Dot [O]
+      const t = (progress - 48) / 6;
+      return { x: 50 + (1 - t) * 6, y: 34 + t * 1.5, action: 'Drop Aksen: Titik Sage #047857', isClicking: true, isStill: false };
+    } else if (progress < 68) {
+      // Styling flanking divider lines
+      return { x: 50, y: 35.5, action: 'Menambahkan Garis Ornamen', isClicking: false, isStill: true };
+    } else if (progress < 74) {
+      // Clicks outside
+      return { x: 78, y: 38, action: 'Klik Luar: Deselect Focus', isClicking: progress >= 68 && progress <= 70, isStill: false };
     } else {
-      // Idle & celebration
-      return {
-        x: 82,
-        y: 24,
-        action: '😍 Suka banget font-nya! ✨',
-        isClicking: false,
-        isActiveOnElement: null,
-      };
-    }
-  }, [progress, isCormorantFont]);
-
-  // Budi Cursor (Envelope & QRIS)
-  const budiCursor = React.useMemo(() => {
-    if (progress < 24) {
-      // Dragging component from left edge
-      const t = progress / 24;
-      return {
-        x: 12 + t * 36,
-        y: 72 - Math.sin(t * Math.PI) * 4,
-        action: '📦 Drag: DigitalEnvelope.fig',
-        isClicking: true,
-        isActiveOnElement: 'envelope',
-      };
-    } else if (progress < 52) {
-      // Styling envelope card
-      const t = (progress - 24) / 28;
-      return {
-        x: 35 + t * 30,
-        y: 68 + Math.sin(t * Math.PI * 2) * 2,
-        action: '💳 R: 16px · Bank Mandiri & BCA Linked',
-        isClicking: (progress - 24) % 6 < 1.5,
-        isActiveOnElement: 'envelope',
-      };
-    } else if (progress < 75) {
-      // Centering QRIS barcode
-      const t = (progress - 52) / 23;
-      return {
-        x: 48 + Math.sin(t * Math.PI) * 4,
-        y: 78,
-        action: '📲 QRIS Merchant: Arif & Windi · Snapped',
-        isClicking: progress >= 58 && progress <= 64,
-        isActiveOnElement: 'qris',
-      };
-    } else {
-      // Idle & celebration
-      return {
-        x: 84,
-        y: 82,
-        action: '🎉 QRIS siap scan & transfer! 🚀',
-        isClicking: false,
-        isActiveOnElement: null,
-      };
+      // Finished / idle celebration
+      return { x: 82, y: 24, action: 'Tipografinya Elegan Banget! ✨', isClicking: false, isStill: true };
     }
   }, [progress]);
 
-  // Reza Cursor (Verse & Auto-Layout)
+  // 3. Reza Cursor (Royal Blue)
   const rezaCursor = React.useMemo(() => {
-    if (progress < 22) {
-      // Formatting Verse Box
-      const t = progress / 22;
-      return {
-        x: 45 + Math.cos(t * Math.PI * 2) * 12,
-        y: 35 + t * 4,
-        action: '📜 Quote Frame · Background #FCFAF7',
-        isClicking: progress % 5 < 1.2,
-        isActiveOnElement: 'verse',
-      };
-    } else if (progress < 52) {
-      // Typing verse text
-      const t = (progress - 22) / 30;
-      return {
-        x: 28 + t * 42,
-        y: 38 + Math.sin(t * Math.PI) * 1.5,
-        action: 'T QS. Ar-Rum: 21 · Serif 11px',
-        isClicking: (progress - 22) % 5 < 1.2,
-        isActiveOnElement: 'verse',
-      };
-    } else if (progress < 78) {
-      // Selecting Canvas & Triggering Auto-Layout
-      return {
-        x: 52,
-        y: 10,
-        action: '📐 Auto-Layout [Shift+A] · Gap: 16px',
-        isClicking: progress >= 62 && progress <= 68,
-        isActiveOnElement: 'canvas',
-      };
+    if (progress < 4) {
+      // Moving to avatar header
+      const t = progress / 4;
+      return { x: 38 + t * 10, y: 12 + t * 2, action: 'Memilih Tool Lingkaran [O]', isClicking: false, isStill: false };
+    } else if (progress < 9) {
+      // Dragging circular frame for avatar
+      const t = (progress - 4) / 5;
+      return { x: 48 + t * 4, y: 14 + t * 3, action: 'Drag Frame Foto: 64 x 64px', isClicking: true, isStill: false };
+    } else if (progress < 19) {
+      // Setting image fill and gold ring border: STAYS STILL
+      return { x: 53, y: 16, action: 'Memasang Foto & Border Emas', isClicking: progress >= 12 && progress <= 14, isStill: true };
+    } else if (progress < 24) {
+      // Clicks outside to deselect avatar
+      return { x: 68, y: 15, action: 'Klik Luar: Deselect Foto', isClicking: progress >= 19 && progress <= 21, isStill: false };
+    } else if (progress < 29) {
+      // Moving to Quote card area & dragging box
+      const t = (progress - 24) / 5;
+      return { x: 32 + t * 36, y: 41 + t * 5, action: 'Drag Frame Kutipan Ar-Rum', isClicking: true, isStill: false };
+    } else if (progress < 33) {
+      // Drops Heart Icon at top of verse card
+      return { x: 50, y: 43, action: 'Drop Ikon Heart Sage', isClicking: progress >= 30 && progress <= 32, isStill: false };
+    } else if (progress < 49) {
+      // TYPING: STAYS STILL at the side of quote card!
+      return { x: 68, y: 46, action: 'Mengetik QS. Ar-Rum: 21...', isClicking: false, isStill: true };
+    } else if (progress < 54) {
+      // Clicks outside to deselect quote card
+      return { x: 78, y: 47, action: 'Klik Luar: Deselect Kutipan', isClicking: progress >= 49 && progress <= 51, isStill: false };
+    } else if (progress < 72) {
+      // Selects Main Canvas Frame & applies Auto-Layout [Shift+A]
+      return { x: 50, y: 5, action: 'Auto-Layout [Shift+A]: Gap 14px', isClicking: progress >= 56 && progress <= 60, isStill: true };
     } else {
-      // Idle & celebration
-      return {
-        x: 16,
-        y: 42,
-        action: '💍 Layout mobile 375px presisi! 💯',
-        isClicking: false,
-        isActiveOnElement: null,
-      };
+      // Finished / idle celebration
+      return { x: 16, y: 42, action: 'Auto-Layout Presisi 100%! 💍', isClicking: false, isStill: true };
+    }
+  }, [progress]);
+
+  // 4. Budi Cursor (Purple)
+  const budiCursor = React.useMemo(() => {
+    if (progress < 5) {
+      // Moving to left assets library
+      const t = progress / 5;
+      return { x: 26 - t * 12, y: 68 + t * 3, action: 'Mengambil Komponen Amplop', isClicking: false, isStill: false };
+    } else if (progress < 12) {
+      // Dragging envelope component into canvas
+      const t = (progress - 5) / 7;
+      return { x: 14 + t * 36, y: 71 + t * 3, action: 'Drag Komponen: Amplop Digital', isClicking: true, isStill: false };
+    } else if (progress < 23) {
+      // Setting card radius 16px and shadow: STAYS STILL
+      return { x: 66, y: 73, action: 'Setting R: 16px & Border #E7E5E4', isClicking: progress >= 15 && progress <= 17, isStill: true };
+    } else if (progress < 26) {
+      // Clicks outside to deselect
+      return { x: 78, y: 70, action: 'Klik Luar: Deselect Frame', isClicking: progress >= 23 && progress <= 25, isStill: false };
+    } else if (progress < 45) {
+      // Adding bank accounts & badges: STAYS STILL
+      return { x: 62, y: 75, action: 'Menyematkan BCA & Mandiri', isClicking: progress >= 30 && progress <= 32, isStill: true };
+    } else if (progress < 50) {
+      // Moving to grab QRIS barcode asset
+      const t = (progress - 45) / 5;
+      return { x: 62 - t * 30, y: 75 + t * 2, action: 'Mengambil Barcode QRIS', isClicking: false, isStill: false };
+    } else if (progress < 56) {
+      // Dragging QRIS into center of envelope
+      const t = (progress - 50) / 6;
+      return { x: 32 + t * 18, y: 77 + t * 1, action: 'Drag QRIS ke Tengah', isClicking: true, isStill: false };
+    } else if (progress < 69) {
+      // Centering QRIS with magenta snap guide: STAYS STILL
+      return { x: 50, y: 78, action: 'Auto-Snap Center QRIS Merchant', isClicking: progress >= 58 && progress <= 61, isStill: true };
+    } else if (progress < 74) {
+      // Clicks outside to finalize
+      return { x: 76, y: 80, action: 'Klik Luar: Finalisasi Amplop', isClicking: progress >= 69 && progress <= 71, isStill: false };
+    } else {
+      // Finished / idle celebration
+      return { x: 84, y: 84, action: 'QRIS & Rekening Siap! 🎉', isClicking: false, isStill: true };
     }
   }, [progress]);
 
@@ -324,44 +340,44 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
   };
 
   return (
-    <div className="relative w-full min-h-[680px] bg-[#2C2C2C] p-2 sm:p-5 select-none overflow-hidden rounded-3xl border border-stone-700 shadow-2xl font-sans text-stone-100">
+    <div className="relative w-full min-h-[700px] bg-[#222222] p-2 sm:p-5 select-none overflow-hidden rounded-3xl border border-stone-700 shadow-2xl font-sans text-stone-100">
       {/* Background Dot Grid khas Figma Canvas */}
       <div
-        className="absolute inset-0 opacity-25 pointer-events-none"
+        className="absolute inset-0 opacity-20 pointer-events-none"
         style={{
-          backgroundImage: 'radial-gradient(#6B7280 1.2px, transparent 1.2px)',
+          backgroundImage: 'radial-gradient(#9CA3AF 1.2px, transparent 1.2px)',
           backgroundSize: '20px 20px',
         }}
       />
 
       {/* Top Figma Application Header Bar */}
-      <div className="relative z-30 mb-3 bg-[#1E1E1E] border border-stone-800 rounded-2xl p-2 sm:px-4 sm:py-2 flex flex-wrap items-center justify-between gap-2 shadow-lg text-xs">
+      <div className="relative z-30 mb-3 bg-[#1A1A1A] border border-stone-800 rounded-2xl p-2 sm:px-4 sm:py-2 flex flex-wrap items-center justify-between gap-2 shadow-lg text-xs">
         {/* Left: Project title & Figma Tools icons */}
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5 font-semibold text-white tracking-wide">
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-mono text-[11px] uppercase tracking-wider text-stone-300">
-              NikahPlan Canvas · Live 4-Multiplayer
+              Figma Multiplayer Crafting
             </span>
           </div>
 
           {/* Quick tool selector badges */}
-          <div className="hidden md:flex items-center gap-1 bg-stone-900 px-2 py-0.5 rounded-lg border border-stone-800 text-[10px] text-stone-400 font-mono">
-            <span className="text-teal-400 flex items-center gap-0.5 font-bold">
+          <div className="hidden lg:flex items-center gap-1.5 bg-stone-900 px-2.5 py-1 rounded-lg border border-stone-800 text-[10px] text-stone-400 font-mono">
+            <span className="text-teal-400 font-bold flex items-center gap-0.5">
               <MousePointer className="w-3 h-3" /> V
             </span>
             <span>·</span>
-            <span className="text-amber-400 flex items-center gap-0.5 font-bold">
+            <span className="text-amber-400 font-bold flex items-center gap-0.5">
               <Type className="w-3 h-3" /> T
             </span>
             <span>·</span>
-            <span className="text-blue-400 flex items-center gap-0.5 font-bold">
-              <LayoutGrid className="w-3 h-3" /> Shift+A
+            <span className="text-blue-400 font-bold flex items-center gap-0.5">
+              <LayoutGrid className="w-3 h-3" /> Auto-Layout
             </span>
           </div>
         </div>
 
-        {/* Center: Active Collaborators Presence Avatars */}
+        {/* Center: Active Collaborators Presence */}
         <div className="flex items-center -space-x-1.5 overflow-hidden py-0.5">
           {COLLABORATORS.map((user) => (
             <div
@@ -373,7 +389,7 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
             </div>
           ))}
           <span className="pl-2 text-[10px] font-mono text-emerald-400 font-medium hidden sm:inline">
-            4 Aktif Bersamaan
+            4 Bekerja Bebarengan
           </span>
         </div>
 
@@ -416,7 +432,7 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
             onClick={handleSkipToFinish}
             className="px-3 py-1.5 rounded-xl bg-teal-700 hover:bg-teal-600 text-white font-semibold flex items-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer text-[11px]"
           >
-            <span>Hasil Undangan</span>
+            <span>Hasil Jadi</span>
             <FastForward className="w-3 h-3" />
           </button>
         </div>
@@ -436,57 +452,56 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
           />
         </div>
         <div className="flex justify-between items-center text-[9px] font-mono text-stone-400 mt-1 px-0.5">
-          <span>00:00 · Inisialisasi</span>
-          <span className="text-teal-400 font-semibold">{Math.round(progress)}% Selesai Dirakit</span>
-          <span>00:14 · Undangan Sempurna</span>
+          <span>00:00 · Drag &amp; Create</span>
+          <span className="text-teal-400 font-semibold">{Math.round(progress)}% Real-time Designing</span>
+          <span>00:16 · Undangan Selesai</span>
         </div>
       </div>
 
       {/* Main Work Area: Canvas Frame Ponsel 375px */}
-      <div className="relative mx-auto max-w-sm w-full min-h-[580px] p-2 sm:p-0">
+      <div className="relative mx-auto max-w-sm w-full min-h-[600px] p-2 sm:p-0">
         {/* Frame Label Badge di Pojok Atas */}
         <div className="text-[10px] font-mono text-stone-400 font-semibold uppercase tracking-wider mb-1 flex items-center justify-between">
-          <span># Mobile Frame · 375 x 812 (NikahPlan-Invitation)</span>
-          <span className="text-[9px] text-stone-400 font-mono">Zoom: 100%</span>
+          <span># Mobile Frame · 375 x 812 (NikahPlan-Canvas)</span>
+          <span className="text-[9px] text-stone-500 font-mono">Zoom: 100%</span>
         </div>
 
         {/* Center Vertical Smart Guide (Figma Magenta Guide) */}
-        {(windiCursor.isActiveOnElement || budiCursor.isActiveOnElement || isAutoLayoutActive) && (
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-30 pointer-events-none opacity-80" />
+        {(isDividerFocused || isQrisFocused || isAutoLayoutActive) && (
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-30 pointer-events-none opacity-85" />
         )}
 
-        {/* Horizontal Alignment Guide during Auto-Layout */}
+        {/* Horizontal Alignment Guides during Auto-Layout */}
         {isAutoLayoutActive && (
           <>
-            <div className="absolute left-0 right-0 top-[28%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
-            <div className="absolute left-0 right-0 top-[48%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
-            <div className="absolute left-0 right-0 top-[68%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
+            <div className="absolute left-0 right-0 top-[24%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
+            <div className="absolute left-0 right-0 top-[45%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
+            <div className="absolute left-0 right-0 top-[65%] h-[1px] bg-pink-500/70 z-30 pointer-events-none" />
           </>
         )}
 
-        {/* The Mobile Card Itself */}
+        {/* ========================================================================= */}
+        {/* THE MOBILE CARD ITSELF */}
+        {/* ========================================================================= */}
         <div
-          className={`relative w-full bg-[#FAF8F5] rounded-3xl shadow-2xl overflow-hidden min-h-[560px] p-5 flex flex-col justify-between text-center transition-all duration-500 border-2 ${
-            rezaCursor.isActiveOnElement === 'canvas' ? 'border-blue-500 shadow-blue-500/20' : 'border-stone-300'
+          className={`relative w-full bg-[#FAF8F5] rounded-3xl shadow-2xl overflow-hidden min-h-[580px] p-5 flex flex-col justify-between text-center transition-all duration-500 border-2 ${
+            isAutoLayoutActive ? 'border-blue-500 shadow-blue-500/20' : 'border-stone-300'
           }`}
         >
-          {/* Outer Frame Auto-Layout Label when Reza activates it */}
-          {rezaCursor.isActiveOnElement === 'canvas' && (
-            <div className="absolute -top-3.5 left-2 bg-blue-600 text-white text-[9px] font-mono px-2 py-0.5 rounded-sm z-30 shadow-xs flex items-center gap-1 animate-in fade-in">
-              <span>Reza · Auto-Layout [Shift+A] · Gap 16px</span>
-            </div>
-          )}
+          {/* 1. Header Teks Walimatul 'Urs (Arif) */}
+          <div className="relative pt-1">
+            {/* Dragging outline */}
+            {isArifDraggingHeader && (
+              <div className="h-6 border-2 border-dashed border-teal-500 bg-teal-50/40 rounded-md flex items-center justify-center text-[8px] font-mono text-teal-800">
+                <span>[W: 240 x H: 22px]</span>
+              </div>
+            )}
 
-          {/* 1. Header Teks Walimatul 'Urs (Arif's Area) */}
-          <div className="relative pt-2">
-            {/* Arif's Bounding Box */}
-            {arifCursor.isActiveOnElement === 'header' && (
-              <div
-                className="absolute -inset-1 rounded-lg border-2 pointer-events-none z-20 animate-in fade-in"
-                style={{ borderColor: '#0F766E' }}
-              >
-                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1 py-0.2 rounded-xs bg-teal-700 font-mono shadow-xs">
-                  Arif · Text: 11px
+            {/* Active Bounding Box when focused */}
+            {isHeaderFocused && (
+              <div className="absolute -inset-1 rounded-lg border-2 border-teal-600 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3 left-1 text-[8px] font-bold text-white px-1 rounded-xs bg-teal-700 font-mono shadow-xs">
+                  Arif · Text: 11px [T]
                 </span>
                 <div className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-white border border-teal-800" />
                 <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-white border border-teal-800" />
@@ -495,22 +510,57 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
               </div>
             )}
 
-            <div className="text-[11px] uppercase tracking-[0.25em] font-semibold text-teal-800 min-h-[18px]">
-              {textWalimatul}
-              {progress < 22 && <span className="inline-block w-1.5 h-3 bg-teal-800 ml-0.5 animate-pulse" />}
-            </div>
+            {showHeaderBox && (
+              <div className="text-[11px] uppercase tracking-[0.25em] font-semibold text-teal-800 min-h-[18px]">
+                {walimatulText}
+                {isHeaderFocused && <span className="inline-block w-1.5 h-3 bg-teal-800 ml-0.5 animate-pulse" />}
+              </div>
+            )}
           </div>
 
-          {/* 2. Nama Mempelai Hero & Divider Dot (Windi's Area) */}
-          <div className="relative my-2 py-2">
-            {/* Windi's Bounding Box */}
-            {windiCursor.isActiveOnElement === 'names' && (
-              <div
-                className="absolute -inset-1.5 rounded-xl border-2 pointer-events-none z-20 animate-in fade-in"
-                style={{ borderColor: '#D97706' }}
-              >
-                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1 py-0.2 rounded-xs bg-amber-600 font-mono shadow-xs">
-                  Windi · {isCormorantFont ? 'Cormorant 50px' : 'Inter 36px'}
+          {/* 2. Avatar Foto Pasangan Lingkaran dengan Ring Emas (Reza) */}
+          <div className="relative my-1 flex justify-center">
+            {isRezaDraggingAvatar && (
+              <div className="w-16 h-16 rounded-full border-2 border-dashed border-blue-500 bg-blue-50/40 flex items-center justify-center text-[8px] font-mono text-blue-700">
+                <span>64 x 64</span>
+              </div>
+            )}
+
+            {isAvatarFocused && (
+              <div className="absolute -inset-1 w-[72px] h-[72px] rounded-full border-2 border-blue-600 pointer-events-none z-20 animate-in fade-in" />
+            )}
+
+            {showAvatarFrame && (
+              <div className="relative w-16 h-16 rounded-full p-1 bg-gradient-to-tr from-amber-200 via-stone-100 to-amber-300 shadow-md">
+                <div className="w-full h-full rounded-full overflow-hidden bg-stone-200 flex items-center justify-center">
+                  {showAvatarImage ? (
+                    <img
+                      src="/generated/avatar-groom.svg"
+                      alt="Avatar Pasangan"
+                      className="w-full h-full object-cover animate-in zoom-in-75 duration-300"
+                    />
+                  ) : (
+                    <span className="text-[8px] font-mono text-stone-400">Loading Foto...</span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 3. Nama Mempelai Hero & Divider Dot (Windi) */}
+          <div className="relative my-1">
+            {/* Dragging outline */}
+            {isWindiDraggingNames && (
+              <div className="h-14 border-2 border-dashed border-amber-500 bg-amber-50/40 rounded-xl flex items-center justify-center text-[9px] font-mono text-amber-800">
+                <span>[W: 260 x H: 54px · Cormorant Garamond]</span>
+              </div>
+            )}
+
+            {/* Active Bounding Box when focused */}
+            {isNamesFocused && (
+              <div className="absolute -inset-1.5 rounded-xl border-2 border-amber-500 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1.5 py-0.2 rounded-xs bg-amber-600 font-mono shadow-xs">
+                  Windi · {isCormorantFont ? 'Cormorant 50px Italic' : 'Inter Sans 36px'}
                 </span>
                 <div className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-white border border-amber-700" />
                 <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-white border border-amber-700" />
@@ -519,121 +569,173 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
               </div>
             )}
 
-            <h2
-              className={`text-stone-900 tracking-tight min-h-[52px] flex items-center justify-center transition-all duration-300 ${
-                isCormorantFont ? 'font-serif text-4xl sm:text-5xl font-bold' : 'font-sans text-3xl font-semibold'
-              } ${isItalicFont ? 'italic' : ''}`}
-            >
-              {textNames}
-              {progress < 22 && <span className="inline-block w-2 h-7 bg-stone-900 ml-1 animate-pulse" />}
-            </h2>
-
-            {/* Botanical Sage Divider Dot */}
-            <div className="relative inline-block mt-2">
-              {windiCursor.isActiveOnElement === 'dot' && (
-                <div className="absolute -inset-1 rounded-full border-2 border-amber-500 pointer-events-none z-20 animate-pulse" />
-              )}
-              {showDividerDot ? (
-                <div className="w-2.5 h-2.5 rounded-full bg-teal-700 mx-auto shadow-xs animate-in zoom-in duration-300" />
-              ) : (
-                <div className="w-2 h-2 rounded-full border border-dashed border-stone-300 mx-auto" />
-              )}
-            </div>
-          </div>
-
-          {/* 3. Ayat Suci Ar-Rum: 21 (Reza's Area) */}
-          <div className="relative my-1">
-            {/* Reza's Bounding Box */}
-            {rezaCursor.isActiveOnElement === 'verse' && (
-              <div
-                className="absolute -inset-1 rounded-xl border-2 pointer-events-none z-20 animate-in fade-in"
-                style={{ borderColor: '#2563EB' }}
-              >
-                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1 py-0.2 rounded-xs bg-blue-600 font-mono shadow-xs">
-                  Reza · Quote Frame
-                </span>
-                <div className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-white border border-blue-700" />
-                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-white border border-blue-700" />
-                <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-white border border-blue-700" />
-                <div className="absolute -bottom-1 -right-1 w-1.5 h-1.5 bg-white border border-blue-700" />
+            {/* Floating Font Dropdown Mockup while Windi selects it */}
+            {showFontDropdown && (
+              <div className="absolute -top-14 right-2 bg-stone-900 text-white rounded-xl p-2 shadow-2xl border border-stone-700 z-30 text-left font-mono text-[9px] animate-in zoom-in-95">
+                <div className="text-stone-400 text-[8px] uppercase tracking-wider mb-1">Font Family</div>
+                <div className="bg-amber-600/30 text-amber-300 font-serif px-2 py-0.5 rounded-sm font-semibold flex items-center justify-between gap-2">
+                  <span>✓ Cormorant Garamond</span>
+                  <span className="text-[7px]">Serif</span>
+                </div>
+                <div className="text-stone-400 px-2 py-0.5 opacity-60">Inter Sans</div>
               </div>
             )}
 
-            {showVerseCard ? (
+            {showNamesBox && (
+              <h2
+                className={`text-stone-900 tracking-tight min-h-[50px] flex items-center justify-center transition-all duration-300 ${
+                  isCormorantFont ? 'font-serif text-4xl sm:text-5xl font-bold' : 'font-sans text-3xl font-semibold'
+                } ${isItalicFont ? 'italic' : ''}`}
+              >
+                {namesText}
+                {isNamesFocused && !isCormorantFont && (
+                  <span className="inline-block w-2 h-7 bg-stone-900 ml-1 animate-pulse" />
+                )}
+              </h2>
+            )}
+
+            {/* Botanical Sage Divider Dot & Flanking Ornaments */}
+            {isWindiDraggingDivider && (
+              <div className="h-4 border border-dashed border-amber-400 mx-auto w-24 rounded-full mt-1" />
+            )}
+
+            {showDividerDot && (
+              <div className="relative flex items-center justify-center gap-2 mt-1">
+                {showDividerLines && <div className="w-8 h-[1px] bg-teal-700/40 animate-in fade-in" />}
+                <div className="w-2.5 h-2.5 rounded-full bg-teal-700 shadow-xs animate-in zoom-in" />
+                {showDividerLines && <div className="w-8 h-[1px] bg-teal-700/40 animate-in fade-in" />}
+              </div>
+            )}
+          </div>
+
+          {/* 4. Ayat Suci QS. Ar-Rum: 21 (Reza) */}
+          <div className="relative my-1">
+            {isRezaDraggingVerse && (
+              <div className="h-16 border-2 border-dashed border-blue-400 bg-blue-50/40 rounded-xl flex items-center justify-center text-[9px] font-mono text-blue-700">
+                <span>[W: 300 x H: 68px · Quote Card]</span>
+              </div>
+            )}
+
+            {isVerseFocused && (
+              <div className="absolute -inset-1 rounded-xl border-2 border-blue-500 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3 left-1 text-[8px] font-bold text-white px-1 rounded-xs bg-blue-600 font-mono shadow-xs">
+                  Reza · Card Kutipan
+                </span>
+              </div>
+            )}
+
+            {showVerseCard && (
               <div className="bg-[#FAF6F0] rounded-2xl p-2.5 border border-stone-200/80 shadow-xs transition-all">
-                <Heart className="w-3 h-3 text-teal-700 mx-auto mb-1 opacity-70" />
-                <p className="font-serif italic text-[10.5px] text-stone-600 leading-relaxed min-h-[34px]">
-                  &ldquo;{textVerse}&rdquo;
+                {showVerseHeart && <Heart className="w-3 h-3 text-teal-700 mx-auto mb-1 opacity-70 animate-in zoom-in" />}
+                <p className="font-serif italic text-[10.5px] text-stone-600 leading-relaxed min-h-[32px]">
+                  &ldquo;{verseText}&rdquo;
                 </p>
                 {progress >= 42 && (
-                  <p className="text-[9px] font-bold uppercase tracking-widest text-teal-800 font-mono mt-1">
+                  <p className="text-[8.5px] font-bold uppercase tracking-widest text-teal-800 font-mono mt-0.5">
                     QS. AR-RUM: 21
                   </p>
                 )}
               </div>
-            ) : (
-              <div className="h-10 border border-dashed border-stone-300 rounded-xl flex items-center justify-center text-[10px] text-stone-400">
-                <span>[Frame Quote dalam proses...]</span>
-              </div>
             )}
           </div>
 
-          {/* 4. Jadwal Tanggal & Venue (Arif's Area) */}
+          {/* 5. Jadwal Tanggal & Venue (Arif) */}
           <div className="relative my-1">
-            {/* Arif's Bounding Box on Schedule */}
-            {arifCursor.isActiveOnElement === 'schedule' && (
-              <div
-                className="absolute -inset-1 rounded-xl border-2 pointer-events-none z-20 animate-in fade-in"
-                style={{ borderColor: '#0F766E' }}
-              >
-                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1 py-0.2 rounded-xs bg-teal-700 font-mono shadow-xs">
-                  Arif · Schedule Pill
+            {isArifDraggingSchedule && (
+              <div className="h-10 border-2 border-dashed border-teal-500 bg-teal-50/40 rounded-xl flex items-center justify-center text-[9px] font-mono text-teal-800">
+                <span>[W: 300 x H: 36px · Pill Container]</span>
+              </div>
+            )}
+
+            {isScheduleFocused && (
+              <div className="absolute -inset-1 rounded-xl border-2 border-teal-600 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3 left-1 text-[8px] font-bold text-white px-1 rounded-xs bg-teal-700 font-mono shadow-xs">
+                  Arif · Pill Jadwal
                 </span>
               </div>
             )}
 
-            <div className="bg-stone-100 rounded-xl py-1.5 px-3 border border-stone-200 text-stone-700">
-              <p className="text-[11px] font-mono font-medium tracking-wide">
-                {textDetails}
-                {progress >= 24 && progress < 48 && (
-                  <span className="inline-block w-1.5 h-2.5 bg-stone-700 ml-0.5 animate-pulse" />
-                )}
-              </p>
-            </div>
+            {showScheduleBox && (
+              <div className="bg-stone-100 rounded-xl py-1.5 px-3 border border-stone-200 text-stone-700 flex items-center justify-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+                <p className="text-[10.5px] font-mono font-medium tracking-wide truncate">
+                  {scheduleText}
+                  {isScheduleFocused && <span className="inline-block w-1.5 h-2.5 bg-stone-700 ml-0.5 animate-pulse" />}
+                </p>
+              </div>
+            )}
           </div>
 
-          {/* 5. Komponen Amplop Digital & QRIS (Budi's Area) */}
-          <div className="relative mt-2">
-            {/* Budi's Bounding Box on Envelope / QRIS */}
-            {(budiCursor.isActiveOnElement === 'envelope' || budiCursor.isActiveOnElement === 'qris') && (
-              <div
-                className="absolute -inset-1.5 rounded-2xl border-2 pointer-events-none z-20 animate-in fade-in"
-                style={{ borderColor: '#7C3AED' }}
-              >
-                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1 py-0.2 rounded-xs bg-purple-600 font-mono shadow-xs">
-                  Budi · {budiCursor.isActiveOnElement === 'qris' ? 'QRIS Component' : 'Digital Envelope'}
-                </span>
-                <div className="absolute -top-1 -left-1 w-1.5 h-1.5 bg-white border border-purple-800" />
-                <div className="absolute -top-1 -right-1 w-1.5 h-1.5 bg-white border border-purple-800" />
-                <div className="absolute -bottom-1 -left-1 w-1.5 h-1.5 bg-white border border-purple-800" />
-                <div className="absolute -bottom-1 -right-1 w-1.5 h-1.5 bg-white border border-purple-800" />
+          {/* 6. Tombol Aksi Buka Google Maps (Arif) */}
+          <div className="relative my-1">
+            {isArifDraggingButton && (
+              <div className="h-9 border-2 border-dashed border-teal-600 bg-teal-50/40 rounded-xl flex items-center justify-center text-[9px] font-mono text-teal-900">
+                <span>[Button: 220 x 38px · Fill: #0F766E]</span>
               </div>
             )}
 
-            {showEnvelopeCard ? (
-              <div className="bg-white rounded-2xl p-2.5 border border-stone-200 shadow-xs text-left text-xs transition-all animate-in slide-in-from-bottom-2 duration-300">
+            {isButtonFocused && (
+              <div className="absolute -inset-1 rounded-xl border-2 border-teal-600 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3 left-1 text-[8px] font-bold text-white px-1 rounded-xs bg-teal-700 font-mono shadow-xs">
+                  Arif · Action Button
+                </span>
+              </div>
+            )}
+
+            {showButtonBox && (
+              <button
+                type="button"
+                className="w-full py-2 px-3 rounded-xl bg-teal-700 text-white font-medium text-[11px] shadow-xs flex items-center justify-center gap-1.5 transition-all hover:bg-teal-800"
+              >
+                {showButtonIcon && <MapPin className="w-3.5 h-3.5" />}
+                <span>{buttonLabelText}</span>
+                {isButtonFocused && <span className="inline-block w-1 h-3 bg-white ml-0.5 animate-pulse" />}
+              </button>
+            )}
+          </div>
+
+          {/* 7. Komponen Amplop Digital, Bank & QRIS (Budi) */}
+          <div className="relative mt-1">
+            {isBudiDraggingEnvelope && (
+              <div className="h-16 border-2 border-dashed border-purple-500 bg-purple-50/40 rounded-2xl flex items-center justify-center text-[9px] font-mono text-purple-800">
+                <span>[W: 310 x H: 105px · Amplop Digital &amp; QRIS]</span>
+              </div>
+            )}
+
+            {(isEnvelopeFocused || isBankFocused || isQrisFocused) && (
+              <div className="absolute -inset-1.5 rounded-2xl border-2 border-purple-600 pointer-events-none z-20 animate-in fade-in">
+                <span className="absolute -top-3.5 left-1 text-[8px] font-bold text-white px-1.5 py-0.2 rounded-xs bg-purple-600 font-mono shadow-xs">
+                  Budi · {isQrisFocused ? 'QRIS Component Center' : 'Amplop Digital'}
+                </span>
+              </div>
+            )}
+
+            {showEnvelopeCard && (
+              <div className="bg-white rounded-2xl p-2.5 border border-stone-200 shadow-xs text-left text-xs transition-all animate-in slide-in-from-bottom-2">
                 <div className="flex items-center justify-between text-teal-800 font-bold mb-1">
                   <span className="flex items-center gap-1 text-[11px]">
                     <CreditCard className="w-3 h-3" />
                     <span>Amplop Digital &amp; QRIS</span>
                   </span>
-                  <span className="text-[9px] text-purple-700 font-mono font-semibold bg-purple-50 px-1.5 py-0.2 rounded-sm border border-purple-200">
+                  <span className="text-[8.5px] text-purple-700 font-mono font-semibold bg-purple-50 px-1.5 py-0.2 rounded-sm border border-purple-200">
                     Auto-Centered
                   </span>
                 </div>
 
-                {showQrisBarcode ? (
-                  <div className="flex items-center gap-2 mt-1 bg-stone-50 p-1.5 rounded-xl border border-stone-200">
+                {/* Bank Badges & Account Numbers */}
+                {showBankBadges && (
+                  <div className="flex items-center gap-1.5 text-[9px] font-mono text-stone-600 mb-1.5 bg-stone-50 p-1 rounded-lg border border-stone-200">
+                    <span className="font-bold text-blue-700">BCA</span>
+                    <span>1234567890</span>
+                    <span className="text-stone-300">|</span>
+                    <span className="font-bold text-amber-700">Mandiri</span>
+                    <span>9876543210</span>
+                  </div>
+                )}
+
+                {/* QRIS Barcode */}
+                {showQrisBarcode && (
+                  <div className="flex items-center gap-2 bg-stone-50 p-1.5 rounded-xl border border-stone-200 animate-in zoom-in-95">
                     <div className="w-8 h-8 bg-teal-800 text-white rounded-lg flex items-center justify-center font-mono font-bold text-[9px] shrink-0">
                       QRIS
                     </div>
@@ -641,22 +743,10 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
                       <div className="text-[10px] font-bold text-stone-800 truncate">
                         NikahPlan: {groomNick} &amp; {brideNick}
                       </div>
-                      <div className="text-[8px] text-stone-500">Scan QRIS BCA, Mandiri, Gopay, Ovo</div>
+                      <div className="text-[8px] text-stone-500">Scan BCA, Mandiri, Gopay, ShopeePay</div>
                     </div>
                   </div>
-                ) : (
-                  <p className="text-[10px] text-stone-500">
-                    Transfer BCA, Mandiri &amp; scan QRIS resmi siap digunakan.
-                  </p>
                 )}
-              </div>
-            ) : isDraggingEnvelope ? (
-              <div className="h-14 border-2 border-dashed border-purple-400 bg-purple-50/50 rounded-2xl flex items-center justify-center text-[10px] text-purple-700 font-mono animate-pulse">
-                <span>[Budi: Dragging DigitalEnvelope.fig ke Kanvas...]</span>
-              </div>
-            ) : (
-              <div className="h-12 border border-dashed border-stone-300 rounded-2xl flex items-center justify-center text-[10px] text-stone-400">
-                <span>Area Amplop Digital &amp; QRIS</span>
               </div>
             )}
           </div>
@@ -680,122 +770,119 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
         </div>
 
         {/* ========================================================================= */}
-        {/* 4 CURSORS SIMULTANEOUS MULTIPLAYER OVERLAYS (BERGERAK BEBARENGAN) */}
+        {/* 4 CURSORS SIMULTANEOUS MULTIPLAYER OVERLAYS (STILL WHILE TYPING) */}
         {/* ========================================================================= */}
 
-        {/* Cursor 1: Arif (Mempelai Pria - Teal) */}
+        {/* Cursor 1: Arif (Teal) */}
         <div
-          className="absolute z-40 pointer-events-none transition-all duration-300 ease-out flex flex-col items-start"
+          className={`absolute z-40 pointer-events-none flex flex-col items-start ${
+            arifCursor.isStill ? 'transition-none' : 'transition-all duration-300 ease-out'
+          }`}
           style={{
             left: `${arifCursor.x}%`,
             top: `${arifCursor.y}%`,
           }}
         >
-          {/* Click Ripple Pulse */}
+          {/* Click Ripple Pulse (only fires on actual clicks, not repeated) */}
           {arifCursor.isClicking && (
-            <div className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-teal-400 bg-teal-400/20 animate-ping pointer-events-none" />
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 border-teal-400 bg-teal-400/20 animate-ping pointer-events-none" />
           )}
 
-          {/* Figma Arrow */}
           <svg className="w-5 h-5 drop-shadow-md" viewBox="0 0 24 24" fill="#0F766E" stroke="white" strokeWidth="1.5">
             <path d="M5.5 3.5l14 7-6.5 2-2 6.5-5.5-15.5z" />
           </svg>
 
-          {/* Badge Tag */}
           <div className="text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap ml-3 -mt-1 bg-teal-700 flex items-center gap-1">
             <span>Arif (Mempelai)</span>
+            {arifCursor.isStill && <span className="w-1.5 h-1.5 rounded-full bg-teal-300 animate-pulse" />}
           </div>
 
-          {/* Floating Action Property Pill */}
-          <div className="bg-[#1E1E1E]/95 text-stone-200 text-[9px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
+          <div className="bg-[#1A1A1A]/95 text-stone-200 text-[8.5px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
             <span>{arifCursor.action}</span>
           </div>
         </div>
 
-        {/* Cursor 2: Windi (Mempelai Wanita - Amber) */}
+        {/* Cursor 2: Windi (Amber) */}
         <div
-          className="absolute z-40 pointer-events-none transition-all duration-300 ease-out flex flex-col items-start"
+          className={`absolute z-40 pointer-events-none flex flex-col items-start ${
+            windiCursor.isStill ? 'transition-none' : 'transition-all duration-300 ease-out'
+          }`}
           style={{
             left: `${windiCursor.x}%`,
             top: `${windiCursor.y}%`,
           }}
         >
-          {/* Click Ripple Pulse */}
           {windiCursor.isClicking && (
-            <div className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-amber-400 bg-amber-400/20 animate-ping pointer-events-none" />
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 border-amber-400 bg-amber-400/20 animate-ping pointer-events-none" />
           )}
 
-          {/* Figma Arrow */}
           <svg className="w-5 h-5 drop-shadow-md" viewBox="0 0 24 24" fill="#D97706" stroke="white" strokeWidth="1.5">
             <path d="M5.5 3.5l14 7-6.5 2-2 6.5-5.5-15.5z" />
           </svg>
 
-          {/* Badge Tag */}
           <div className="text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap ml-3 -mt-1 bg-amber-600 flex items-center gap-1">
             <span>Windi (Mempelai)</span>
+            {windiCursor.isStill && <span className="w-1.5 h-1.5 rounded-full bg-amber-200 animate-pulse" />}
           </div>
 
-          {/* Floating Action Property Pill */}
-          <div className="bg-[#1E1E1E]/95 text-stone-200 text-[9px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
+          <div className="bg-[#1A1A1A]/95 text-stone-200 text-[8.5px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
             <span>{windiCursor.action}</span>
           </div>
         </div>
 
-        {/* Cursor 3: Budi Santoso (Best Man - Purple) */}
+        {/* Cursor 3: Reza (Royal Blue) */}
         <div
-          className="absolute z-40 pointer-events-none transition-all duration-300 ease-out flex flex-col items-start"
-          style={{
-            left: `${budiCursor.x}%`,
-            top: `${budiCursor.y}%`,
-          }}
-        >
-          {/* Click Ripple Pulse */}
-          {budiCursor.isClicking && (
-            <div className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-purple-400 bg-purple-400/20 animate-ping pointer-events-none" />
-          )}
-
-          {/* Figma Arrow */}
-          <svg className="w-5 h-5 drop-shadow-md" viewBox="0 0 24 24" fill="#7C3AED" stroke="white" strokeWidth="1.5">
-            <path d="M5.5 3.5l14 7-6.5 2-2 6.5-5.5-15.5z" />
-          </svg>
-
-          {/* Badge Tag */}
-          <div className="text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap ml-3 -mt-1 bg-purple-600 flex items-center gap-1">
-            <span>Budi Santoso</span>
-          </div>
-
-          {/* Floating Action Property Pill */}
-          <div className="bg-[#1E1E1E]/95 text-stone-200 text-[9px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
-            <span>{budiCursor.action}</span>
-          </div>
-        </div>
-
-        {/* Cursor 4: Reza Pratama (Decorator / Alumni TI - Blue) */}
-        <div
-          className="absolute z-40 pointer-events-none transition-all duration-300 ease-out flex flex-col items-start"
+          className={`absolute z-40 pointer-events-none flex flex-col items-start ${
+            rezaCursor.isStill ? 'transition-none' : 'transition-all duration-300 ease-out'
+          }`}
           style={{
             left: `${rezaCursor.x}%`,
             top: `${rezaCursor.y}%`,
           }}
         >
-          {/* Click Ripple Pulse */}
           {rezaCursor.isClicking && (
-            <div className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full border-2 border-blue-400 bg-blue-400/20 animate-ping pointer-events-none" />
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 border-blue-400 bg-blue-400/20 animate-ping pointer-events-none" />
           )}
 
-          {/* Figma Arrow */}
           <svg className="w-5 h-5 drop-shadow-md" viewBox="0 0 24 24" fill="#2563EB" stroke="white" strokeWidth="1.5">
             <path d="M5.5 3.5l14 7-6.5 2-2 6.5-5.5-15.5z" />
           </svg>
 
-          {/* Badge Tag */}
           <div className="text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap ml-3 -mt-1 bg-blue-600 flex items-center gap-1">
             <span>Reza Pratama</span>
+            {rezaCursor.isStill && <span className="w-1.5 h-1.5 rounded-full bg-blue-200 animate-pulse" />}
           </div>
 
-          {/* Floating Action Property Pill */}
-          <div className="bg-[#1E1E1E]/95 text-stone-200 text-[9px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
+          <div className="bg-[#1A1A1A]/95 text-stone-200 text-[8.5px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
             <span>{rezaCursor.action}</span>
+          </div>
+        </div>
+
+        {/* Cursor 4: Budi (Purple) */}
+        <div
+          className={`absolute z-40 pointer-events-none flex flex-col items-start ${
+            budiCursor.isStill ? 'transition-none' : 'transition-all duration-300 ease-out'
+          }`}
+          style={{
+            left: `${budiCursor.x}%`,
+            top: `${budiCursor.y}%`,
+          }}
+        >
+          {budiCursor.isClicking && (
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 border-purple-400 bg-purple-400/20 animate-ping pointer-events-none" />
+          )}
+
+          <svg className="w-5 h-5 drop-shadow-md" viewBox="0 0 24 24" fill="#7C3AED" stroke="white" strokeWidth="1.5">
+            <path d="M5.5 3.5l14 7-6.5 2-2 6.5-5.5-15.5z" />
+          </svg>
+
+          <div className="text-[9px] font-bold text-white px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap ml-3 -mt-1 bg-purple-600 flex items-center gap-1">
+            <span>Budi Santoso</span>
+            {budiCursor.isStill && <span className="w-1.5 h-1.5 rounded-full bg-purple-200 animate-pulse" />}
+          </div>
+
+          <div className="bg-[#1A1A1A]/95 text-stone-200 text-[8.5px] px-2 py-0.5 rounded-md shadow-md mt-0.5 ml-3 font-mono border border-stone-700 whitespace-nowrap animate-in fade-in">
+            <span>{budiCursor.action}</span>
           </div>
         </div>
       </div>
