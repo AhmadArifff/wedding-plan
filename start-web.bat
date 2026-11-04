@@ -12,3 +12,4 @@ echo.
 start http://localhost:3000
 call pnpm dev:web
 pause
+

@@ -95,3 +95,4 @@ cls
 echo Terima kasih telah menggunakan NikahPlan Studio!
 timeout /t 2 >nul
 exit /b 0
+

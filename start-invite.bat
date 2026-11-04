@@ -12,3 +12,4 @@ echo.
 start http://localhost:3001/v/arif-siti
 call pnpm dev:invite
 pause
+
