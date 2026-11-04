@@ -29,3 +29,4 @@ export class BudgetRepositoryStub {
     return { mode: 'EQUALS', categoryId: filter };
   }
 }
+

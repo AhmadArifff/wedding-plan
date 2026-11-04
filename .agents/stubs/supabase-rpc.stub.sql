@@ -45,3 +45,4 @@ $$;
 
 REVOKE EXECUTE ON FUNCTION public.rpc_template_workspace_mutation(UUID, UUID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.rpc_template_workspace_mutation(UUID, UUID) TO authenticated;
+

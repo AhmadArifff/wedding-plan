@@ -35,3 +35,4 @@ Selamat datang di direktori tata kelola arsitektur, aturan kerja, basis pengetah
 - **[knowledge/anti-slop-design-dna.md](./knowledge/anti-slop-design-dna.md)**: Profil Design DNA JSON dan resep koreografi animasi (`motion`, `animate-ui`, `animejs`).
 - **[skills/nikahplan-domain/SKILL.md](./skills/nikahplan-domain/SKILL.md)**: Skill orkestrasi domain NikahPlan Studio yang menghubungkan 42 skill global.
 - **[stubs/](./stubs/)**: Template kode TypeScript Service (`Result Pattern`), Repository, dan Supabase RPC.
+

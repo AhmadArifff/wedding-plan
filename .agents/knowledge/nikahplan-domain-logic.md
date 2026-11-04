@@ -82,3 +82,4 @@ Saat workspace baru diinisialisasi (atau Super Admin menjalankan seeding `master
 5. `Minyak Goreng & Gas LPG` (`paket`)
 6. `Buah, Kerupuk & Es konsumsi` (`paket`)
 7. `Jasa Tukang Masak & Tenaga Bantu` (`tim`)
+

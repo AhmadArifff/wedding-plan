@@ -50,3 +50,4 @@ Gunakan token warna lembut yang memenuhi rasio kontras WCAG AA ($\ge 4.5:1$):
 | **Melebihi Plafon (Over-Budget)** | `bg-rose-50 border-rose-200` | `text-rose-800 font-semibold` | Harga kandidat vendor melampaui plafon kategori (*Early Warning*). |
 | **Netral / Manual / Kandidat** | `bg-stone-100 border-stone-200` | `text-stone-700 font-medium` | Item anggaran input manual, status `Kandidat` atau `Arsip`. |
 | **Grand Total (`<tfoot>`)** | `bg-stone-900 text-stone-50` | `text-white font-bold` | Baris `TOTAL AKUMULASI` di bagian bawah tabel. |
+

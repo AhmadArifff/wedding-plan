@@ -80,3 +80,4 @@ Setiap animasi di bawah ini memiliki alasan fungsional tertulis sesuai aturan **
    - **Komponen**: `DigitalEnvelopeCard`.
    - **Parameter Gerak**: Morphing ikon SVG dari `Copy` menjadi `Check` (`stroke-dashoffset` via `motion` / `animejs` dalam `250ms`) disertai Toast konfirmasi pasif selama 3 detik.
    - **Tujuan UX**: Memastikan tamu yakin 100% bahwa nomor rekening telah tersalin ke *clipboard* tanpa perlu menebak.
+

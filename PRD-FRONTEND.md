@@ -336,3 +336,4 @@ Saat agen `frontend-engineer` atau `ui-ux-designer` mengeksekusi sub-tugas dari 
 4. **`skills/animate-ui/SKILL.md` & `skills/motion/SKILL.md` & `skills/motion-design-skill/SKILL.md`**: Animasi perubahan angka finansial (*sliding number*), transisi status vendor (`layoutId`), dan koreografi pembukaan undangan digital.
 5. **`skills/21st-dev/SKILL.md` & `skills/cast/SKILL.md`**: Komponen interaktif khusus pada halaman publik undangan digital (`/v/[slug]`) dan *live preview dock*.
 6. **`skills/playwright/SKILL.md`**: Pengujian klik nyata (*click-through verification* `R-35`) pada seluruh tombol, modal, inline edit, dan salin nomor rekening sebelum serah terima.
+

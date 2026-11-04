@@ -43,3 +43,4 @@ Saat mengerjakan modul tertentu, kombinasikan skill lokal ini dengan skill globa
    - Halaman `/v/[slug]` hanya membaca dari `v_public_invitation_safe` dan sama sekali tidak membocorkan data anggaran/tabungan.
 5. **Apakah Perubahan Sudah Di-Push ke Branch `dev`?**
    - Lakukan commit atomik dan `git push origin dev`. **JANGAN PERNAH** melakukan merge ke `main` secara otomatis!
+

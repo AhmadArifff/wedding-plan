@@ -380,3 +380,4 @@ Seluruh tabel di skema `public` **WAJIB** mengaktifkan RLS (`ALTER TABLE ... ENA
    - Menyediakan endpoint terjadwal `/api/cron/supabase-keepalive` (dilindungi header `Authorization: Bearer ${CRON_SECRET}`) yang melakukan operasi *upsert* ringan ke tabel `cronjob_keepalive` setiap 3 hari agar database Supabase tidak terkena *auto-pause* pada lingkungan pengembangan/staging.
 5. **Kebijakan Zero-Direct-CRUD & Migrasi SQL Terverifikasi**:
    - Seluruh perubahan skema tabel, pembuatan View (`v_...`), kebijakan RLS, dan fungsi RPC (`rpc_...`) wajib ditulis ke dalam file migrasi SQL terstruktur di `packages/db/supabase/migrations/` lengkap dengan skrip *rollback* (`DROP FUNCTION IF EXISTS ...`) dan kueri *smoke test*.
+

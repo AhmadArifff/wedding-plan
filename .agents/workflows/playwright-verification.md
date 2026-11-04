@@ -16,3 +16,4 @@
    - Uji **Halaman Publik Undangan (`/v/[slug]`)** pada viewport mobile `375x812px` -> pastikan bebas *horizontal overflow* (`R-03`), tombol **Salin Rekening** memunculkan Toast, dan modal **QRIS Merchant** tampil tajam.
 3. **Verifikasi 4-Blok Mandatory Delivery Gate**:
    - Sertakan bukti hasil klik satu per satu di laporan akhir sesuai `skills/antislop/SKILL.md`.
+

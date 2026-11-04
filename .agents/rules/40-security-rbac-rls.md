@@ -37,3 +37,4 @@ Seluruh tabel di skema `public` wajib mengaktifkan **Row-Level Security (`ENABLE
    - Sanitasi seluruh input teks ucapan tamu (`wish_message` & `guest_name`) dari karakter/tag HTML berbahaya.
 4. **Keamanan Fungsi `SECURITY DEFINER`**:
    - Setiap fungsi PL/pgSQL yang dideklarasikan dengan `SECURITY DEFINER` **WAJIB** mencantumkan `SET search_path = public, pg_temp` dan memvalidasi `auth.uid()` serta keanggotaan workspace (`has_workspace_role`) di awal blok `BEGIN`.
+

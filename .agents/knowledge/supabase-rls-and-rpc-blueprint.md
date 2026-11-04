@@ -255,3 +255,4 @@ $$;
 REVOKE EXECUTE ON FUNCTION public.rpc_sync_gold_mahar_price(UUID, UUID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION public.rpc_sync_gold_mahar_price(UUID, UUID) TO authenticated;
 ```
+
