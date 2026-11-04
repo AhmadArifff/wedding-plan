@@ -15,6 +15,11 @@ export interface DigitalEnvelopeBlockProps {
   qrisHolderName?: string;
   bankCardCraftId?: string;
   qrisCardCraftId?: string;
+  isBankCrafted?: boolean;
+  isBankActive?: boolean;
+  isQrisCrafted?: boolean;
+  isQrisActive?: boolean;
+  subPhase?: string;
 }
 
 export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
@@ -23,6 +28,11 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
   qrisHolderName = 'Arif & Windi Wedding',
   bankCardCraftId,
   qrisCardCraftId,
+  isBankCrafted = true,
+  isBankActive = false,
+  isQrisCrafted = true,
+  isQrisActive = false,
+  subPhase,
 }) => {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);
@@ -55,7 +65,20 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
       </div>
 
       {/* Daftar Rekening Bank */}
-      <div className="space-y-3.5" data-craft-id={bankCardCraftId}>
+      {!isBankCrafted && !isBankActive ? (
+        <div
+          data-craft-id={bankCardCraftId}
+          className="border border-dashed border-stone-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/50 min-h-[140px] flex items-center justify-center select-none"
+        >
+          [Frame Rekening Bank BCA &amp; Mandiri]
+        </div>
+      ) : (
+        <div
+          data-craft-id={bankCardCraftId}
+          className={`space-y-3.5 ${
+            isBankActive ? 'animate-in slide-in-from-bottom-2 duration-300' : ''
+          }`}
+        >
         {bankAccounts.map((account) => {
           const isCopied = copiedId === account.id;
           return (
@@ -109,34 +132,49 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
           );
         })}
       </div>
+      )}
 
       {/* Bagian QRIS Merchant */}
       {qrisImageUrl && (
-        <div data-craft-id={qrisCardCraftId} className="mt-5 bg-gradient-to-b from-stone-50 to-white rounded-2xl p-4 border border-stone-200 shadow-xs text-center">
-          <div className="inline-flex items-center gap-1 text-xs font-semibold text-stone-700 mb-3">
-            <QrCode className="w-4 h-4 text-teal-700" />
-            <span>Pindai QRIS (Semua Bank &amp; E-Wallet)</span>
+        !isQrisCrafted && !isQrisActive ? (
+          <div
+            data-craft-id={qrisCardCraftId}
+            className="mt-5 border border-dashed border-stone-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/50 min-h-[160px] flex items-center justify-center select-none"
+          >
+            [Frame Barcode QRIS Merchant]
           </div>
+        ) : (
+          <div
+            data-craft-id={qrisCardCraftId}
+            className={`mt-5 bg-gradient-to-b from-stone-50 to-white rounded-2xl p-4 border border-stone-200 shadow-xs text-center ${
+              isQrisActive ? 'animate-in zoom-in-95 duration-300' : ''
+            }`}
+          >
+            <div className="inline-flex items-center gap-1 text-xs font-semibold text-stone-700 mb-3">
+              <QrCode className="w-4 h-4 text-teal-700" />
+              <span>Pindai QRIS (Semua Bank &amp; E-Wallet)</span>
+            </div>
 
-          <div className="relative inline-block mx-auto bg-white p-3 rounded-xl border border-stone-200 shadow-xs">
-            <img
-              src={qrisImageUrl}
-              alt={`QRIS ${qrisHolderName}`}
-              className="w-44 h-44 object-contain mx-auto cursor-pointer rounded-lg hover:opacity-95 transition-opacity"
-              onClick={() => setIsQrModalOpen(true)}
-            />
-            <button
-              type="button"
-              onClick={() => setIsQrModalOpen(true)}
-              className="mt-2 text-[11px] text-teal-700 font-semibold underline underline-offset-2 flex items-center justify-center gap-1 mx-auto cursor-pointer"
-            >
-              Klik untuk memperbesar QRIS
-            </button>
+            <div className="relative inline-block mx-auto bg-white p-3 rounded-xl border border-stone-200 shadow-xs">
+              <img
+                src={qrisImageUrl}
+                alt={`QRIS ${qrisHolderName}`}
+                className="w-44 h-44 object-contain mx-auto cursor-pointer rounded-lg hover:opacity-95 transition-opacity"
+                onClick={() => setIsQrModalOpen(true)}
+              />
+              <button
+                type="button"
+                onClick={() => setIsQrModalOpen(true)}
+                className="mt-2 text-[11px] text-teal-700 font-semibold underline underline-offset-2 flex items-center justify-center gap-1 mx-auto cursor-pointer"
+              >
+                Klik untuk memperbesar QRIS
+              </button>
+            </div>
+            <p className="text-[11px] text-stone-600 mt-2">
+              NMID terdaftar resmi atas nama <strong>{qrisHolderName}</strong>
+            </p>
           </div>
-          <p className="text-[11px] text-stone-600 mt-2">
-            NMID terdaftar resmi atas nama <strong>{qrisHolderName}</strong>
-          </p>
-        </div>
+        )
       )}
 
       {/* Modal Perbesar QRIS */}

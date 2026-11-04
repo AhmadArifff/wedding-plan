@@ -11,6 +11,7 @@ import {
   CheckCircle,
   Palette,
   Eye,
+  Sparkles,
 } from 'lucide-react';
 import {
   WaxSealEnvelopeCover,
@@ -34,6 +35,11 @@ export default function PublicInvitationPage() {
   const [craftingState, setCraftingState] = React.useState<CraftingState | null>(null);
   const mainContainerRef = React.useRef<HTMLElement | null>(null);
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
+
+  // Helper status perakitan tiap elemen
+  const isDone = (id: string) =>
+    craftingState?.completedStepIds.includes(id) || craftingState?.isFinished || !craftingState;
+  const isActive = (id: string) => craftingState?.activeStepId === id;
   const [senderName, setSenderName] = React.useState('');
   const [senderMessage, setSenderMessage] = React.useState('');
   const [isWishSent, setIsWishSent] = React.useState(false);
@@ -176,56 +182,62 @@ export default function PublicInvitationPage() {
             />
             <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent flex flex-col justify-end p-6 text-white text-center">
               {/* Element 1: Walimatul 'Urs Header */}
-              <div data-craft-id="hero-header" className="relative min-h-[28px] flex items-center justify-center">
-                <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold mb-2">
-                  {craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'typing'
-                    ? craftingState.typedText
-                    : craftingState?.completedStepIds.includes('hero-header') || !craftingState
-                    ? "Walimatul 'Urs"
-                    : craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'settling'
-                    ? "[Kotak Header Walimatul 'Urs]"
-                    : "Walimatul 'Urs"}
-                </span>
-                {craftingState?.activeStepId === 'hero-header' && craftingState.subPhase === 'typing' && (
-                  <span className="inline-block w-1.5 h-3 bg-teal-300 ml-1 animate-pulse" />
+              <div data-craft-id="hero-header" className="relative min-h-[30px] flex items-center justify-center">
+                {!isDone('hero-header') && !isActive('hero-header') ? (
+                  <div className="border border-dashed border-teal-400/40 rounded-lg px-4 py-1 text-[10px] uppercase font-mono tracking-widest text-teal-300/40 select-none">
+                    [Kotak Header Walimatul 'Urs]
+                  </div>
+                ) : (
+                  <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold mb-2">
+                    {isActive('hero-header') && craftingState?.subPhase === 'typing'
+                      ? craftingState.typedText
+                      : "Walimatul 'Urs"}
+                    {isActive('hero-header') && craftingState?.subPhase === 'typing' && (
+                      <span className="inline-block w-1.5 h-3 bg-teal-300 ml-1 animate-pulse" />
+                    )}
+                  </span>
                 )}
               </div>
 
               {/* Element 2: Nama Mempelai Hero + Font Cormorant Garamond */}
-              <div data-craft-id="hero-names" className="relative min-h-[56px] flex items-center justify-center">
-                <h1
-                  className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-300 ${
-                    craftingState?.isSpecialFontActive || craftingState?.completedStepIds.includes('hero-names') || !craftingState
-                      ? 'font-serif italic text-white'
-                      : 'font-sans text-stone-200'
-                  }`}
-                >
-                  {craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'typing'
-                    ? craftingState.typedText
-                    : craftingState?.completedStepIds.includes('hero-names') || !craftingState
-                    ? `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`
-                    : craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'settling'
-                    ? "[Kotak Nama Mempelai]"
-                    : `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`}
-                </h1>
-                {craftingState?.activeStepId === 'hero-names' && craftingState.subPhase === 'typing' && (
-                  <span className="inline-block w-2 h-8 bg-amber-400 ml-1 animate-pulse" />
+              <div data-craft-id="hero-names" className="relative min-h-[58px] flex items-center justify-center">
+                {!isDone('hero-names') && !isActive('hero-names') ? (
+                  <div className="border border-dashed border-amber-400/40 rounded-xl px-6 py-2 text-xs font-mono text-stone-300/40 select-none">
+                    [Kotak Tipografi Nama Mempelai]
+                  </div>
+                ) : (
+                  <h1
+                    className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-500 ${
+                      craftingState?.isSpecialFontActive || isDone('hero-names')
+                        ? 'font-serif italic text-white'
+                        : 'font-sans text-stone-200'
+                    }`}
+                  >
+                    {isActive('hero-names') && craftingState?.subPhase === 'typing'
+                      ? craftingState.typedText
+                      : `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`}
+                    {isActive('hero-names') && craftingState?.subPhase === 'typing' && (
+                      <span className="inline-block w-2 h-8 bg-amber-400 ml-1 animate-pulse" />
+                    )}
+                  </h1>
                 )}
               </div>
 
               {/* Element 3: Tanggal Akad & Resepsi */}
-              <div data-craft-id="hero-date" className="relative min-h-[22px] flex items-center justify-center mt-2">
-                <p className="text-xs text-stone-300 font-mono">
-                  {craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'typing'
-                    ? craftingState.typedText
-                    : craftingState?.completedStepIds.includes('hero-date') || !craftingState
-                    ? "Minggu, 14 November 2027"
-                    : craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'settling'
-                    ? "[Tanggal Akad & Resepsi]"
-                    : "Minggu, 14 November 2027"}
-                </p>
-                {craftingState?.activeStepId === 'hero-date' && craftingState.subPhase === 'typing' && (
-                  <span className="inline-block w-1.5 h-3 bg-stone-300 ml-1 animate-pulse" />
+              <div data-craft-id="hero-date" className="relative min-h-[26px] flex items-center justify-center mt-2">
+                {!isDone('hero-date') && !isActive('hero-date') ? (
+                  <div className="border border-dashed border-stone-400/40 rounded-md px-4 py-0.5 text-[10px] font-mono text-stone-400/40 select-none">
+                    [Format Tanggal Acara]
+                  </div>
+                ) : (
+                  <p className="text-xs text-stone-300 font-mono">
+                    {isActive('hero-date') && craftingState?.subPhase === 'typing'
+                      ? craftingState.typedText
+                      : "Minggu, 14 November 2027"}
+                    {isActive('hero-date') && craftingState?.subPhase === 'typing' && (
+                      <span className="inline-block w-1.5 h-3 bg-stone-300 ml-1 animate-pulse" />
+                    )}
+                  </p>
                 )}
               </div>
             </div>
@@ -234,21 +246,33 @@ export default function PublicInvitationPage() {
           {/* Element 4: Ayat Suci & Mukadimah */}
           <section
             data-craft-id="verse-box"
-            className={`p-6 text-center space-y-4 border-b border-stone-100 transition-all duration-500 ${
-              craftingState && !craftingState.completedStepIds.includes('verse-box') && craftingState.activeStepId !== 'verse-box'
-                ? 'opacity-40 border-dashed border-stone-300 bg-stone-50/50'
-                : 'opacity-100'
-            }`}
+            className="p-6 text-center space-y-4 border-b border-stone-100 min-h-[170px] flex flex-col justify-center transition-all duration-500"
           >
-            <div className="w-8 h-8 rounded-full bg-teal-50 text-teal-800 flex items-center justify-center mx-auto">
-              <Heart className="w-4 h-4 text-teal-700" />
-            </div>
-            <p className="font-serif italic text-sm text-stone-700 leading-relaxed max-w-xs mx-auto">
-              &ldquo;Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.&rdquo;
-            </p>
-            <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest block">
-              QS. AR-RUM: 21
-            </span>
+            {!isDone('verse-box') && !isActive('verse-box') ? (
+              <div className="border border-dashed border-stone-300 rounded-2xl p-6 text-stone-400 italic text-xs bg-stone-50/40 select-none">
+                [Frame Ayat Suci &amp; Mukadimah QS. Ar-Rum: 21]
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {/* Heart Icon drops in with bounce */}
+                <div className="w-8 h-8 rounded-full bg-teal-50 text-teal-800 flex items-center justify-center mx-auto animate-in zoom-in-75 duration-300 shadow-xs">
+                  <Heart className="w-4 h-4 text-teal-700" />
+                </div>
+                {/* Verse text types/reveals */}
+                <p className="font-serif italic text-sm text-stone-700 leading-relaxed max-w-xs mx-auto animate-in fade-in duration-300">
+                  &ldquo;{isActive('verse-box') && craftingState?.subPhase === 'typing'
+                    ? craftingState.typedText
+                    : 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.'}&rdquo;
+                  {isActive('verse-box') && craftingState?.subPhase === 'typing' && (
+                    <span className="inline-block w-1.5 h-3.5 bg-teal-700 ml-0.5 animate-pulse" />
+                  )}
+                </p>
+                {/* Badge citation */}
+                <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest block animate-in slide-in-from-bottom-1 duration-300">
+                  QS. AR-RUM: 21
+                </span>
+              </div>
+            )}
           </section>
 
           {/* Profil Kedua Mempelai */}
@@ -262,51 +286,69 @@ export default function PublicInvitationPage() {
 
             <div className="space-y-6">
               {/* Element 5: Pengantin Pria (Arif) */}
-              <div
-                data-craft-id="groom-card"
-                className={`bg-white p-5 rounded-2xl border transition-all duration-500 text-center shadow-xs ${
-                  craftingState && !craftingState.completedStepIds.includes('groom-card') && craftingState.activeStepId !== 'groom-card'
-                    ? 'opacity-40 border-dashed border-teal-300'
-                    : 'opacity-100 border-stone-200'
-                }`}
-              >
-                <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-teal-700 bg-teal-50 mb-3">
-                  <img
-                    src="/generated/avatar-groom.svg"
-                    alt={DUMMY_INVITATION.groomFullName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
-                <h3 className="font-serif font-bold text-lg text-stone-900">
-                  {DUMMY_INVITATION.groomFullName}
-                </h3>
-                <p className="text-xs text-stone-500 mt-1">
-                  {DUMMY_INVITATION.groomParents}
-                </p>
+              <div data-craft-id="groom-card" className="min-h-[160px]">
+                {!isDone('groom-card') && !isActive('groom-card') ? (
+                  <div className="border border-dashed border-teal-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
+                    [Frame Profil Pengantin Pria]
+                  </div>
+                ) : (
+                  <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs animate-in fade-in duration-300">
+                    {/* Avatar image drops with zoom */}
+                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-teal-700 bg-teal-50 mb-3 animate-in zoom-in-75 duration-300 shadow-xs">
+                      <img
+                        src="/generated/avatar-groom.svg"
+                        alt={DUMMY_INVITATION.groomFullName}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                    {/* Full Name types out */}
+                    <h3 className="font-serif font-bold text-lg text-stone-900">
+                      {isActive('groom-card') && craftingState?.subPhase === 'typing'
+                        ? craftingState.typedText
+                        : DUMMY_INVITATION.groomFullName}
+                      {isActive('groom-card') && craftingState?.subPhase === 'typing' && (
+                        <span className="inline-block w-1.5 h-4 bg-teal-700 ml-1 animate-pulse" />
+                      )}
+                    </h3>
+                    {/* Parents text slides up */}
+                    <p className="text-xs text-stone-500 mt-1 animate-in slide-in-from-bottom-2 duration-300">
+                      {DUMMY_INVITATION.groomParents}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Element 6: Pengantin Wanita (Windi) */}
-              <div
-                data-craft-id="bride-card"
-                className={`bg-white p-5 rounded-2xl border transition-all duration-500 text-center shadow-xs ${
-                  craftingState && !craftingState.completedStepIds.includes('bride-card') && craftingState.activeStepId !== 'bride-card'
-                    ? 'opacity-40 border-dashed border-amber-300'
-                    : 'opacity-100 border-stone-200'
-                }`}
-              >
-                <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-amber-600 bg-amber-50 mb-3">
-                  <img
-                    src="/generated/avatar-bride.svg"
-                    alt={DUMMY_INVITATION.brideFullName}
-                    className="w-full h-full rounded-full object-cover"
-                  />
-                </div>
-                <h3 className="font-serif font-bold text-lg text-stone-900">
-                  {DUMMY_INVITATION.brideFullName}
-                </h3>
-                <p className="text-xs text-stone-500 mt-1">
-                  {DUMMY_INVITATION.brideParents}
-                </p>
+              <div data-craft-id="bride-card" className="min-h-[160px]">
+                {!isDone('bride-card') && !isActive('bride-card') ? (
+                  <div className="border border-dashed border-amber-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
+                    [Frame Profil Pengantin Wanita]
+                  </div>
+                ) : (
+                  <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs animate-in fade-in duration-300">
+                    {/* Avatar image drops with zoom */}
+                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-amber-600 bg-amber-50 mb-3 animate-in zoom-in-75 duration-300 shadow-xs">
+                      <img
+                        src="/generated/avatar-bride.svg"
+                        alt={DUMMY_INVITATION.brideFullName}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    </div>
+                    {/* Full Name types out */}
+                    <h3 className="font-serif font-bold text-lg text-stone-900">
+                      {isActive('bride-card') && craftingState?.subPhase === 'typing'
+                        ? craftingState.typedText
+                        : DUMMY_INVITATION.brideFullName}
+                      {isActive('bride-card') && craftingState?.subPhase === 'typing' && (
+                        <span className="inline-block w-1.5 h-4 bg-amber-600 ml-1 animate-pulse" />
+                      )}
+                    </h3>
+                    {/* Parents text slides up */}
+                    <p className="text-xs text-stone-500 mt-1 animate-in slide-in-from-bottom-2 duration-300">
+                      {DUMMY_INVITATION.brideParents}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </section>
@@ -322,83 +364,108 @@ export default function PublicInvitationPage() {
 
             <div className="space-y-4">
               {/* Element 7: Akad Nikah */}
-              <div
-                data-craft-id="agenda-akad"
-                className={`rounded-2xl p-4 border transition-all duration-500 space-y-2 ${
-                  craftingState && !craftingState.completedStepIds.includes('agenda-akad') && craftingState.activeStepId !== 'agenda-akad'
-                    ? 'opacity-40 border-dashed border-stone-300 bg-stone-50/50'
-                    : 'opacity-100 bg-stone-50 border-stone-200'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-serif font-bold text-base text-stone-900">Akad Nikah</span>
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800">
-                    Khusus Keluarga
-                  </span>
-                </div>
-                <div className="text-xs text-stone-600 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-stone-500" />
-                    <span>Minggu, 14 November 2027</span>
+              <div data-craft-id="agenda-akad" className="min-h-[110px]">
+                {!isDone('agenda-akad') && !isActive('agenda-akad') ? (
+                  <div className="border border-dashed border-stone-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
+                    [Frame Agenda Akad Nikah]
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-stone-500" />
-                    <span>08:00 - 10:00 WIB</span>
+                ) : (
+                  <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 space-y-2 animate-in fade-in duration-300">
+                    <div className="flex items-center justify-between">
+                      <span className="font-serif font-bold text-base text-stone-900">
+                        {isActive('agenda-akad') && craftingState?.subPhase === 'typing'
+                          ? craftingState.typedText
+                          : 'Akad Nikah'}
+                        {isActive('agenda-akad') && craftingState?.subPhase === 'typing' && (
+                          <span className="inline-block w-1.5 h-3.5 bg-stone-700 ml-0.5 animate-pulse" />
+                        )}
+                      </span>
+                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 animate-in zoom-in-75 duration-200">
+                        Khusus Keluarga
+                      </span>
+                    </div>
+                    <div className="text-xs text-stone-600 space-y-1 animate-in slide-in-from-bottom-1 duration-300">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-stone-500" />
+                        <span>Minggu, 14 November 2027</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-stone-500" />
+                        <span>08:00 - 10:00 WIB</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-stone-500" />
+                        <span>Pendopo Dalem Ngabean, Kraton Yogyakarta</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-stone-500" />
-                    <span>Pendopo Dalem Ngabean, Kraton Yogyakarta</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Element 8: Resepsi Pernikahan */}
-              <div
-                data-craft-id="agenda-resepsi"
-                className={`rounded-2xl p-4 border transition-all duration-500 space-y-2 ${
-                  craftingState && !craftingState.completedStepIds.includes('agenda-resepsi') && craftingState.activeStepId !== 'agenda-resepsi'
-                    ? 'opacity-40 border-dashed border-amber-300 bg-amber-50/20'
-                    : 'opacity-100 bg-amber-50/50 border-amber-200'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-serif font-bold text-base text-stone-900">Resepsi Pernikahan</span>
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                    Umum &amp; Kerabat
-                  </span>
-                </div>
-                <div className="text-xs text-stone-600 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-stone-500" />
-                    <span>Minggu, 14 November 2027</span>
+              <div data-craft-id="agenda-resepsi" className="min-h-[110px]">
+                {!isDone('agenda-resepsi') && !isActive('agenda-resepsi') ? (
+                  <div className="border border-dashed border-amber-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-amber-50/20 h-full flex items-center justify-center select-none">
+                    [Frame Agenda Resepsi Pernikahan]
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-stone-500" />
-                    <span>11:00 - 14:00 WIB</span>
+                ) : (
+                  <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-200 space-y-2 animate-in fade-in duration-300">
+                    <div className="flex items-center justify-between">
+                      <span className="font-serif font-bold text-base text-stone-900">
+                        {isActive('agenda-resepsi') && craftingState?.subPhase === 'typing'
+                          ? craftingState.typedText
+                          : 'Resepsi Pernikahan'}
+                        {isActive('agenda-resepsi') && craftingState?.subPhase === 'typing' && (
+                          <span className="inline-block w-1.5 h-3.5 bg-amber-700 ml-0.5 animate-pulse" />
+                        )}
+                      </span>
+                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 animate-in zoom-in-75 duration-200">
+                        Umum &amp; Kerabat
+                      </span>
+                    </div>
+                    <div className="text-xs text-stone-600 space-y-1 animate-in slide-in-from-bottom-1 duration-300">
+                      <div className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-stone-500" />
+                        <span>Minggu, 14 November 2027</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-stone-500" />
+                        <span>11:00 - 14:00 WIB</span>
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-stone-500" />
+                        <span>{DUMMY_INVITATION.venueName}</span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-stone-500" />
-                    <span>{DUMMY_INVITATION.venueName}</span>
-                  </div>
-                </div>
+                )}
               </div>
 
               {/* Element 9: Tombol Buka Google Maps */}
-              <div data-craft-id="maps-button">
-                <a
-                  href={DUMMY_INVITATION.googleMapsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95"
-                >
-                  <MapPin className="w-4 h-4 text-amber-400" />
-                  <span>
-                    {craftingState?.activeStepId === 'maps-button' && craftingState.subPhase === 'typing'
-                      ? craftingState.typedText
-                      : 'Petunjuk Arah Google Maps'}
-                  </span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+              <div data-craft-id="maps-button" className="min-h-[44px]">
+                {!isDone('maps-button') && !isActive('maps-button') ? (
+                  <div className="border border-dashed border-stone-400 rounded-xl h-11 flex items-center justify-center text-xs text-stone-400 italic bg-stone-100/50 select-none">
+                    [Tombol Petunjuk Arah Google Maps]
+                  </div>
+                ) : (
+                  <a
+                    href={DUMMY_INVITATION.googleMapsUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 animate-in zoom-in-95 duration-200"
+                  >
+                    <MapPin className="w-4 h-4 text-amber-400 animate-in slide-in-from-left duration-200" />
+                    <span>
+                      {isActive('maps-button') && craftingState?.subPhase === 'typing'
+                        ? craftingState.typedText
+                        : 'Petunjuk Arah Google Maps'}
+                    </span>
+                    {isActive('maps-button') && craftingState?.subPhase === 'typing' && (
+                      <span className="inline-block w-1 h-3 bg-white ml-0.5 animate-pulse" />
+                    )}
+                    <ExternalLink className="w-3.5 h-3.5 animate-in slide-in-from-right duration-200" />
+                  </a>
+                )}
               </div>
             </div>
           </section>
@@ -410,9 +477,14 @@ export default function PublicInvitationPage() {
             qrisHolderName="Arif &amp; Windi Wedding"
             bankCardCraftId="bank-card"
             qrisCardCraftId="qris-card"
+            isBankCrafted={isDone('bank-card')}
+            isBankActive={isActive('bank-card')}
+            isQrisCrafted={isDone('qris-card')}
+            isQrisActive={isActive('qris-card')}
+            subPhase={craftingState?.subPhase}
           />
 
-          {/* 5. RSVP Konfirmasi Kehadiran */}
+          {/* 5. RSVP Konfirmasi Kehadiran (Terkunci dengan informasi ramah saat proses crafting) */}
           <section className="p-6 border-t border-stone-100 bg-stone-50/70 space-y-4">
             <div className="text-center">
               <h2 className="text-xl font-serif font-bold text-stone-900">Konfirmasi Kehadiran</h2>
@@ -421,8 +493,16 @@ export default function PublicInvitationPage() {
               </p>
             </div>
 
-            {isRsvpSubmitted ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-2">
+            {!isDone('qris-card') ? (
+              <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 text-center space-y-1.5 text-xs text-teal-800 animate-in fade-in select-none">
+                <Sparkles className="w-4 h-4 text-teal-600 mx-auto animate-pulse" />
+                <p className="font-semibold">Undangan Sedang Dirakit Langsung oleh Arif &amp; Windi</p>
+                <p className="text-[11px] text-teal-600">
+                  Formulir konfirmasi kehadiran dan buku tamu akan terbuka otomatis setelah desain selesai.
+                </p>
+              </div>
+            ) : isRsvpSubmitted ? (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-2 animate-in zoom-in-95">
                 <CheckCircle className="w-6 h-6 text-emerald-600 mx-auto" />
                 <p className="text-xs font-bold text-emerald-800">
                   Terima kasih atas konfirmasi kehadiran Anda!
@@ -432,7 +512,7 @@ export default function PublicInvitationPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleRsvpSubmit} className="space-y-3 bg-white p-4 rounded-2xl border border-stone-200">
+              <form onSubmit={handleRsvpSubmit} className="space-y-3 bg-white p-4 rounded-2xl border border-stone-200 animate-in fade-in duration-500">
                 <div>
                   <label className="text-xs font-semibold text-stone-700 block mb-1">Nama Lengkap</label>
                   <input
