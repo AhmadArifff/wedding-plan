@@ -8,6 +8,7 @@
 | **Pengembang** | Solo Developer |
 | **Tech Stack Utama** | Next.js (App Router), Turborepo, Supabase (PostgreSQL, Auth, Storage), Tailwind CSS, Shadcn UI, Vercel |
 | **Status Dokumen** | Final v1.1 (Dilengkapi Fitur Harga Emas Terkini & Manajemen Trial Marketing) |
+| **Dokumen Spesifikasi Terpecah** | [PRD-FRONTEND.md](./PRD-FRONTEND.md) (UI/UX Interaktif & Zero AI-Slop) · [PRD-BACKEND.md](./PRD-BACKEND.md) (Logic Flow, DB Optimization & Security) · [AGENTS.md](./AGENTS.md) (Tata Kelola `.agents`) |
 
 ## 1. Visi & Tujuan Produk
 
