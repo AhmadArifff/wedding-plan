@@ -16,10 +16,11 @@ echo   [3] Jalankan KEDUANYA Sekaligus   (Dual Window + Buka Browser Otomatis)
 echo   [4] Jalankan Uji Type-Check       (Verifikasi TypeScript Seluruh Modul)
 echo   [5] Generate Ulang Aset Gambar    (Avatar, Cover, QRIS, Logam Mulia)
 echo   [6] Jalankan Ulang Setup / Install
+echo   [7] Bersihkan Cache (.next, .turbo) ^& Refresh Dependensi
 echo   [0] Keluar
 echo.
 echo ======================================================================
-set /p pilihan="Masukkan pilihan Anda [1-6/0]: "
+set /p pilihan="Masukkan pilihan Anda [1-7/0]: "
 
 if "%pilihan%"=="1" goto run_web
 if "%pilihan%"=="2" goto run_invite
@@ -27,6 +28,7 @@ if "%pilihan%"=="3" goto run_all
 if "%pilihan%"=="4" goto run_typecheck
 if "%pilihan%"=="5" goto run_assets
 if "%pilihan%"=="6" goto run_setup
+if "%pilihan%"=="7" goto run_clean
 if "%pilihan%"=="0" goto keluar
 
 echo Pilihan tidak valid. Silakan coba lagi.
@@ -90,9 +92,13 @@ cls
 call setup.bat
 goto menu
 
+:run_clean
+cls
+call clean-cache.bat
+goto menu
+
 :keluar
 cls
 echo Terima kasih telah menggunakan NikahPlan Studio!
 timeout /t 2 >nul
 exit /b 0
-

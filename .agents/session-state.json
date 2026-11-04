@@ -14,9 +14,9 @@
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
     "id": "T-08",
-    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & Figma Live Crafting Animation",
+    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & 4-Cursor Simultaneous Figma Live Crafting",
     "owner_role": "frontend-engineer & ui-ux-designer",
-    "status": "in_progress",
+    "status": "done",
     "rework_iteration_count": 0
   },
   "subtasks": [
@@ -89,7 +89,7 @@
     },
     {
       "id": "T-08",
-      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & Figma Live Crafting Animation",
+      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & 4-Cursor Simultaneous Figma Live Crafting",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
       "depends_on": ["T-06", "T-07"],
@@ -182,6 +182,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic",
     "result": "approved",
-    "note": "Pembaruan nama mempelai wanita menjadi Windi Widia telah selesai diverifikasi di seluruh mock data, komponen UI, invitation blocks, aset SVG, URL route /v/arif-windi, dan script batch."
+    "note": "4-Cursor Simultaneous Figma Live Crafting berhasil diimplementasikan dengan 4 track kolaboratif paralel, click ripple, smart guide magenta, live property tuning, serta perbaikan sw.js dan konfigurasi .npmrc shamefully-hoist untuk stabilitas monorepo."
   }
 }
