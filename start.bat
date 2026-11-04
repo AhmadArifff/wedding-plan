@@ -37,6 +37,8 @@ goto menu
 
 :run_web
 cls
+echo Menutup proses lama di Port 3000 jika ada...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
 echo Memulai NikahPlan Studio Web (Port 3000)...
 start http://localhost:3000
 call pnpm dev:web
@@ -44,6 +46,8 @@ goto menu
 
 :run_invite
 cls
+echo Menutup proses lama di Port 3001 jika ada...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3001 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
 echo Memulai Undangan Digital Tamu (Port 3001)...
 start http://localhost:3001/v/arif-windi
 call pnpm dev:invite
@@ -51,6 +55,10 @@ goto menu
 
 :run_all
 cls
+echo Menutup proses lama di Port 3000 dan 3001 jika ada...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3001 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
+
 echo Membuka Planner Studio di jendela baru...
 start "NikahPlan - Planner Studio (Port 3000)" cmd /k "pnpm dev:web"
 timeout /t 3 >nul

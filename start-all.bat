@@ -8,6 +8,10 @@ echo          MEMULAI NIKAHPLAN STUDIO & UNDANGAN DIGITAL
 echo ======================================================================
 echo.
 
+:: Tutup proses lama di Port 3000 dan 3001 jika ada
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3000 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr :3001 ^| findstr LISTENING 2^>nul') do taskkill /f /pid %%a >nul 2>nul
+
 echo [1/2] Menjalankan Planner Studio (apps/web di Port 3000)...
 start "NikahPlan - Planner Studio (Port 3000)" cmd /k "pnpm dev:web"
 timeout /t 3 >nul
@@ -26,4 +30,3 @@ start http://localhost:3001/v/arif-windi
 echo Server dev sedang aktif di jendela Command Prompt terpisah.
 echo Anda dapat menutup jendela ini kapan saja.
 pause
-
