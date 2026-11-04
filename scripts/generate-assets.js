@@ -433,3 +433,4 @@ assets.forEach(asset => {
 });
 
 console.log('\nAll assets generated successfully across packages/ui and apps public directories!');
+

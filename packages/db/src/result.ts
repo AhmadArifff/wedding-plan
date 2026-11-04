@@ -35,3 +35,4 @@ export const Result = {
     return { isSuccess: false, error: { code, message, fieldErrors } };
   },
 };
+

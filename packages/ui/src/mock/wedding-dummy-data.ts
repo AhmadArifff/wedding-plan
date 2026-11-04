@@ -642,3 +642,4 @@ export function getDummyFinancialSummary(): WorkspaceFinancialSummaryView {
     trialDaysRemaining: 28,
   };
 }
+

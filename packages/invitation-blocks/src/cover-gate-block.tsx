@@ -70,3 +70,4 @@ export const CoverGateBlock: React.FC<CoverGateBlockProps> = ({
     </div>
   );
 };
+

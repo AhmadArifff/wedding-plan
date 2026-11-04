@@ -79,3 +79,4 @@ export const TrialBanner: React.FC<TrialBannerProps> = ({
     </aside>
   );
 };
+

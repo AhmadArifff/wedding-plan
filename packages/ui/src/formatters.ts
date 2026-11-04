@@ -71,3 +71,4 @@ export function formatDateTimeIndo(dateTimeStr: string): string {
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${dateFormatted}, ${hours}:${minutes} WIB`;
 }
+

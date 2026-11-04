@@ -184,3 +184,4 @@ export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
     </section>
   );
 };
+

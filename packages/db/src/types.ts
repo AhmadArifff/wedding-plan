@@ -263,3 +263,4 @@ export interface PublicInvitationSafeView {
   }[];
   showFreeWatermark: boolean;
 }
+
