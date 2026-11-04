@@ -20,6 +20,7 @@ import {
   FigmaCraftingCanvas,
   InvitationLiveCrafting,
   type CraftingState,
+  type ElementCraftStage,
 } from '@nikahplan/invitation-blocks';
 import {
   DUMMY_INVITATION,
@@ -29,6 +30,11 @@ import {
 } from '@nikahplan/ui';
 import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 
+const sliceByProgress = (text: string, progress: number) => {
+  const clamped = Math.max(0, Math.min(1, progress));
+  return text.slice(0, Math.max(1, Math.ceil(text.length * clamped)));
+};
+
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
   const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('invitation');
@@ -36,10 +42,30 @@ export default function PublicInvitationPage() {
   const mainContainerRef = React.useRef<HTMLElement | null>(null);
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
 
-  // Helper status perakitan tiap elemen
-  const isDone = (id: string) =>
-    craftingState?.completedStepIds.includes(id) || craftingState?.isFinished || !craftingState;
-  const isActive = (id: string) => craftingState?.activeStepId === id;
+  // Helper 4-tahap perakitan tiap elemen agar tidak pernah muncul prematur saat cursor baru jalan/drag
+  const getStage = (id: string): ElementCraftStage => {
+    if (!craftingState) return 'wireframe';
+    if (craftingState.isFinished || craftingState.completedStepIds.includes(id)) {
+      return 'verified';
+    }
+    if (craftingState.activeStepId === id) {
+      const phase = craftingState.subPhase;
+      if (phase === 'idle' || phase === 'traveling' || phase === 'dragging') {
+        return 'wireframe';
+      }
+      if (phase === 'settling' || phase === 'clicking') {
+        return 'container';
+      }
+      if (phase === 'typing') {
+        return 'typing';
+      }
+      return 'verified';
+    }
+    return 'wireframe';
+  };
+
+  const typingProgress = craftingState?.typingProgress ?? 0;
+
   const [senderName, setSenderName] = React.useState('');
   const [senderMessage, setSenderMessage] = React.useState('');
   const [isWishSent, setIsWishSent] = React.useState(false);
@@ -52,7 +78,9 @@ export default function PublicInvitationPage() {
 
   // Normalisasi bank accounts untuk komponen DigitalEnvelopeBlock
   const bankAccountsList = React.useMemo(() => {
-    return DUMMY_ENVELOPES.filter((acc: InvitationEnvelope) => acc.envelopeType === 'BANK_TRANSFER').map((acc: InvitationEnvelope) => ({
+    return DUMMY_ENVELOPES.filter(
+      (acc: InvitationEnvelope) => acc.envelopeType === 'BANK_TRANSFER'
+    ).map((acc: InvitationEnvelope) => ({
       id: acc.id,
       bankName: acc.bankName || 'Bank',
       accountNumber: acc.accountNumber || '-',
@@ -88,6 +116,12 @@ export default function PublicInvitationPage() {
     setIsRsvpSubmitted(true);
   };
 
+  const fullVerseText =
+    'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.';
+  const coupleIntroText =
+    'Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud melangsungkan pernikahan:';
+  const agendaIntroText = 'Insya Allah acara diselenggarakan pada:';
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 selection:bg-teal-100 relative">
       {/* 1. Wax Seal Physical Envelope Cover (Cinematic Flap Unfold & Fade Out) */}
@@ -101,7 +135,9 @@ export default function PublicInvitationPage() {
       />
 
       {/* 2. Figma Multiplayer Live Presence Cursors (Hadir setelah proses crafting selesai dirakit) */}
-      {isCoverOpen && viewMode === 'invitation' && craftingState?.isFinished && <FigmaPartyCursors />}
+      {isCoverOpen && viewMode === 'invitation' && craftingState?.isFinished && (
+        <FigmaPartyCursors />
+      )}
 
       {/* Floating Toggle Mode di Bagian Atas Kanan */}
       {isCoverOpen && (
@@ -158,7 +194,7 @@ export default function PublicInvitationPage() {
         </div>
       )}
 
-      {/* Mode 2: Main Invitation Content (Dengan Live Crafting Animation Berdua oleh Arif & Windi) */}
+      {/* Mode 2: Main Invitation Content (Dengan Live Crafting Animation 20 Elemen oleh Arif & Windi) */}
       {isCoverOpen && viewMode === 'invitation' && (
         <main
           ref={mainContainerRef}
@@ -180,62 +216,96 @@ export default function PublicInvitationPage() {
               alt="Tema Botanical Sage"
               className="w-full h-full object-cover opacity-85"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent flex flex-col justify-end p-6 text-white text-center">
-              {/* Element 1: Walimatul 'Urs Header */}
-              <div data-craft-id="hero-header" className="relative min-h-[30px] flex items-center justify-center">
-                {!isDone('hero-header') && !isActive('hero-header') ? (
-                  <div className="border border-dashed border-teal-400/40 rounded-lg px-4 py-1 text-[10px] uppercase font-mono tracking-widest text-teal-300/40 select-none">
-                    [Kotak Header Walimatul 'Urs]
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-900 via-stone-900/40 to-transparent flex flex-col justify-end p-6 text-white text-center space-y-2">
+              {/* Step 1: Walimatul 'Urs Header */}
+              <div
+                data-craft-id="hero-header"
+                className="relative min-h-[28px] flex items-center justify-center"
+              >
+                {getStage('hero-header') === 'wireframe' && (
+                  <div className="border border-dashed border-teal-400/50 rounded-lg px-4 py-1 text-[10px] uppercase font-mono tracking-widest text-teal-200/50 select-none">
+                    [Area Teks Header Walimatul 'Urs]
                   </div>
-                ) : (
-                  <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold mb-2">
-                    {isActive('hero-header') && craftingState?.subPhase === 'typing'
-                      ? craftingState.typedText
-                      : "Walimatul 'Urs"}
-                    {isActive('hero-header') && craftingState?.subPhase === 'typing' && (
+                )}
+                {getStage('hero-header') === 'container' && (
+                  <div className="border border-teal-400/70 bg-teal-950/50 rounded-lg px-4 py-1 text-[10px] font-mono text-teal-200 flex items-center gap-1.5 craft-fade-in select-none">
+                    <span>[Kotak Teks Header Siap Diketik]</span>
+                    <span className="inline-block w-1.5 h-3 bg-teal-300 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('hero-header') === 'typing' ||
+                  getStage('hero-header') === 'verified') && (
+                  <span className="text-xs uppercase tracking-[0.25em] text-teal-300 font-semibold craft-fade-in">
+                    {getStage('hero-header') === 'typing'
+                      ? craftingState?.typedText
+                      : "WALIMATUL 'URS"}
+                    {getStage('hero-header') === 'typing' && (
                       <span className="inline-block w-1.5 h-3 bg-teal-300 ml-1 animate-pulse" />
                     )}
                   </span>
                 )}
               </div>
 
-              {/* Element 2: Nama Mempelai Hero + Font Cormorant Garamond */}
-              <div data-craft-id="hero-names" className="relative min-h-[58px] flex items-center justify-center">
-                {!isDone('hero-names') && !isActive('hero-names') ? (
-                  <div className="border border-dashed border-amber-400/40 rounded-xl px-6 py-2 text-xs font-mono text-stone-300/40 select-none">
-                    [Kotak Tipografi Nama Mempelai]
+              {/* Step 2: Nama Mempelai Hero + Font Cormorant Garamond */}
+              <div
+                data-craft-id="hero-names"
+                className="relative min-h-[56px] flex items-center justify-center"
+              >
+                {getStage('hero-names') === 'wireframe' && (
+                  <div className="border border-dashed border-amber-400/50 rounded-xl px-6 py-2 text-xs font-mono text-amber-200/50 select-none">
+                    [Area Tipografi Nama Mempelai]
                   </div>
-                ) : (
+                )}
+                {getStage('hero-names') === 'container' && (
+                  <div className="border border-amber-400/70 bg-amber-950/40 rounded-xl px-6 py-2 text-xs font-mono text-amber-200 flex items-center gap-1.5 craft-fade-in select-none">
+                    <span>[Frame Nama Utama Siap Diketik]</span>
+                    <span className="inline-block w-1.5 h-4 bg-amber-300 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('hero-names') === 'typing' ||
+                  getStage('hero-names') === 'verified') && (
                   <h1
-                    className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-500 ${
-                      craftingState?.isSpecialFontActive || isDone('hero-names')
+                    className={`text-4xl sm:text-5xl font-bold tracking-tight transition-all duration-300 ${
+                      craftingState?.isSpecialFontActive ||
+                      getStage('hero-names') === 'verified'
                         ? 'font-serif italic text-white'
                         : 'font-sans text-stone-200'
                     }`}
                   >
-                    {isActive('hero-names') && craftingState?.subPhase === 'typing'
-                      ? craftingState.typedText
+                    {getStage('hero-names') === 'typing'
+                      ? craftingState?.typedText
                       : `${DUMMY_INVITATION.groomNick} & ${DUMMY_INVITATION.brideNick}`}
-                    {isActive('hero-names') && craftingState?.subPhase === 'typing' && (
+                    {getStage('hero-names') === 'typing' && (
                       <span className="inline-block w-2 h-8 bg-amber-400 ml-1 animate-pulse" />
                     )}
                   </h1>
                 )}
               </div>
 
-              {/* Element 3: Tanggal Akad & Resepsi */}
-              <div data-craft-id="hero-date" className="relative min-h-[26px] flex items-center justify-center mt-2">
-                {!isDone('hero-date') && !isActive('hero-date') ? (
-                  <div className="border border-dashed border-stone-400/40 rounded-md px-4 py-0.5 text-[10px] font-mono text-stone-400/40 select-none">
-                    [Format Tanggal Acara]
+              {/* Step 3: Tanggal Akad & Resepsi */}
+              <div
+                data-craft-id="hero-date"
+                className="relative min-h-[26px] flex items-center justify-center"
+              >
+                {getStage('hero-date') === 'wireframe' && (
+                  <div className="border border-dashed border-stone-400/50 rounded-md px-4 py-0.5 text-[10px] font-mono text-stone-300/50 select-none">
+                    [Area Tanggal Acara]
                   </div>
-                ) : (
-                  <p className="text-xs text-stone-300 font-mono">
-                    {isActive('hero-date') && craftingState?.subPhase === 'typing'
-                      ? craftingState.typedText
-                      : "Minggu, 14 November 2027"}
-                    {isActive('hero-date') && craftingState?.subPhase === 'typing' && (
-                      <span className="inline-block w-1.5 h-3 bg-stone-300 ml-1 animate-pulse" />
+                )}
+                {getStage('hero-date') === 'container' && (
+                  <div className="border border-teal-400/60 bg-stone-900/60 rounded-md px-4 py-0.5 text-[10px] font-mono text-teal-200 flex items-center gap-1 craft-fade-in select-none">
+                    <span>[Kotak Tanggal Siap Diketik]</span>
+                    <span className="inline-block w-1.5 h-3 bg-teal-300 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('hero-date') === 'typing' ||
+                  getStage('hero-date') === 'verified') && (
+                  <p className="text-xs text-stone-200 font-mono craft-fade-in">
+                    {getStage('hero-date') === 'typing'
+                      ? craftingState?.typedText
+                      : 'Minggu, 14 November 2027'}
+                    {getStage('hero-date') === 'typing' && (
+                      <span className="inline-block w-1.5 h-3 bg-teal-300 ml-1 animate-pulse" />
                     )}
                   </p>
                 )}
@@ -243,248 +313,562 @@ export default function PublicInvitationPage() {
             </div>
           </section>
 
-          {/* Element 4: Ayat Suci & Mukadimah */}
-          <section
-            data-craft-id="verse-box"
-            className="p-6 text-center space-y-4 border-b border-stone-100 min-h-[170px] flex flex-col justify-center transition-all duration-500"
-          >
-            {!isDone('verse-box') && !isActive('verse-box') ? (
-              <div className="border border-dashed border-stone-300 rounded-2xl p-6 text-stone-400 italic text-xs bg-stone-50/40 select-none">
-                [Frame Ayat Suci &amp; Mukadimah QS. Ar-Rum: 21]
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {/* Heart Icon drops in with bounce */}
-                <div className="w-8 h-8 rounded-full bg-teal-50 text-teal-800 flex items-center justify-center mx-auto animate-in zoom-in-75 duration-300 shadow-xs">
-                  <Heart className="w-4 h-4 text-teal-700" />
+          {/* Seksi Ayat Suci & Mukadimah (Steps 4, 5, 6) */}
+          <section className="p-6 text-center space-y-3.5 border-b border-stone-100 flex flex-col justify-center">
+            {/* Step 4: Ikon Hati Ayat Suci */}
+            <div
+              data-craft-id="verse-icon"
+              className="min-h-[38px] flex items-center justify-center"
+            >
+              {getStage('verse-icon') === 'wireframe' && (
+                <div className="w-9 h-9 rounded-full border border-dashed border-amber-400 flex items-center justify-center text-[9px] font-mono text-stone-400 select-none">
+                  [Ikon]
                 </div>
-                {/* Verse text types/reveals */}
-                <p className="font-serif italic text-sm text-stone-700 leading-relaxed max-w-xs mx-auto animate-in fade-in duration-300">
-                  &ldquo;{isActive('verse-box') && craftingState?.subPhase === 'typing'
-                    ? craftingState.typedText
-                    : 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang.'}&rdquo;
-                  {isActive('verse-box') && craftingState?.subPhase === 'typing' && (
-                    <span className="inline-block w-1.5 h-3.5 bg-teal-700 ml-0.5 animate-pulse" />
+              )}
+              {getStage('verse-icon') === 'container' && (
+                <div className="w-9 h-9 rounded-full border border-amber-400 bg-amber-50/50 flex items-center justify-center text-[10px] font-mono text-amber-700 craft-fade-in select-none">
+                  +
+                </div>
+              )}
+              {(getStage('verse-icon') === 'typing' ||
+                getStage('verse-icon') === 'verified') && (
+                <div className="w-9 h-9 rounded-full bg-teal-50 border border-teal-200 text-teal-800 flex items-center justify-center mx-auto shadow-xs craft-pop-in">
+                  <Heart className="w-4 h-4 text-teal-700 fill-teal-700/15" />
+                </div>
+              )}
+            </div>
+
+            {/* Step 5: Teks Lengkap Ayat Suci QS. Ar-Rum: 21 */}
+            <div
+              data-craft-id="verse-text"
+              className="min-h-[88px] flex items-center justify-center px-2"
+            >
+              {getStage('verse-text') === 'wireframe' && (
+                <div className="w-full border border-dashed border-stone-300 rounded-xl p-4 text-stone-400 italic text-xs bg-stone-50/50 select-none">
+                  [Area Terjemahan Lengkap Ayat Suci QS. Ar-Rum: 21]
+                </div>
+              )}
+              {getStage('verse-text') === 'container' && (
+                <div className="w-full border border-amber-300 bg-amber-50/30 rounded-xl p-4 text-amber-800 font-mono text-[10px] flex items-center justify-center gap-1.5 craft-fade-in select-none">
+                  <span>[Paragraf Ayat Suci Siap Diketik...]</span>
+                  <span className="inline-block w-1.5 h-3.5 bg-amber-600 animate-pulse" />
+                </div>
+              )}
+              {(getStage('verse-text') === 'typing' ||
+                getStage('verse-text') === 'verified') && (
+                <p className="font-serif italic text-sm text-stone-700 leading-relaxed max-w-xs mx-auto craft-fade-in">
+                  &ldquo;
+                  {getStage('verse-text') === 'typing'
+                    ? craftingState?.typedText
+                    : fullVerseText}
+                  &rdquo;
+                  {getStage('verse-text') === 'typing' && (
+                    <span className="inline-block w-1.5 h-3.5 bg-amber-600 ml-0.5 animate-pulse" />
                   )}
                 </p>
-                {/* Badge citation */}
-                <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest block animate-in slide-in-from-bottom-1 duration-300">
-                  QS. AR-RUM: 21
+              )}
+            </div>
+
+            {/* Step 6: Label Referensi Surah QS. AR-RUM: 21 */}
+            <div
+              data-craft-id="verse-ref"
+              className="min-h-[24px] flex items-center justify-center"
+            >
+              {getStage('verse-ref') === 'wireframe' && (
+                <div className="border border-dashed border-stone-300 rounded-md px-3 py-0.5 text-[10px] font-mono text-stone-400 select-none">
+                  [Label Referensi Surah]
+                </div>
+              )}
+              {getStage('verse-ref') === 'container' && (
+                <div className="border border-amber-300 bg-amber-50/40 rounded-md px-3 py-0.5 text-[10px] font-mono text-amber-800 flex items-center gap-1 craft-fade-in select-none">
+                  <span>[Siap Ketik Surah]</span>
+                  <span className="inline-block w-1 h-3 bg-amber-600 animate-pulse" />
+                </div>
+              )}
+              {(getStage('verse-ref') === 'typing' ||
+                getStage('verse-ref') === 'verified') && (
+                <span className="text-[11px] font-bold text-stone-500 uppercase tracking-widest block craft-slide-up">
+                  {getStage('verse-ref') === 'typing'
+                    ? craftingState?.typedText
+                    : 'QS. AR-RUM: 21'}
+                  {getStage('verse-ref') === 'typing' && (
+                    <span className="inline-block w-1.5 h-3 bg-amber-600 ml-0.5 animate-pulse" />
+                  )}
                 </span>
-              </div>
-            )}
+              )}
+            </div>
           </section>
 
-          {/* Profil Kedua Mempelai */}
-          <section className="p-6 space-y-6 border-b border-stone-100 bg-[#FAF8F5]/50">
-            <div className="text-center">
-              <h2 className="text-xl font-serif font-bold text-stone-900">Kedua Mempelai</h2>
-              <p className="text-xs text-stone-500 mt-1">
-                Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud melangsungkan pernikahan:
-              </p>
+          {/* Profil Kedua Mempelai (Steps 7 - 13) */}
+          <section className="p-6 space-y-6 border-b border-stone-100 bg-[#FAF8F5]/60">
+            {/* Step 7: Judul & Mukadimah Kedua Mempelai */}
+            <div
+              data-craft-id="couple-header"
+              className="min-h-[68px] flex flex-col justify-center text-center"
+            >
+              {getStage('couple-header') === 'wireframe' && (
+                <div className="border border-dashed border-teal-300 rounded-xl p-3 text-xs text-stone-400 italic bg-white/60 select-none">
+                  [Area Judul Kedua Mempelai &amp; Kalimat Mukadimah]
+                </div>
+              )}
+              {getStage('couple-header') === 'container' && (
+                <div className="border border-teal-400 bg-teal-50/40 rounded-xl p-3 text-[10px] font-mono text-teal-800 flex items-center justify-center gap-1.5 craft-fade-in select-none">
+                  <span>[Kotak Judul &amp; Mukadimah Siap Diketik...]</span>
+                  <span className="inline-block w-1.5 h-3.5 bg-teal-700 animate-pulse" />
+                </div>
+              )}
+              {(getStage('couple-header') === 'typing' ||
+                getStage('couple-header') === 'verified') && (
+                <div className="text-center craft-fade-in">
+                  <h2 className="text-xl font-serif font-bold text-stone-900">
+                    {getStage('couple-header') === 'typing'
+                      ? sliceByProgress('Kedua Mempelai', Math.min(1, typingProgress * 2.5))
+                      : 'Kedua Mempelai'}
+                    {getStage('couple-header') === 'typing' && typingProgress < 0.4 && (
+                      <span className="inline-block w-1.5 h-4 bg-teal-700 ml-1 animate-pulse" />
+                    )}
+                  </h2>
+                  <p className="text-xs text-stone-500 mt-1">
+                    {getStage('couple-header') === 'typing'
+                      ? typingProgress > 0.35
+                        ? sliceByProgress(coupleIntroText, (typingProgress - 0.35) / 0.65)
+                        : ''
+                      : coupleIntroText}
+                    {getStage('couple-header') === 'typing' && typingProgress >= 0.35 && (
+                      <span className="inline-block w-1.5 h-3 bg-teal-700 ml-0.5 animate-pulse" />
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-6">
-              {/* Element 5: Pengantin Pria (Arif) */}
-              <div data-craft-id="groom-card" className="min-h-[160px]">
-                {!isDone('groom-card') && !isActive('groom-card') ? (
-                  <div className="border border-dashed border-teal-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
-                    [Frame Profil Pengantin Pria]
-                  </div>
-                ) : (
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs animate-in fade-in duration-300">
-                    {/* Avatar image drops with zoom */}
-                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-teal-700 bg-teal-50 mb-3 animate-in zoom-in-75 duration-300 shadow-xs">
+              {/* Kartu Pengantin Pria (Steps 8, 9, 10) */}
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs space-y-2.5">
+                {/* Step 8: Foto Avatar Pengantin Pria */}
+                <div
+                  data-craft-id="groom-avatar"
+                  className="min-h-[84px] flex items-center justify-center"
+                >
+                  {getStage('groom-avatar') === 'wireframe' && (
+                    <div className="w-20 h-20 mx-auto rounded-full border-2 border-dashed border-teal-300 bg-stone-50 flex items-center justify-center text-[9px] font-mono text-stone-400 select-none">
+                      [Foto Pria]
+                    </div>
+                  )}
+                  {getStage('groom-avatar') === 'container' && (
+                    <div className="w-20 h-20 mx-auto rounded-full border-2 border-teal-600 bg-teal-50/50 flex items-center justify-center text-[9px] font-mono text-teal-800 craft-fade-in select-none">
+                      Siap Upload
+                    </div>
+                  )}
+                  {(getStage('groom-avatar') === 'typing' ||
+                    getStage('groom-avatar') === 'verified') && (
+                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-teal-700 bg-teal-50 shadow-xs craft-pop-in">
                       <img
                         src="/generated/avatar-groom.svg"
                         alt={DUMMY_INVITATION.groomFullName}
                         className="w-full h-full rounded-full object-cover"
                       />
                     </div>
-                    {/* Full Name types out */}
-                    <h3 className="font-serif font-bold text-lg text-stone-900">
-                      {isActive('groom-card') && craftingState?.subPhase === 'typing'
-                        ? craftingState.typedText
+                  )}
+                </div>
+
+                {/* Step 9: Nama Lengkap Pengantin Pria */}
+                <div
+                  data-craft-id="groom-name"
+                  className="min-h-[30px] flex items-center justify-center"
+                >
+                  {getStage('groom-name') === 'wireframe' && (
+                    <div className="border border-dashed border-teal-300 rounded-lg px-4 py-1 text-[11px] font-mono text-stone-400 select-none">
+                      [Area Nama Lengkap Pengantin Pria]
+                    </div>
+                  )}
+                  {getStage('groom-name') === 'container' && (
+                    <div className="border border-teal-500 bg-teal-50/40 rounded-lg px-4 py-1 text-[10px] font-mono text-teal-800 flex items-center gap-1 craft-fade-in select-none">
+                      <span>[Kotak Nama Pria Siap Diketik]</span>
+                      <span className="inline-block w-1.5 h-3.5 bg-teal-700 animate-pulse" />
+                    </div>
+                  )}
+                  {(getStage('groom-name') === 'typing' ||
+                    getStage('groom-name') === 'verified') && (
+                    <h3 className="font-serif font-bold text-lg text-stone-900 craft-fade-in">
+                      {getStage('groom-name') === 'typing'
+                        ? craftingState?.typedText
                         : DUMMY_INVITATION.groomFullName}
-                      {isActive('groom-card') && craftingState?.subPhase === 'typing' && (
+                      {getStage('groom-name') === 'typing' && (
                         <span className="inline-block w-1.5 h-4 bg-teal-700 ml-1 animate-pulse" />
                       )}
                     </h3>
-                    {/* Parents text slides up */}
-                    <p className="text-xs text-stone-500 mt-1 animate-in slide-in-from-bottom-2 duration-300">
-                      {DUMMY_INVITATION.groomParents}
+                  )}
+                </div>
+
+                {/* Step 10: Nama Orang Tua Pengantin Pria (Bapak & Ibu) */}
+                <div
+                  data-craft-id="groom-parents"
+                  className="min-h-[28px] flex items-center justify-center"
+                >
+                  {getStage('groom-parents') === 'wireframe' && (
+                    <div className="border border-dashed border-stone-300 rounded-lg px-3 py-1 text-[10px] font-mono text-stone-400 select-none">
+                      [Area Silsilah Bapak &amp; Ibu Mempelai Pria]
+                    </div>
+                  )}
+                  {getStage('groom-parents') === 'container' && (
+                    <div className="border border-teal-400 bg-teal-50/30 rounded-lg px-3 py-1 text-[10px] font-mono text-teal-800 flex items-center gap-1 craft-fade-in select-none">
+                      <span>[Kotak Nama Orang Tua Pria Siap Diketik]</span>
+                      <span className="inline-block w-1.5 h-3 bg-teal-700 animate-pulse" />
+                    </div>
+                  )}
+                  {(getStage('groom-parents') === 'typing' ||
+                    getStage('groom-parents') === 'verified') && (
+                    <p className="text-xs text-stone-600 craft-slide-up">
+                      {getStage('groom-parents') === 'typing'
+                        ? craftingState?.typedText
+                        : DUMMY_INVITATION.groomParents}
+                      {getStage('groom-parents') === 'typing' && (
+                        <span className="inline-block w-1.5 h-3 bg-teal-700 ml-0.5 animate-pulse" />
+                      )}
                     </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
-              {/* Element 6: Pengantin Wanita (Windi) */}
-              <div data-craft-id="bride-card" className="min-h-[160px]">
-                {!isDone('bride-card') && !isActive('bride-card') ? (
-                  <div className="border border-dashed border-amber-300 rounded-2xl p-6 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
-                    [Frame Profil Pengantin Wanita]
-                  </div>
-                ) : (
-                  <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs animate-in fade-in duration-300">
-                    {/* Avatar image drops with zoom */}
-                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-amber-600 bg-amber-50 mb-3 animate-in zoom-in-75 duration-300 shadow-xs">
+              {/* Kartu Pengantin Wanita (Steps 11, 12, 13) */}
+              <div className="bg-white p-5 rounded-2xl border border-stone-200 text-center shadow-xs space-y-2.5">
+                {/* Step 11: Foto Avatar Pengantin Wanita */}
+                <div
+                  data-craft-id="bride-avatar"
+                  className="min-h-[84px] flex items-center justify-center"
+                >
+                  {getStage('bride-avatar') === 'wireframe' && (
+                    <div className="w-20 h-20 mx-auto rounded-full border-2 border-dashed border-amber-300 bg-stone-50 flex items-center justify-center text-[9px] font-mono text-stone-400 select-none">
+                      [Foto Wanita]
+                    </div>
+                  )}
+                  {getStage('bride-avatar') === 'container' && (
+                    <div className="w-20 h-20 mx-auto rounded-full border-2 border-amber-500 bg-amber-50/50 flex items-center justify-center text-[9px] font-mono text-amber-800 craft-fade-in select-none">
+                      Siap Upload
+                    </div>
+                  )}
+                  {(getStage('bride-avatar') === 'typing' ||
+                    getStage('bride-avatar') === 'verified') && (
+                    <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-amber-600 bg-amber-50 shadow-xs craft-pop-in">
                       <img
                         src="/generated/avatar-bride.svg"
                         alt={DUMMY_INVITATION.brideFullName}
                         className="w-full h-full rounded-full object-cover"
                       />
                     </div>
-                    {/* Full Name types out */}
-                    <h3 className="font-serif font-bold text-lg text-stone-900">
-                      {isActive('bride-card') && craftingState?.subPhase === 'typing'
-                        ? craftingState.typedText
+                  )}
+                </div>
+
+                {/* Step 12: Nama Lengkap Pengantin Wanita */}
+                <div
+                  data-craft-id="bride-name"
+                  className="min-h-[30px] flex items-center justify-center"
+                >
+                  {getStage('bride-name') === 'wireframe' && (
+                    <div className="border border-dashed border-amber-300 rounded-lg px-4 py-1 text-[11px] font-mono text-stone-400 select-none">
+                      [Area Nama Lengkap Pengantin Wanita]
+                    </div>
+                  )}
+                  {getStage('bride-name') === 'container' && (
+                    <div className="border border-amber-500 bg-amber-50/40 rounded-lg px-4 py-1 text-[10px] font-mono text-amber-800 flex items-center gap-1 craft-fade-in select-none">
+                      <span>[Kotak Nama Wanita Siap Diketik]</span>
+                      <span className="inline-block w-1.5 h-3.5 bg-amber-600 animate-pulse" />
+                    </div>
+                  )}
+                  {(getStage('bride-name') === 'typing' ||
+                    getStage('bride-name') === 'verified') && (
+                    <h3 className="font-serif font-bold text-lg text-stone-900 craft-fade-in">
+                      {getStage('bride-name') === 'typing'
+                        ? craftingState?.typedText
                         : DUMMY_INVITATION.brideFullName}
-                      {isActive('bride-card') && craftingState?.subPhase === 'typing' && (
+                      {getStage('bride-name') === 'typing' && (
                         <span className="inline-block w-1.5 h-4 bg-amber-600 ml-1 animate-pulse" />
                       )}
                     </h3>
-                    {/* Parents text slides up */}
-                    <p className="text-xs text-stone-500 mt-1 animate-in slide-in-from-bottom-2 duration-300">
-                      {DUMMY_INVITATION.brideParents}
+                  )}
+                </div>
+
+                {/* Step 13: Nama Orang Tua Pengantin Wanita (Bapak & Ibu) */}
+                <div
+                  data-craft-id="bride-parents"
+                  className="min-h-[28px] flex items-center justify-center"
+                >
+                  {getStage('bride-parents') === 'wireframe' && (
+                    <div className="border border-dashed border-stone-300 rounded-lg px-3 py-1 text-[10px] font-mono text-stone-400 select-none">
+                      [Area Silsilah Bapak &amp; Ibu Mempelai Wanita]
+                    </div>
+                  )}
+                  {getStage('bride-parents') === 'container' && (
+                    <div className="border border-amber-400 bg-amber-50/30 rounded-lg px-3 py-1 text-[10px] font-mono text-amber-800 flex items-center gap-1 craft-fade-in select-none">
+                      <span>[Kotak Nama Orang Tua Wanita Siap Diketik]</span>
+                      <span className="inline-block w-1.5 h-3 bg-amber-600 animate-pulse" />
+                    </div>
+                  )}
+                  {(getStage('bride-parents') === 'typing' ||
+                    getStage('bride-parents') === 'verified') && (
+                    <p className="text-xs text-stone-600 craft-slide-up">
+                      {getStage('bride-parents') === 'typing'
+                        ? craftingState?.typedText
+                        : DUMMY_INVITATION.brideParents}
+                      {getStage('bride-parents') === 'typing' && (
+                        <span className="inline-block w-1.5 h-3 bg-amber-600 ml-0.5 animate-pulse" />
+                      )}
                     </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Rangkaian Agenda Acara */}
+          {/* Rangkaian Agenda Acara (Steps 14, 15, 16, 17) */}
           <section className="p-6 space-y-5 border-b border-stone-100">
-            <div className="text-center">
-              <h2 className="text-xl font-serif font-bold text-stone-900">Rangkaian Acara</h2>
-              <p className="text-xs text-stone-500 mt-1">
-                Insya Allah acara diselenggarakan pada:
-              </p>
+            {/* Step 14: Header Rangkaian Acara */}
+            <div
+              data-craft-id="agenda-header"
+              className="min-h-[54px] flex flex-col justify-center text-center"
+            >
+              {getStage('agenda-header') === 'wireframe' && (
+                <div className="border border-dashed border-stone-300 rounded-xl p-2.5 text-xs text-stone-400 italic bg-stone-50/40 select-none">
+                  [Area Judul Rangkaian Acara]
+                </div>
+              )}
+              {getStage('agenda-header') === 'container' && (
+                <div className="border border-teal-400 bg-teal-50/30 rounded-xl p-2.5 text-[10px] font-mono text-teal-800 flex items-center justify-center gap-1.5 craft-fade-in select-none">
+                  <span>[Kotak Judul Acara Siap Diketik...]</span>
+                  <span className="inline-block w-1.5 h-3.5 bg-teal-700 animate-pulse" />
+                </div>
+              )}
+              {(getStage('agenda-header') === 'typing' ||
+                getStage('agenda-header') === 'verified') && (
+                <div className="text-center craft-fade-in">
+                  <h2 className="text-xl font-serif font-bold text-stone-900">
+                    {getStage('agenda-header') === 'typing'
+                      ? sliceByProgress('Rangkaian Acara', Math.min(1, typingProgress * 2.2))
+                      : 'Rangkaian Acara'}
+                    {getStage('agenda-header') === 'typing' && typingProgress < 0.45 && (
+                      <span className="inline-block w-1.5 h-4 bg-teal-700 ml-1 animate-pulse" />
+                    )}
+                  </h2>
+                  <p className="text-xs text-stone-500 mt-1">
+                    {getStage('agenda-header') === 'typing'
+                      ? typingProgress > 0.4
+                        ? sliceByProgress(agendaIntroText, (typingProgress - 0.4) / 0.6)
+                        : ''
+                      : agendaIntroText}
+                    {getStage('agenda-header') === 'typing' && typingProgress >= 0.4 && (
+                      <span className="inline-block w-1.5 h-3 bg-teal-700 ml-0.5 animate-pulse" />
+                    )}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-4">
-              {/* Element 7: Akad Nikah */}
-              <div data-craft-id="agenda-akad" className="min-h-[110px]">
-                {!isDone('agenda-akad') && !isActive('agenda-akad') ? (
-                  <div className="border border-dashed border-stone-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-stone-50/40 h-full flex items-center justify-center select-none">
-                    [Frame Agenda Akad Nikah]
+              {/* Step 15: Kartu Akad Nikah */}
+              <div data-craft-id="agenda-akad" className="min-h-[120px]">
+                {getStage('agenda-akad') === 'wireframe' && (
+                  <div className="border border-dashed border-stone-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-stone-50/40 min-h-[120px] flex items-center justify-center select-none">
+                    [Frame Jadwal Akad Nikah]
                   </div>
-                ) : (
-                  <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 space-y-2 animate-in fade-in duration-300">
+                )}
+                {getStage('agenda-akad') === 'container' && (
+                  <div className="bg-stone-50 rounded-2xl p-5 border border-teal-400 min-h-[120px] flex flex-col items-center justify-center gap-1.5 craft-fade-in select-none">
+                    <span className="text-[10px] font-mono text-teal-800 font-semibold">
+                      [Card Akad Nikah Siap Diisi Waktu &amp; Lokasi...]
+                    </span>
+                    <span className="inline-block w-1.5 h-4 bg-teal-600 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('agenda-akad') === 'typing' ||
+                  getStage('agenda-akad') === 'verified') && (
+                  <div className="bg-stone-50 rounded-2xl p-4 border border-stone-200 space-y-2 craft-fade-in">
                     <div className="flex items-center justify-between">
                       <span className="font-serif font-bold text-base text-stone-900">
-                        {isActive('agenda-akad') && craftingState?.subPhase === 'typing'
-                          ? craftingState.typedText
+                        {getStage('agenda-akad') === 'typing'
+                          ? sliceByProgress('Akad Nikah', Math.min(1, typingProgress * 3))
                           : 'Akad Nikah'}
-                        {isActive('agenda-akad') && craftingState?.subPhase === 'typing' && (
-                          <span className="inline-block w-1.5 h-3.5 bg-stone-700 ml-0.5 animate-pulse" />
-                        )}
                       </span>
-                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 animate-in zoom-in-75 duration-200">
+                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 craft-pop-in">
                         Khusus Keluarga
                       </span>
                     </div>
-                    <div className="text-xs text-stone-600 space-y-1 animate-in slide-in-from-bottom-1 duration-300">
+                    <div className="text-xs text-stone-600 space-y-1">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-stone-500" />
-                        <span>Minggu, 14 November 2027</span>
+                        <Calendar className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-akad') === 'typing'
+                            ? typingProgress > 0.2
+                              ? sliceByProgress(
+                                  'Minggu, 14 November 2027',
+                                  (typingProgress - 0.2) / 0.3
+                                )
+                              : ''
+                            : 'Minggu, 14 November 2027'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-stone-500" />
-                        <span>08:00 - 10:00 WIB</span>
+                        <Clock className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-akad') === 'typing'
+                            ? typingProgress > 0.45
+                              ? sliceByProgress(
+                                  '08:00 - 10:00 WIB',
+                                  (typingProgress - 0.45) / 0.25
+                                )
+                              : ''
+                            : '08:00 - 10:00 WIB'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-stone-500" />
-                        <span>Pendopo Dalem Ngabean, Kraton Yogyakarta</span>
+                        <MapPin className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-akad') === 'typing'
+                            ? typingProgress > 0.65
+                              ? sliceByProgress(
+                                  'Pendopo Dalem Ngabean, Kraton Yogyakarta',
+                                  (typingProgress - 0.65) / 0.35
+                                )
+                              : ''
+                            : 'Pendopo Dalem Ngabean, Kraton Yogyakarta'}
+                          {getStage('agenda-akad') === 'typing' && (
+                            <span className="inline-block w-1.5 h-3 bg-teal-700 ml-0.5 animate-pulse" />
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Element 8: Resepsi Pernikahan */}
-              <div data-craft-id="agenda-resepsi" className="min-h-[110px]">
-                {!isDone('agenda-resepsi') && !isActive('agenda-resepsi') ? (
-                  <div className="border border-dashed border-amber-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-amber-50/20 h-full flex items-center justify-center select-none">
-                    [Frame Agenda Resepsi Pernikahan]
+              {/* Step 16: Kartu Resepsi Pernikahan */}
+              <div data-craft-id="agenda-resepsi" className="min-h-[120px]">
+                {getStage('agenda-resepsi') === 'wireframe' && (
+                  <div className="border border-dashed border-amber-300 rounded-2xl p-5 text-center text-xs text-stone-400 italic bg-amber-50/20 min-h-[120px] flex items-center justify-center select-none">
+                    [Frame Jadwal Resepsi Pernikahan]
                   </div>
-                ) : (
-                  <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-200 space-y-2 animate-in fade-in duration-300">
+                )}
+                {getStage('agenda-resepsi') === 'container' && (
+                  <div className="bg-amber-50/40 rounded-2xl p-5 border border-teal-400 min-h-[120px] flex flex-col items-center justify-center gap-1.5 craft-fade-in select-none">
+                    <span className="text-[10px] font-mono text-teal-800 font-semibold">
+                      [Card Resepsi Siap Diisi Waktu &amp; Gedung...]
+                    </span>
+                    <span className="inline-block w-1.5 h-4 bg-teal-600 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('agenda-resepsi') === 'typing' ||
+                  getStage('agenda-resepsi') === 'verified') && (
+                  <div className="bg-amber-50/50 rounded-2xl p-4 border border-amber-200 space-y-2 craft-fade-in">
                     <div className="flex items-center justify-between">
                       <span className="font-serif font-bold text-base text-stone-900">
-                        {isActive('agenda-resepsi') && craftingState?.subPhase === 'typing'
-                          ? craftingState.typedText
+                        {getStage('agenda-resepsi') === 'typing'
+                          ? sliceByProgress('Resepsi Pernikahan', Math.min(1, typingProgress * 3))
                           : 'Resepsi Pernikahan'}
-                        {isActive('agenda-resepsi') && craftingState?.subPhase === 'typing' && (
-                          <span className="inline-block w-1.5 h-3.5 bg-amber-700 ml-0.5 animate-pulse" />
-                        )}
                       </span>
-                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 animate-in zoom-in-75 duration-200">
+                      <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 craft-pop-in">
                         Umum &amp; Kerabat
                       </span>
                     </div>
-                    <div className="text-xs text-stone-600 space-y-1 animate-in slide-in-from-bottom-1 duration-300">
+                    <div className="text-xs text-stone-600 space-y-1">
                       <div className="flex items-center gap-1.5">
-                        <Calendar className="w-3.5 h-3.5 text-stone-500" />
-                        <span>Minggu, 14 November 2027</span>
+                        <Calendar className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-resepsi') === 'typing'
+                            ? typingProgress > 0.2
+                              ? sliceByProgress(
+                                  'Minggu, 14 November 2027',
+                                  (typingProgress - 0.2) / 0.3
+                                )
+                              : ''
+                            : 'Minggu, 14 November 2027'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <Clock className="w-3.5 h-3.5 text-stone-500" />
-                        <span>11:00 - 14:00 WIB</span>
+                        <Clock className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-resepsi') === 'typing'
+                            ? typingProgress > 0.45
+                              ? sliceByProgress(
+                                  '11:00 - 14:00 WIB',
+                                  (typingProgress - 0.45) / 0.25
+                                )
+                              : ''
+                            : '11:00 - 14:00 WIB'}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3.5 h-3.5 text-stone-500" />
-                        <span>{DUMMY_INVITATION.venueName}</span>
+                        <MapPin className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                        <span>
+                          {getStage('agenda-resepsi') === 'typing'
+                            ? typingProgress > 0.65
+                              ? sliceByProgress(
+                                  DUMMY_INVITATION.venueName,
+                                  (typingProgress - 0.65) / 0.35
+                                )
+                              : ''
+                            : DUMMY_INVITATION.venueName}
+                          {getStage('agenda-resepsi') === 'typing' && (
+                            <span className="inline-block w-1.5 h-3 bg-teal-700 ml-0.5 animate-pulse" />
+                          )}
+                        </span>
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* Element 9: Tombol Buka Google Maps */}
+              {/* Step 17: Tombol Buka Google Maps */}
               <div data-craft-id="maps-button" className="min-h-[44px]">
-                {!isDone('maps-button') && !isActive('maps-button') ? (
+                {getStage('maps-button') === 'wireframe' && (
                   <div className="border border-dashed border-stone-400 rounded-xl h-11 flex items-center justify-center text-xs text-stone-400 italic bg-stone-100/50 select-none">
-                    [Tombol Petunjuk Arah Google Maps]
+                    [Area Tombol Petunjuk Arah Google Maps]
                   </div>
-                ) : (
+                )}
+                {getStage('maps-button') === 'container' && (
+                  <div className="border border-teal-500 bg-stone-800 text-teal-200 rounded-xl h-11 flex items-center justify-center gap-1.5 text-[10px] font-mono craft-fade-in select-none">
+                    <span>[Tombol CTA Maps Siap Diketik...]</span>
+                    <span className="inline-block w-1.5 h-3.5 bg-teal-300 animate-pulse" />
+                  </div>
+                )}
+                {(getStage('maps-button') === 'typing' ||
+                  getStage('maps-button') === 'verified') && (
                   <a
                     href={DUMMY_INVITATION.googleMapsUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 animate-in zoom-in-95 duration-200"
+                    className="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 hover:bg-stone-800 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 craft-pop-in"
                   >
-                    <MapPin className="w-4 h-4 text-amber-400 animate-in slide-in-from-left duration-200" />
+                    <MapPin className="w-4 h-4 text-amber-400" />
                     <span>
-                      {isActive('maps-button') && craftingState?.subPhase === 'typing'
-                        ? craftingState.typedText
+                      {getStage('maps-button') === 'typing'
+                        ? craftingState?.typedText
                         : 'Petunjuk Arah Google Maps'}
                     </span>
-                    {isActive('maps-button') && craftingState?.subPhase === 'typing' && (
+                    {getStage('maps-button') === 'typing' && (
                       <span className="inline-block w-1 h-3 bg-white ml-0.5 animate-pulse" />
                     )}
-                    <ExternalLink className="w-3.5 h-3.5 animate-in slide-in-from-right duration-200" />
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 )}
               </div>
             </div>
           </section>
 
-          {/* Element 10 & 11: Digital Envelope Block (BCA, Mandiri, QRIS) */}
+          {/* Steps 18, 19 & 20: Digital Envelope Block (Header, Rekening BCA & Mandiri, Barcode QRIS) */}
           <DigitalEnvelopeBlock
             bankAccounts={bankAccountsList}
             qrisImageUrl="/generated/qris-merchant-dummy.svg"
-            qrisHolderName="Arif &amp; Windi Wedding"
+            qrisHolderName="Arif & Windi Wedding"
+            headerCraftId="envelope-header"
             bankCardCraftId="bank-card"
             qrisCardCraftId="qris-card"
-            isBankCrafted={isDone('bank-card')}
-            isBankActive={isActive('bank-card')}
-            isQrisCrafted={isDone('qris-card')}
-            isQrisActive={isActive('qris-card')}
-            subPhase={craftingState?.subPhase}
+            headerStage={getStage('envelope-header')}
+            bankStage={getStage('bank-card')}
+            qrisStage={getStage('qris-card')}
+            typingProgress={typingProgress}
           />
 
-          {/* 5. RSVP Konfirmasi Kehadiran (Terkunci dengan informasi ramah saat proses crafting) */}
+          {/* 5. RSVP Konfirmasi Kehadiran (Terbuka otomatis setelah seluruh 20 elemen selesai dirakit) */}
           <section className="p-6 border-t border-stone-100 bg-stone-50/70 space-y-4">
             <div className="text-center">
               <h2 className="text-xl font-serif font-bold text-stone-900">Konfirmasi Kehadiran</h2>
@@ -493,16 +877,18 @@ export default function PublicInvitationPage() {
               </p>
             </div>
 
-            {!isDone('qris-card') ? (
-              <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 text-center space-y-1.5 text-xs text-teal-800 animate-in fade-in select-none">
+            {getStage('qris-card') !== 'verified' ? (
+              <div className="bg-teal-50 border border-teal-200 rounded-2xl p-4 text-center space-y-1.5 text-xs text-teal-800 craft-fade-in select-none">
                 <Sparkles className="w-4 h-4 text-teal-600 mx-auto animate-pulse" />
-                <p className="font-semibold">Undangan Sedang Dirakit Langsung oleh Arif &amp; Windi</p>
+                <p className="font-semibold">
+                  Undangan Sedang Dirakit Langsung oleh Arif &amp; Windi
+                </p>
                 <p className="text-[11px] text-teal-600">
-                  Formulir konfirmasi kehadiran dan buku tamu akan terbuka otomatis setelah desain selesai.
+                  Formulir konfirmasi kehadiran dan buku tamu akan terbuka otomatis setelah ke-20 elemen selesai divalidasi.
                 </p>
               </div>
             ) : isRsvpSubmitted ? (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-2 animate-in zoom-in-95">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center space-y-2 craft-pop-in">
                 <CheckCircle className="w-6 h-6 text-emerald-600 mx-auto" />
                 <p className="text-xs font-bold text-emerald-800">
                   Terima kasih atas konfirmasi kehadiran Anda!
@@ -512,9 +898,14 @@ export default function PublicInvitationPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleRsvpSubmit} className="space-y-3 bg-white p-4 rounded-2xl border border-stone-200 animate-in fade-in duration-500">
+              <form
+                onSubmit={handleRsvpSubmit}
+                className="space-y-3 bg-white p-4 rounded-2xl border border-stone-200 craft-fade-in"
+              >
                 <div>
-                  <label className="text-xs font-semibold text-stone-700 block mb-1">Nama Lengkap</label>
+                  <label className="text-xs font-semibold text-stone-700 block mb-1">
+                    Nama Lengkap
+                  </label>
                   <input
                     type="text"
                     required
@@ -526,7 +917,9 @@ export default function PublicInvitationPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-stone-700 block mb-1">Status Kehadiran</label>
+                  <label className="text-xs font-semibold text-stone-700 block mb-1">
+                    Status Kehadiran
+                  </label>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <button
                       type="button"
@@ -555,7 +948,9 @@ export default function PublicInvitationPage() {
 
                 {rsvpStatus === 'ATTENDING' && (
                   <div>
-                    <label className="text-xs font-semibold text-stone-700 block mb-1">Jumlah Orang Hadir</label>
+                    <label className="text-xs font-semibold text-stone-700 block mb-1">
+                      Jumlah Orang Hadir
+                    </label>
                     <select
                       value={rsvpCount}
                       onChange={(e) => setRsvpCount(Number(e.target.value))}
@@ -589,7 +984,10 @@ export default function PublicInvitationPage() {
             </div>
 
             {/* Form Kirim Doa */}
-            <form onSubmit={handleSendWish} className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2.5">
+            <form
+              onSubmit={handleSendWish}
+              className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2.5"
+            >
               <input
                 type="text"
                 required
@@ -623,7 +1021,10 @@ export default function PublicInvitationPage() {
             {/* Daftar Doa Tamu Realistis */}
             <div className="space-y-3 pt-2">
               {wishes.map((w) => (
-                <div key={w.id} className="bg-white p-3.5 rounded-xl border border-stone-100 shadow-2xs space-y-1">
+                <div
+                  key={w.id}
+                  className="bg-white p-3.5 rounded-xl border border-stone-100 shadow-2xs space-y-1"
+                >
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-xs text-stone-900">{w.guestName}</span>
                     <span className="text-[10px] text-stone-400 font-mono">
@@ -634,7 +1035,7 @@ export default function PublicInvitationPage() {
                     </span>
                   </div>
                   <p className="text-xs text-stone-600 leading-relaxed italic">
-                    "{w.wishMessage}"
+                    &ldquo;{w.wishMessage}&rdquo;
                   </p>
                 </div>
               ))}

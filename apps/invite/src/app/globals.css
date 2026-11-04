@@ -19,3 +19,82 @@ body {
   min-height: 100vh;
 }
 
+@keyframes craftFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes craftPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.82);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes craftSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floralFall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate3d(var(--floral-drift, 40px), 108vh, 0) rotate(var(--floral-rot, 360deg));
+    opacity: 0;
+  }
+}
+
+@keyframes floralSway {
+  0%,
+  100% {
+    margin-left: 0px;
+  }
+  50% {
+    margin-left: var(--floral-sway, 22px);
+  }
+}
+
+.craft-fade-in {
+  animation: craftFadeIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.craft-pop-in {
+  animation: craftPopIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.craft-slide-up {
+  animation: craftSlideUp 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.floral-particle {
+  animation:
+    floralFall var(--fall-duration, 8s) linear var(--fall-delay, 0s) infinite,
+    floralSway var(--sway-duration, 3.2s) ease-in-out var(--fall-delay, 0s) infinite;
+}

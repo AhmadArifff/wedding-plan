@@ -14,7 +14,7 @@
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
     "id": "T-08",
-    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & 2-Cursor Realistic Figma Live Crafting",
+    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 20-Step Granular Figma Live Crafting & Unique Floral Confetti Finale",
     "owner_role": "frontend-engineer & ui-ux-designer",
     "status": "done",
     "rework_iteration_count": 0
@@ -117,7 +117,7 @@
     },
     {
       "id": "T-08",
-      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & 2-Cursor Realistic Figma Live Crafting",
+      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 20-Step Granular Figma Live Crafting & Unique Floral Confetti Finale",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
       "depends_on": [
@@ -223,8 +223,8 @@
   ],
   "open_questions": [],
   "last_reviewer_verdict": {
-    "role": "tech-critic",
+    "role": "tech-critic & qa-engineer",
     "result": "approved",
-    "note": "Implementasi animasi konten riil (teks mengetik per karakter dengan caret, foto avatar zoom-in, ikon pop/slide in, tombol CTA terisi, rekening bank slide-in, QRIS barcode zoom-in dengan magenta center snap guide) berhasil diterapkan secara menyeluruh pada setiap elemen di tab Undangan Jadi dari wireframe blueprint hingga selesai."
+    "note": "20-step granular crafting pada tab Undangan Jadi berhasil memperbaiki 4 akar masalah: (1) pemisahan 4-stage rendering (wireframe -> container -> typing -> verified) sehingga tidak ada elemen muncul prematur saat cursor baru jalan/drag, (2) lockstep dragProgress 0-100% antara cursor dan kotak dashed, (3) semua teks termasuk nama orang tua Bapak/Ibu, mukadimah, dan ayat penuh diketik satu per satu, serta (4) animasi hujan bunga botanikal (FloralConfettiShower: Melati, Kelopak Mawar, Daun Sage, Daisy Emas) saat seluruh elemen selesai."
   }
 }
