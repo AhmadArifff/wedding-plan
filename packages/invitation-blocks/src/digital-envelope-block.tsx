@@ -18,7 +18,7 @@ export interface DigitalEnvelopeBlockProps {
 export const DigitalEnvelopeBlock: React.FC<DigitalEnvelopeBlockProps> = ({
   bankAccounts,
   qrisImageUrl,
-  qrisHolderName = 'Arif & Siti Wedding',
+  qrisHolderName = 'Arif & Windi Wedding',
 }) => {
   const [copiedId, setCopiedId] = React.useState<string | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = React.useState(false);

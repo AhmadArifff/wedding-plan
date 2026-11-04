@@ -32,7 +32,7 @@ Karena monorepo ini memiliki dua aplikasi dengan tujuan psikologis yang berbeda,
 
 ---
 
-### 1.2. Sistem Token Warna & Tipografi (Maksimal 3 Warna Inti + 1 Aksen — `R-29` & `R-25`)
+### 1.2. Sistem Token Warna & Tipografi (Maksimal 3 Warna Inti + 1 Aksen  -  `R-29` & `R-25`)
 
 > [!IMPORTANT]
 > **Larangan Mutlak Warna AI Slop (`R-01`)**: Dilarang keras menggunakan gradien biru-ke-ungu (`from-blue-500 to-purple-600`), efek *neon glow* di seluruh halaman, atau latar belakang gelap tanpa alasan identitas merek.
@@ -41,8 +41,8 @@ Karena monorepo ini memiliki dua aplikasi dengan tujuan psikologis yang berbeda,
 
 | Peran Token | Nama Warna | Hex / Tailwind Token | Rasio Kontras (WCAG AA) | Alasan Penggunaan Tertulis (`R-31`) |
 | :--- | :--- | :--- | :---: | :--- |
-| **Background Canvas** | Warm Alabaster | `#FAF8F5` (`bg-[#FAF8F5]`) | — | Memberikan permukaan baca yang hangat dan tidak menyilaukan mata saat menyunting tabel anggaran berjam-jam. |
-| **Surface Card / Table** | Crisp Ivory White | `#FFFFFF` (`bg-white` + `border-[#E7E5E4]`) | — | Memisahkan area kerja tabel dan kartu KPI dari latar belakang menggunakan border 1px tegas tanpa bayangan berlebih. |
+| **Background Canvas** | Warm Alabaster | `#FAF8F5` (`bg-[#FAF8F5]`) |  -  | Memberikan permukaan baca yang hangat dan tidak menyilaukan mata saat menyunting tabel anggaran berjam-jam. |
+| **Surface Card / Table** | Crisp Ivory White | `#FFFFFF` (`bg-white` + `border-[#E7E5E4]`) |  -  | Memisahkan area kerja tabel dan kartu KPI dari latar belakang menggunakan border 1px tegas tanpa bayangan berlebih. |
 | **Primary Text & Numerals** | Deep Espresso | `#1C1917` (`text-stone-900`) | **16.4 : 1** (AAA) | Menjamin keterbacaan maksimal pada angka rupiah dan teks rincian item di layar mobile maupun desktop. |
 | **Muted / Meta Text** | Warm Slate | `#57534E` (`text-stone-600`) | **7.2 : 1** (AAA) | Digunakan untuk label kolom sekunder, satuan (`gram`, `porsi`), dan keterangan waktu tanpa mengaburkan fokus utama. |
 | **Primary Brand & Deal Accent** | Botanical Emerald | `#0F766E` (`teal-700` / `emerald-700`) | **5.4 : 1** (AA) | Menandai aksi primer, status `Deal / Terpilih`, dan indikator tabungan sehat (asosiasi psikologis pertumbuhan & kepastian). |
@@ -66,7 +66,7 @@ Karena monorepo ini memiliki dua aplikasi dengan tujuan psikologis yang berbeda,
 ### 1.3. Aturan Mutlak Anti-Slop pada Copywriting & Elemen Visual (`R-01` s.d `R-38`)
 
 1. **Larangan Mutlak Karakter Em-Dash (`R-02`)**:
-   - Seluruh teks UI, label, *placeholder*, pesan *empty state*, *toast*, dan deskripsi di dalam kode aplikasi **DILARANG KERAS** memuat karakter em-dash (`—`). Gunakan tanda koma (`,`), titik dua (`:`), atau tanda kurung `()`.
+   - Seluruh teks UI, label, *placeholder*, pesan *empty state*, *toast*, dan deskripsi di dalam kode aplikasi **DILARANG KERAS** memuat karakter em-dash (` - `). Gunakan tanda koma (`,`), titik dua (`:`), atau tanda kurung `()`.
 2. **Larangan Kata Klise AI (`R-15` & `R-16`)**:
    - Dilarang menggunakan kata *"Revolutionary"*, *"Seamless"*, *"AI-Powered"*, *"Cutting-Edge"*, atau tombol generik *"Get Started"* / *"Learn More"*.
    - Gunakan CTA kontekstual yang spesifik:
@@ -79,7 +79,7 @@ Karena monorepo ini memiliki dua aplikasi dengan tujuan psikologis yang berbeda,
    - **Glow (`R-13`)**: Maksimal digunakan pada **1 elemen fokus** (indikator aktif *Live Gold Price*).
    - **Shadow (`R-12`)**: Kartu tabel dan KPI menggunakan border tegas `1px solid #E7E5E4` dengan `shadow-none` atau `shadow-xs`. Bayangan elevasi (`shadow-lg`) hanya diizinkan untuk komponen melayang (Modal, Popover, Slide-Over Drawer, dan Toast).
 4. **Larangan Statistik & Testimoni Fiktif (`R-17`, `R-18`, `R-36`, `R-38`)**:
-   - Pada halaman landing page atau dashboard, dilarang mengarang klaim palsu seperti *"Dipercaya 50.000+ Pasangan Indonesia"* atau membuat avatar testimoni palsu. Tampilkan simulasi interaktif kalkulator anggaran nyata sebagai bukti nilai produk (*Evidence Over Claims — C-5*).
+   - Pada halaman landing page atau dashboard, dilarang mengarang klaim palsu seperti *"Dipercaya 50.000+ Pasangan Indonesia"* atau membuat avatar testimoni palsu. Tampilkan simulasi interaktif kalkulator anggaran nyata sebagai bukti nilai produk (*Evidence Over Claims  -  C-5*).
 
 ---
 
@@ -283,12 +283,12 @@ Mematuhi **Rule 31 (Single Unified Table & Pure Numeric Typography)** serta **Pr
 #### A. ASCII Wireframe Editor Visual Undangan (`apps/web`)
 ```text
 +--------------------------------------------------------------------------------------------------+
-| Undangan: nikahplan.id/v/arif-dan-siti    [Status: Draft]   [Salin Link] [Publikasikan Undangan] |
+| Undangan: nikahplan.id/v/arif-dan-windi    [Status: Draft]   [Salin Link] [Publikasikan Undangan] |
 +-----------------------------------------------+--------------------------------------------------+
 | PANEL KONFIGURASI BLOK (Kiri - Scrollable)    | LIVE MOBILE PREVIEW (Kanan - Frame 375x812px)    |
 |                                               |   +------------------------------------------+   |
 | [1. Tema & Tipografi v]                       |   |          THE WEDDING OF                  |   |
-|    Pilih Tema: [Javanese Heritage] [Botanical]|   |         Arif & Siti                      |   |
+|    Pilih Tema: [Javanese Heritage] [Botanical]|   |         Arif & Windi                      |   |
 | [2. Informasi Mempelai v]                     |   |       Minggu, 14 November 2027           |   |
 |    Mempelai Pria & Wanita, Nama Orang Tua     |   |                                          |   |
 | [3. Waktu & Lokasi Acara (Google Maps) v]     |   |   [ Lokasi Akad & Resepsi (Peta) ]       |   |
@@ -313,7 +313,7 @@ Mematuhi **Rule 31 (Single Unified Table & Pure Numeric Typography)** serta **Pr
 
 ---
 
-## 4. Standar Wajib 3-State UI (Empty, Loading, Error — `R-27` & `C-4`)
+## 4. Standar Wajib 3-State UI (Empty, Loading, Error  -  `R-27` & `C-4`)
 
 Setiap tabel, kartu metrik, dan daftar di aplikasi **WAJIB** mengimplementasikan 3 kondisi berikut:
 
@@ -358,7 +358,7 @@ Sesuai instruksi pengembangan, **fokus utama pengerjaan antarmuka adalah layar p
 #### A. Mobile Wireframe: Dashboard & Master Anggaran (`apps/web`)
 ```text
 +------------------------------------------+
-| [=] NikahPlan Studio        (Arif & Siti)|
+| [=] NikahPlan Studio        (Arif & Windi)|
 +------------------------------------------+
 | [!] PRO TRIAL: Sisa 28 Hari    [Kode >]  |
 +------------------------------------------+
@@ -454,7 +454,7 @@ Sesuai instruksi pengembangan, **fokus utama pengerjaan antarmuka adalah layar p
 | (Layar Buka: Slide-Up Envelope Reveal)   |
 |                                          |
 |           WALIMATUL 'URS                 |
-|            Arif & Siti                   |
+|            Arif & Windi                   |
 |      Minggu, 14 November 2027            |
 |                                          |
 |      Kepada Yth. Bapak/Ibu:              |
@@ -493,9 +493,9 @@ Sesuai instruksi pengembangan, **fokus utama pengerjaan antarmuka adalah layar p
 Pengembangan tampilan UI **tidak menunggu koneksi Supabase**, melainkan menggunakan engine dataset dummy terstruktur di `packages/ui/mock/` atau `apps/web/src/shared/mock/`:
 
 1. **Identitas Pernikahan**:
-   - Judul: *"Pernikahan Arif & Siti"*
+   - Judul: *"Pernikahan Arif & Windi"*
    - Tanggal Target: `14 November 2027`
-   - Profil Mempelai: Ahmad Arif, S.Kom (Putra Bpk. H. Mahmud & Ibu Hj. Aminah) & Siti Rahmawati, S.Pd (Putri Bpk. Drs. H. Subagyo & Ibu Hj. Endang).
+   - Profil Mempelai: Ahmad Arif, S.Kom (Putra Bpk. H. Mahmud & Ibu Hj. Aminah) & Windi Widia, S.Pd (Putri Bpk. Drs. H. Subagyo & Ibu Hj. Endang).
 2. **Master Anggaran (14 Kategori & 32 Item Riil)**:
    - Total Akumulasi Anggaran Awal: `Rp 81.170.000`.
    - Item Mahar Emas: Logam Mulia 10 gram, harga anggaran `Rp 1.350.000/gram` (subtotal `Rp 13.500.000`).
@@ -509,8 +509,8 @@ Pengembangan tampilan UI **tidak menunggu koneksi Supabase**, melainkan mengguna
    - Rincian belanja: Beras (`Rp 1.500.000`), Daging Sapi (`Rp 6.075.000`), Daging Ayam (`Rp 2.280.000`), Bumbu & Sayur (`Rp 1.765.000`), Minyak & Gas (`Rp 600.000`), Buah & Es (`Rp 600.000`), Tim Masak (`Rp 800.000`) -> Total `Rp 13.620.000` (`Rp 45.400/tamu`).
 5. **Amplop Digital**:
    - Rekening BCA: `1234567890` a.n Ahmad Arif.
-   - Rekening Bank Mandiri: `9876543210` a.n Siti Rahmawati.
-   - Kode QRIS Merchant dummy ter-generate tajam dengan nama toko *"NikahPlan - Arif & Siti Wedding"*.
+   - Rekening Bank Mandiri: `9876543210` a.n Windi Widia.
+   - Kode QRIS Merchant dummy ter-generate tajam dengan nama toko *"NikahPlan - Arif & Windi Wedding"*.
 
 ---
 
@@ -532,7 +532,7 @@ Seluruh aset disimpan di direktori lokal `packages/ui/assets/generated/` dan di-
    - Karakter: Komposisi tata letak undangan editorial dengan ornamen dedaunan botani atau sulur motif nusantara yang berkelas.
 3. **Gambar Kode QRIS Merchant (`qris-merchant-dummy.png`)**:
    - Format: PNG tajam (`600x750px`).
-   - Karakter: Format standar QRIS Nasional Indonesia lengkap dengan logo QRIS resmi, bingkai National Standard QR Code, nama merchant *"NikahPlan: Arif & Siti"*, dan barcode matriks yang dapat dipindai.
+   - Karakter: Format standar QRIS Nasional Indonesia lengkap dengan logo QRIS resmi, bingkai National Standard QR Code, nama merchant *"NikahPlan: Arif & Windi"*, dan barcode matriks yang dapat dipindai.
 4. **Ilustrasi Logam Mulia Mahar (`gold-mahar-illustration.svg`)**:
    - Format: Vektor SVG bersih dengan gradien emas hangat `#D97706` ke `#F59E0B`.
    - Karakter: Gambar koin / emas batangan elegan sebagai pendukung visual widget *Live Gold Price Tracker*.

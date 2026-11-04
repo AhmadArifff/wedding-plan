@@ -18,10 +18,10 @@ timeout /t 2 >nul
 
 echo Membuka browser:
 echo   - Planner Studio   : http://localhost:3000
-echo   - Undangan Tamu    : http://localhost:3001/v/arif-siti
+echo   - Undangan Tamu    : http://localhost:3001/v/arif-windi
 echo.
 start http://localhost:3000
-start http://localhost:3001/v/arif-siti
+start http://localhost:3001/v/arif-windi
 
 echo Server dev sedang aktif di jendela Command Prompt terpisah.
 echo Anda dapat menutup jendela ini kapan saja.

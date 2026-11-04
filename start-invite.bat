@@ -7,9 +7,9 @@ echo ======================================================================
 echo             MEMULAI NIKAHPLAN DIGITAL INVITATION (TAMU)
 echo ======================================================================
 echo.
-echo URL: http://localhost:3001/v/arif-siti
+echo URL: http://localhost:3001/v/arif-windi
 echo.
-start http://localhost:3001/v/arif-siti
+start http://localhost:3001/v/arif-windi
 call pnpm dev:invite
 pause
 

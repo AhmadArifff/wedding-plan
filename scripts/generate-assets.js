@@ -192,7 +192,7 @@ const themeJavaneseSvg = `
 
   <!-- Typography Editorial -->
   <text x="270" y="240" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="600" fill="#D97706" text-anchor="middle" letter-spacing="4">THE WEDDING OF</text>
-  <text x="270" y="340" font-family="'Cormorant Garamond', Georgia, serif" font-size="52" font-style="italic" fill="#FDF6ED" text-anchor="middle">Arif &amp; Siti</text>
+  <text x="270" y="340" font-family="'Cormorant Garamond', Georgia, serif" font-size="52" font-style="italic" fill="#FDF6ED" text-anchor="middle">Arif &amp; Windi</text>
   <line x1="200" y1="380" x2="340" y2="380" stroke="url(#javGold)" stroke-width="1.5"/>
 
   <!-- Date -->
@@ -232,7 +232,7 @@ const themeBotanicalSvg = `
 
   <!-- Typography -->
   <text x="270" y="270" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="#0F766E" text-anchor="middle" letter-spacing="4">WALIMATUL 'URS</text>
-  <text x="270" y="360" font-family="'Cormorant Garamond', Georgia, serif" font-size="56" font-style="italic" fill="#1C1917" text-anchor="middle">Arif &amp; Siti</text>
+  <text x="270" y="360" font-family="'Cormorant Garamond', Georgia, serif" font-size="56" font-style="italic" fill="#1C1917" text-anchor="middle">Arif &amp; Windi</text>
   <circle cx="270" cy="400" r="4" fill="#0F766E"/>
 
   <text x="270" y="460" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" fill="#292524" text-anchor="middle" letter-spacing="1">14 . 11 . 2027</text>
@@ -259,7 +259,7 @@ const themeMinimalSvg = `
   <text x="270" y="380" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="500" fill="#78716C" text-anchor="middle" letter-spacing="5">THE WEDDING CELEBRATION</text>
   <text x="270" y="450" font-family="'Cormorant Garamond', Georgia, serif" font-size="44" fill="#1C1917" text-anchor="middle">Ahmad Arif</text>
   <text x="270" y="490" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#A8A29E" text-anchor="middle">&amp;</text>
-  <text x="270" y="540" font-family="'Cormorant Garamond', Georgia, serif" font-size="44" fill="#1C1917" text-anchor="middle">Siti Rahmawati</text>
+  <text x="270" y="540" font-family="'Cormorant Garamond', Georgia, serif" font-size="44" fill="#1C1917" text-anchor="middle">Windi Widia</text>
 
   <text x="270" y="620" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="600" fill="#1C1917" text-anchor="middle">14 NOVEMBER 2027</text>
 

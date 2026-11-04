@@ -156,7 +156,7 @@ export default function PlannerDashboardPage() {
         activeTab={activeTab}
         onTabChange={(tab) => {
           if (tab === 'invite') {
-            window.open('http://localhost:3001/v/arif-siti', '_blank');
+            window.open('http://localhost:3001/v/arif-windi', '_blank');
           } else {
             setActiveTab(tab);
           }
@@ -199,7 +199,7 @@ export default function PlannerDashboardPage() {
             )}
 
             <a
-              href="http://localhost:3001/v/arif-siti"
+              href="http://localhost:3001/v/arif-windi"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors cursor-pointer"
@@ -367,7 +367,7 @@ export default function PlannerDashboardPage() {
           activeTab={activeTab === 'overview' ? 'budget' : (activeTab as any)}
           onTabChange={(tab) => {
             if (tab === 'invitation') {
-              window.open('http://localhost:3001/v/arif-siti', '_blank');
+              window.open('http://localhost:3001/v/arif-windi', '_blank');
             } else {
               setActiveTab(tab as any);
             }

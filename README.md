@@ -1,4 +1,4 @@
-# wedding-plan — NikahPlan Studio
+# wedding-plan  -  NikahPlan Studio
 
 **Platform Perencanaan Pernikahan, Insight Finansial & Digital Invitation Builder (Monorepo SaaS)**
 
@@ -16,7 +16,7 @@ Untuk kemudahan pengembangan di lingkungan Windows, telah disediakan skrip `.bat
 | **`start.bat`** | **Menu Launcher Interaktif**: Menu CLI dengan pilihan menjalankan Planner, Undangan Digital, Dual Server, Uji Type-Check, atau Generate Ulang Aset. |
 | **`start-all.bat`** | **Jalankan Keduanya (Dual Dev Servers)**: Otomatis membuka `apps/web` (Port 3000) dan `apps/invite` (Port 3001) di jendela CMD terpisah dan membuka browser secara otomatis. |
 | **`start-web.bat`** | **Jalankan Planner Studio**: Membuka dashboard perencana di `http://localhost:3000`. |
-| **`start-invite.bat`** | **Jalankan Undangan Tamu**: Membuka halaman undangan tamu di `http://localhost:3001/v/arif-siti`. |
+| **`start-invite.bat`** | **Jalankan Undangan Tamu**: Membuka halaman undangan tamu di `http://localhost:3001/v/arif-windi`. |
 
 ### Menjalankan Manual via Terminal (Alternatif)
 

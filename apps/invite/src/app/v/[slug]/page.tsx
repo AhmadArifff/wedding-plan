@@ -131,7 +131,7 @@ export default function PublicInvitationPage() {
               Interactive Story Mode
             </span>
             <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-2">
-              Proses Desain Kolaboratif Arif &amp; Siti
+              Proses Desain Kolaboratif Arif &amp; Windi
             </h2>
             <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
               Saksikan bagaimana setiap elemen teks, font, warna, dan komponen amplop dirakit secara langsung di atas kanvas Figma.
@@ -310,7 +310,7 @@ export default function PublicInvitationPage() {
           <DigitalEnvelopeBlock
             bankAccounts={bankAccountsList}
             qrisImageUrl="/generated/qris-merchant-dummy.svg"
-            qrisHolderName="Arif &amp; Siti Wedding"
+            qrisHolderName="Arif &amp; Windi Wedding"
           />
 
           {/* 5. RSVP Konfirmasi Kehadiran */}
@@ -464,7 +464,7 @@ export default function PublicInvitationPage() {
 
           {/* Footer Undangan */}
           <footer className="p-6 bg-stone-900 text-white text-center text-xs space-y-2 mt-auto">
-            <p className="font-serif italic text-base">Arif &amp; Siti</p>
+            <p className="font-serif italic text-base">Arif &amp; Windi</p>
             <p className="text-stone-400 text-[11px]">
               Terima kasih atas segala doa restu dan kehadiran Bapak/Ibu/Saudara/i sekalian.
             </p>

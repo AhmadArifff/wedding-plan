@@ -34,12 +34,12 @@ interface CursorState {
 
 export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
   groomNick = 'Arif',
-  brideNick = 'Siti',
+  brideNick = 'Windi',
   weddingDateFormatted = 'Minggu, 14 November 2027',
   venueName = 'Pendopo Dalem Ngabean, Yogyakarta',
   onFinishCrafting,
 }) => {
-  // Timeline Step (0: Idle/Prep, 1: Arif Type Walimatul, 2: Siti Craft Names, 3: Divider & Dot, 4: Arif Date/Venue, 5: Budi Drop QRIS, 6: Finished)
+  // Timeline Step (0: Idle/Prep, 1: Arif Type Walimatul, 2: Windi Craft Names, 3: Divider & Dot, 4: Arif Date/Venue, 5: Budi Drop QRIS, 6: Finished)
   const [step, setStep] = React.useState<number>(1);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(true);
 
@@ -95,9 +95,9 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
         clearTimeout(timer);
       };
     } else if (step === 2) {
-      // Step 2: Siti mengetik "Arif & Siti" dengan font serif besar
+      // Step 2: Windi mengetik "Arif & Windi" dengan font serif besar
       setActiveCursor({
-        name: 'Siti (Mempelai)',
+        name: 'Windi (Mempelai)',
         color: '#D97706',
         x: 52,
         y: 28,
@@ -123,9 +123,9 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
         clearTimeout(timer);
       };
     } else if (step === 3) {
-      // Step 3: Siti menambahkan aksen titik divider bulat di tengah
+      // Step 3: Windi menambahkan aksen titik divider bulat di tengah
       setActiveCursor({
-        name: 'Siti (Mempelai)',
+        name: 'Windi (Mempelai)',
         color: '#D97706',
         x: 50,
         y: 38,
@@ -310,7 +310,7 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
         {/* 2. Nama Mempelai Kaligrafi Editorial */}
         <div className="relative my-auto py-4">
           {step === 2 && (
-            /* Bounding Box Figma Aktif milik Siti */
+            /* Bounding Box Figma Aktif milik Windi */
             <div
               className="absolute -inset-2 rounded-xl border-2 pointer-events-none z-10 transition-all"
               style={{ borderColor: activeCursor.color }}
@@ -333,7 +333,7 @@ export const FigmaCraftingCanvas: React.FC<FigmaCraftingCanvasProps> = ({
             {step === 2 && <span className="inline-block w-2 h-8 bg-stone-900 ml-1 animate-pulse" />}
           </h2>
 
-          {/* 3. Divider Dot Aksen dari Siti */}
+          {/* 3. Divider Dot Aksen dari Windi */}
           {step >= 3 && (
             <div className="relative inline-block mt-3">
               {step === 3 && (

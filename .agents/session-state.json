@@ -8,13 +8,13 @@
     "allow_agent_merge_to_main": false
   },
   "primary_goal": "Membangun platform SaaS perencanaan pernikahan all-in-one (Master Anggaran 14 Kategori, Live Gold Price Tracker, Decision Matrix Vendor, Kalkulator Dapur Mandiri, Insight Tabungan, & Digital Invitation Builder QRIS) dengan strategi UI-First, Mobile-First Priority, aset gambar ter-generate kustom (zero stock photo), dan database Supabase berkeamanan tinggi.",
-  "current_stage": "PLAN_DEVELOPMENT_LOCKED",
+  "current_stage": "UI_FIRST_SLICING_ACTIVE",
   "git_autopush_enabled": true,
   "database": "supabase",
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
-    "id": "T-07",
-    "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
+    "id": "T-08",
+    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & Figma Live Crafting Animation",
     "owner_role": "frontend-engineer & ui-ux-designer",
     "status": "in_progress",
     "rework_iteration_count": 0
@@ -81,17 +81,21 @@
       "id": "T-07",
       "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
       "owner_role": "frontend-engineer & ui-ux-designer",
-      "status": "in_progress",
+      "status": "done",
       "depends_on": ["T-06"],
-      "rework_iteration_count": 0
+      "rework_iteration_count": 0,
+      "reviewed_by": ["tech-critic"],
+      "verdict": "approved"
     },
     {
       "id": "T-08",
-      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS & Cover Reveal",
+      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & Figma Live Crafting Animation",
       "owner_role": "frontend-engineer & ui-ux-designer",
-      "status": "pending",
-      "depends_on": ["T-06"],
-      "rework_iteration_count": 0
+      "status": "done",
+      "depends_on": ["T-06", "T-07"],
+      "rework_iteration_count": 0,
+      "reviewed_by": ["tech-critic", "qa-engineer"],
+      "verdict": "approved"
     },
     {
       "id": "T-09",
@@ -178,6 +182,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic",
     "result": "approved",
-    "note": "Perincian plan development (PLAN-DEVELOPMENT.md), strategi UI-First dengan dummy data, Mobile-First priority, dan pipeline aset ter-generate telah terkunci rapat di session-state."
+    "note": "Pembaruan nama mempelai wanita menjadi Windi Widia telah selesai diverifikasi di seluruh mock data, komponen UI, invitation blocks, aset SVG, URL route /v/arif-windi, dan script batch."
   }
 }

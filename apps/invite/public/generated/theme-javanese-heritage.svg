@@ -27,7 +27,7 @@
 
   <!-- Typography Editorial -->
   <text x="270" y="240" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" font-weight="600" fill="#D97706" text-anchor="middle" letter-spacing="4">THE WEDDING OF</text>
-  <text x="270" y="340" font-family="'Cormorant Garamond', Georgia, serif" font-size="52" font-style="italic" fill="#FDF6ED" text-anchor="middle">Arif &amp; Siti</text>
+  <text x="270" y="340" font-family="'Cormorant Garamond', Georgia, serif" font-size="52" font-style="italic" fill="#FDF6ED" text-anchor="middle">Arif &amp; Windi</text>
   <line x1="200" y1="380" x2="340" y2="380" stroke="url(#javGold)" stroke-width="1.5"/>
 
   <!-- Date -->

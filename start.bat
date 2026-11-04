@@ -43,7 +43,7 @@ goto menu
 :run_invite
 cls
 echo Memulai Undangan Digital Tamu (Port 3001)...
-start http://localhost:3001/v/arif-siti
+start http://localhost:3001/v/arif-windi
 call pnpm dev:invite
 goto menu
 
@@ -59,7 +59,7 @@ timeout /t 2 >nul
 
 echo Membuka browser...
 start http://localhost:3000
-start http://localhost:3001/v/arif-siti
+start http://localhost:3001/v/arif-windi
 
 echo.
 echo Kedua server sedang berjalan di jendela Command Prompt masing-masing!

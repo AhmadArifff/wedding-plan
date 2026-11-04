@@ -16,9 +16,9 @@ import type {
 } from '@nikahplan/db';
 
 export const DUMMY_WORKSPACE: Workspace = {
-  id: 'ws-nikahplan-arif-siti',
+  id: 'ws-nikahplan-arif-windi',
   ownerId: 'usr-arif-01',
-  weddingTitle: 'Pernikahan Arif & Siti',
+  weddingTitle: 'Pernikahan Arif & Windi',
   targetWeddingDate: '2027-11-14',
   createdAt: '2026-11-04T08:00:00Z',
 };
@@ -522,13 +522,13 @@ export const DUMMY_INVITATION: Invitation = {
   id: 'inv-01',
   workspaceId: DUMMY_WORKSPACE.id,
   themeId: 'theme-botanical-sage',
-  slug: 'arif-dan-siti',
+  slug: 'arif-dan-windi',
   isPublished: true,
   groomNick: 'Arif',
   groomFullName: 'Ahmad Arif, S.Kom',
   groomParents: 'Bpk. H. Mahmud & Ibu Hj. Aminah',
-  brideNick: 'Siti',
-  brideFullName: 'Siti Rahmawati, S.Pd',
+  brideNick: 'Windi',
+  brideFullName: 'Windi Widia, S.Pd',
   brideParents: 'Bpk. Drs. H. Subagyo & Ibu Hj. Endang',
   akadDatetime: '2027-11-14T08:00:00',
   receptionDatetime: '2027-11-14T11:00:00',
@@ -555,7 +555,7 @@ export const DUMMY_ENVELOPES: InvitationEnvelope[] = [
     envelopeType: 'BANK_TRANSFER',
     bankName: 'Bank Mandiri',
     accountNumber: '9876543210123',
-    accountHolderName: 'Siti Rahmawati',
+    accountHolderName: 'Windi Widia',
     isActive: true,
     sortOrder: 2,
   },
@@ -563,7 +563,7 @@ export const DUMMY_ENVELOPES: InvitationEnvelope[] = [
     id: 'env-03',
     invitationId: DUMMY_INVITATION.id,
     envelopeType: 'QRIS_MERCHANT',
-    accountHolderName: 'NikahPlan: Arif & Siti Wedding',
+    accountHolderName: 'NikahPlan: Arif & Windi Wedding',
     qrisStoragePath: '/generated/qris-merchant-dummy.svg',
     isActive: true,
     sortOrder: 3,
@@ -577,7 +577,7 @@ export const DUMMY_RSVP_WISHES: RsvpWish[] = [
     guestName: 'Budi Santoso & Keluarga',
     attendanceStatus: 'ATTENDING',
     paxCount: 2,
-    wishMessage: 'Barakallahu lakuma wa baraka alaikuma wa jamaa bainakuma fii khair. Selamat menempuh hidup baru untuk Mas Arif dan Mbak Siti, semoga menjadi keluarga sakinah mawaddah warahmah.',
+    wishMessage: 'Barakallahu lakuma wa baraka alaikuma wa jamaa bainakuma fii khair. Selamat menempuh hidup baru untuk Mas Arif dan Mbak Windi, semoga menjadi keluarga sakinah mawaddah warahmah.',
     isApproved: true,
     createdAt: '2026-11-04T09:15:00Z',
   },
@@ -587,7 +587,7 @@ export const DUMMY_RSVP_WISHES: RsvpWish[] = [
     guestName: 'Dra. Hj. Nurul Hidayati',
     attendanceStatus: 'ATTENDING',
     paxCount: 1,
-    wishMessage: 'Selamat atas pernikahan Ananda Arif dan Siti. Doa terbaik kami sekeluarga, semoga senantiasa dalam berkah dan lindungan Allah SWT.',
+    wishMessage: 'Selamat atas pernikahan Ananda Arif dan Windi. Doa terbaik kami sekeluarga, semoga senantiasa dalam berkah dan lindungan Allah SWT.',
     isApproved: true,
     createdAt: '2026-11-04T09:45:00Z',
   },
@@ -604,7 +604,7 @@ export const DUMMY_RSVP_WISHES: RsvpWish[] = [
 ];
 
 /**
- * Calculated Top KPI Summary View for Arif & Siti
+ * Calculated Top KPI Summary View for Arif & Windi
  */
 export function getDummyFinancialSummary(): WorkspaceFinancialSummaryView {
   const totalBudget = DUMMY_BUDGET_ITEMS.reduce((sum, item) => sum + item.totalPrice, 0);

@@ -23,7 +23,7 @@
 
   <!-- Typography -->
   <text x="270" y="270" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" font-weight="600" fill="#0F766E" text-anchor="middle" letter-spacing="4">WALIMATUL 'URS</text>
-  <text x="270" y="360" font-family="'Cormorant Garamond', Georgia, serif" font-size="56" font-style="italic" fill="#1C1917" text-anchor="middle">Arif &amp; Siti</text>
+  <text x="270" y="360" font-family="'Cormorant Garamond', Georgia, serif" font-size="56" font-style="italic" fill="#1C1917" text-anchor="middle">Arif &amp; Windi</text>
   <circle cx="270" cy="400" r="4" fill="#0F766E"/>
 
   <text x="270" y="460" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="600" fill="#292524" text-anchor="middle" letter-spacing="1">14 . 11 . 2027</text>

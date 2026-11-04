@@ -73,7 +73,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         <a
-          href="http://localhost:3001/v/arif-siti"
+          href="http://localhost:3001/v/arif-windi"
           target="_blank"
           rel="noreferrer"
           className="p-2 rounded-xl bg-teal-50 text-teal-800 border border-teal-200 text-xs font-semibold flex items-center gap-1"
@@ -153,7 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className="w-7 h-7 rounded-full border border-amber-500/60 object-cover"
                 />
                 <div className="truncate">
-                  <div className="font-semibold text-white truncate">Arif &amp; Siti</div>
+                  <div className="font-semibold text-white truncate">Arif &amp; Windi</div>
                   <div className="text-[10px] text-stone-400">14 Nov 2027 · Yogyakarta</div>
                 </div>
               </div>
@@ -214,7 +214,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Footer Sidebar: Link ke Undangan Tamu */}
         <div className="p-3 border-t border-stone-800">
           <a
-            href="http://localhost:3001/v/arif-siti"
+            href="http://localhost:3001/v/arif-windi"
             target="_blank"
             rel="noreferrer"
             className={`flex items-center gap-2.5 p-2.5 rounded-xl bg-stone-800/90 hover:bg-teal-900/60 border border-stone-700/60 text-stone-200 hover:text-white transition-all text-xs font-semibold group cursor-pointer ${
@@ -227,7 +227,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <>
                 <div className="flex-1 text-left truncate">
                   <div className="text-[11px] leading-tight">Pratinjau Undangan</div>
-                  <div className="text-[9px] text-stone-400 font-mono">/v/arif-siti</div>
+                  <div className="text-[9px] text-stone-400 font-mono">/v/arif-windi</div>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-300 transition-colors" />
               </>

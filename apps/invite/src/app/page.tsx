@@ -23,7 +23,7 @@ export default function InviteIndexPage() {
             Demo Undangan Aktif:
           </span>
           <p className="text-sm font-serif font-bold text-stone-900">
-            Pernikahan Arif &amp; Siti
+            Pernikahan Arif &amp; Windi
           </p>
           <p className="text-xs text-stone-600">
             Yogyakarta · 20 September 2026
@@ -31,7 +31,7 @@ export default function InviteIndexPage() {
         </div>
 
         <Link
-          href="/v/arif-siti"
+          href="/v/arif-windi"
           className="w-full min-h-[48px] inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-teal-700 hover:bg-teal-800 text-white text-sm font-semibold transition-all shadow-md active:scale-95 cursor-pointer"
         >
           <MailOpen className="w-4 h-4" />

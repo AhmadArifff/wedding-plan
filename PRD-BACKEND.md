@@ -127,7 +127,7 @@ erDiagram
     WORKSPACES {
         uuid id PK
         uuid owner_id FK
-        string wedding_title "e.g. Pernikahan Arif & Siti"
+        string wedding_title "e.g. Pernikahan Arif & Windi"
         date target_wedding_date
         timestamptz created_at
         timestamptz deleted_at
