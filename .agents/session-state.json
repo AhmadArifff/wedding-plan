@@ -26,7 +26,9 @@
       "owner_role": "triage-router",
       "status": "done",
       "rework_iteration_count": 0,
-      "reviewed_by": ["policy-schema-enforcer"],
+      "reviewed_by": [
+        "policy-schema-enforcer"
+      ],
       "verdict": "approved"
     },
     {
@@ -35,7 +37,11 @@
       "owner_role": "product-manager",
       "status": "done",
       "rework_iteration_count": 0,
-      "reviewed_by": ["qa-engineer", "tech-critic", "security-engineer"],
+      "reviewed_by": [
+        "qa-engineer",
+        "tech-critic",
+        "security-engineer"
+      ],
       "verdict": "approved"
     },
     {
@@ -44,7 +50,9 @@
       "owner_role": "domain-retriever & policy-schema-enforcer",
       "status": "done",
       "rework_iteration_count": 0,
-      "reviewed_by": ["tech-critic"],
+      "reviewed_by": [
+        "tech-critic"
+      ],
       "verdict": "approved"
     },
     {
@@ -52,9 +60,16 @@
       "task": "Fase 0: Pondasi Monorepo (Turborepo, apps/web, apps/invite, packages/ui, packages/db, packages/invitation-blocks) & Setup Design Tokens",
       "owner_role": "frontend-engineer & backend-engineer",
       "status": "done",
-      "depends_on": ["T-01", "T-02", "T-03"],
+      "depends_on": [
+        "T-01",
+        "T-02",
+        "T-03"
+      ],
       "rework_iteration_count": 0,
-      "reviewed_by": ["tech-critic", "qa-engineer"],
+      "reviewed_by": [
+        "tech-critic",
+        "qa-engineer"
+      ],
       "verdict": "approved"
     },
     {
@@ -62,9 +77,13 @@
       "task": "Fase 1: Pipeline Aset Gambar Ter-generate Kustom (Avatar, QRIS, Cover Tema, Ikon Emas) & Mock Engine Data Dummy Realistis Pernikahan Indonesia",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
-      "depends_on": ["T-04"],
+      "depends_on": [
+        "T-04"
+      ],
       "rework_iteration_count": 0,
-      "reviewed_by": ["qa-engineer"],
+      "reviewed_by": [
+        "qa-engineer"
+      ],
       "verdict": "approved"
     },
     {
@@ -72,9 +91,14 @@
       "task": "Fase 2: UI-First Mobile: Dashboard Planner, Banner Pro Trial, Widget Live Gold Price Tracker & Tabel Master Anggaran Spreadsheet (Mobile-First 375px -> Desktop)",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
-      "depends_on": ["T-05"],
+      "depends_on": [
+        "T-05"
+      ],
       "rework_iteration_count": 0,
-      "reviewed_by": ["ui-ux-designer", "tech-critic"],
+      "reviewed_by": [
+        "ui-ux-designer",
+        "tech-critic"
+      ],
       "verdict": "approved"
     },
     {
@@ -82,9 +106,13 @@
       "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
-      "depends_on": ["T-06"],
+      "depends_on": [
+        "T-06"
+      ],
       "rework_iteration_count": 0,
-      "reviewed_by": ["tech-critic"],
+      "reviewed_by": [
+        "tech-critic"
+      ],
       "verdict": "approved"
     },
     {
@@ -92,9 +120,15 @@
       "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal & 2-Cursor Realistic Figma Live Crafting",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
-      "depends_on": ["T-06", "T-07"],
+      "depends_on": [
+        "T-06",
+        "T-07"
+      ],
       "rework_iteration_count": 0,
-      "reviewed_by": ["tech-critic", "qa-engineer"],
+      "reviewed_by": [
+        "tech-critic",
+        "qa-engineer"
+      ],
       "verdict": "approved"
     },
     {
@@ -102,7 +136,9 @@
       "task": "Fase 5: UI-First: Super Admin Portal (CRUD Dynamic Master Categories, Banks, Gold Price, Themes & Promo Trial Management)",
       "owner_role": "frontend-engineer & backend-engineer",
       "status": "pending",
-      "depends_on": ["T-06"],
+      "depends_on": [
+        "T-06"
+      ],
       "rework_iteration_count": 0
     },
     {
@@ -110,7 +146,12 @@
       "task": "Fase 6: Integrasi Backend Supabase, Skema Database, RLS 4-Tier, 3 Views, 4 PL/pgSQL RPCs, & 2 Storage Buckets",
       "owner_role": "backend-engineer & security-engineer",
       "status": "pending",
-      "depends_on": ["T-06", "T-07", "T-08", "T-09"],
+      "depends_on": [
+        "T-06",
+        "T-07",
+        "T-08",
+        "T-09"
+      ],
       "rework_iteration_count": 0
     },
     {
@@ -118,7 +159,9 @@
       "task": "Fase 7: Pengujian E2E Playwright (Click-Through R-35), Audit Anti-Slop 4-Blok, dan Rilis dev Siap Manual Merge ke main",
       "owner_role": "qa-engineer & tech-critic",
       "status": "pending",
-      "depends_on": ["T-10"],
+      "depends_on": [
+        "T-10"
+      ],
       "rework_iteration_count": 0
     }
   ],
