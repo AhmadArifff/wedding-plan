@@ -14,7 +14,7 @@
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
     "id": "T-08",
-    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 20-Step Granular Figma Live Crafting & Unique Floral Confetti Finale",
+    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 11-Wave Simultaneous Dual-Cursor Figma Live Crafting (22 Elemen Serempak) & Unique Floral Confetti Finale",
     "owner_role": "frontend-engineer & ui-ux-designer",
     "status": "done",
     "rework_iteration_count": 0
@@ -117,7 +117,7 @@
     },
     {
       "id": "T-08",
-      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 20-Step Granular Figma Live Crafting & Unique Floral Confetti Finale",
+      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, 11-Wave Simultaneous Dual-Cursor Figma Live Crafting (22 Elemen Serempak) & Unique Floral Confetti Finale",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "done",
       "depends_on": [
@@ -225,6 +225,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic & qa-engineer",
     "result": "approved",
-    "note": "20-step granular crafting pada tab Undangan Jadi berhasil memperbaiki 4 akar masalah: (1) pemisahan 4-stage rendering (wireframe -> container -> typing -> verified) sehingga tidak ada elemen muncul prematur saat cursor baru jalan/drag, (2) lockstep dragProgress 0-100% antara cursor dan kotak dashed, (3) semua teks termasuk nama orang tua Bapak/Ibu, mukadimah, dan ayat penuh diketik satu per satu, serta (4) animasi hujan bunga botanikal (FloralConfettiShower: Melati, Kelopak Mawar, Daun Sage, Daisy Emas) saat seluruh elemen selesai."
+    "note": "Arsitektur Simultaneous Dual-Cursor Parallel Waves (11 gelombang paralel = 22 elemen) memastikan kursor Arif dan Windi selalu bergerak, menarik kotak (2 dashed boxes), memvalidasi posisi, klik edit, mengetik teks masing-masing (typedTexts[id]), dan memvalidasi hasil secara serempak tanpa saling menunggu satu sama lain."
   }
 }
