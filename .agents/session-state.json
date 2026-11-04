@@ -7,15 +7,15 @@
     "auto_push_dev": true,
     "allow_agent_merge_to_main": false
   },
-  "primary_goal": "Membangun platform SaaS perencanaan pernikahan all-in-one (Master Anggaran 14 Kategori, Live Gold Price Tracker, Decision Matrix Vendor, Kalkulator Dapur Mandiri, Insight Tabungan, & Digital Invitation Builder QRIS) dengan arsitektur Monorepo Turborepo, UI/UX interaktif bebas AI-Slop, dan database Supabase berkeamanan tinggi.",
-  "current_stage": "ARCHITECTURE_AND_PRD_READY",
+  "primary_goal": "Membangun platform SaaS perencanaan pernikahan all-in-one (Master Anggaran 14 Kategori, Live Gold Price Tracker, Decision Matrix Vendor, Kalkulator Dapur Mandiri, Insight Tabungan, & Digital Invitation Builder QRIS) dengan strategi UI-First, Mobile-First Priority, aset gambar ter-generate kustom (zero stock photo), dan database Supabase berkeamanan tinggi.",
+  "current_stage": "PLAN_DEVELOPMENT_LOCKED",
   "git_autopush_enabled": true,
   "database": "supabase",
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
     "id": "T-04",
-    "task": "Setup struktur awal Turborepo Monorepo (apps/web, apps/invite, packages/db, packages/ui, packages/invitation-blocks) & Migrasi SQL Supabase",
-    "owner_role": "backend-engineer & frontend-engineer",
+    "task": "Fase 0: Pondasi Monorepo (Turborepo, apps/web, apps/invite, packages/ui, packages/db, packages/invitation-blocks) & Setup Design Tokens",
+    "owner_role": "frontend-engineer & backend-engineer",
     "status": "pending",
     "rework_iteration_count": 0
   },
@@ -40,7 +40,7 @@
     },
     {
       "id": "T-03",
-      "task": "Penyusunan dan pemaksimalan ekosistem .agents (rules, workflows, knowledge blueprints, nikahplan-domain skill, dan code stubs)",
+      "task": "Penyusunan ekosistem .agents (rules, workflows, knowledge blueprints, nikahplan-domain skill, 42 adopted skills, dan code stubs)",
       "owner_role": "domain-retriever & policy-schema-enforcer",
       "status": "done",
       "rework_iteration_count": 0,
@@ -49,15 +49,15 @@
     },
     {
       "id": "T-04",
-      "task": "Scaffolding Turborepo Monorepo & implementasi skema database Supabase (Master Tables, RLS 4-Tier, 3 Views, 4 PL/pgSQL RPCs)",
-      "owner_role": "backend-engineer",
+      "task": "Fase 0: Pondasi Monorepo (Turborepo, apps/web, apps/invite, packages/ui, packages/db, packages/invitation-blocks) & Setup Design Tokens",
+      "owner_role": "frontend-engineer & backend-engineer",
       "status": "pending",
       "depends_on": ["T-01", "T-02", "T-03"],
       "rework_iteration_count": 0
     },
     {
       "id": "T-05",
-      "task": "Implementasi Design System packages/ui & Dashboard Master Anggaran + Live Gold Price Tracker Widget di apps/web",
+      "task": "Fase 1: Pipeline Aset Gambar Ter-generate Kustom (Avatar, QRIS, Cover Tema, Ikon Emas) & Mock Engine Data Dummy Realistis Pernikahan Indonesia",
       "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "pending",
       "depends_on": ["T-04"],
@@ -65,26 +65,50 @@
     },
     {
       "id": "T-06",
-      "task": "Implementasi Modul Decision Matrix Vendor, Kalkulator Dapur Mandiri, dan Perencanaan Tabungan (Early Warning)",
-      "owner_role": "frontend-engineer & backend-engineer",
+      "task": "Fase 2: UI-First Mobile: Dashboard Planner, Banner Pro Trial, Widget Live Gold Price Tracker & Tabel Master Anggaran Spreadsheet (Mobile-First 375px -> Desktop)",
+      "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "pending",
       "depends_on": ["T-05"],
       "rework_iteration_count": 0
     },
     {
       "id": "T-07",
-      "task": "Implementasi Block-Based Digital Invitation Builder (apps/web) & Public Invitation Renderer (/v/[slug] di apps/invite) dengan Amplop QRIS",
-      "owner_role": "frontend-engineer & backend-engineer",
+      "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
+      "owner_role": "frontend-engineer & ui-ux-designer",
       "status": "pending",
-      "depends_on": ["T-05"],
+      "depends_on": ["T-06"],
       "rework_iteration_count": 0
     },
     {
       "id": "T-08",
-      "task": "Implementasi Portal Super Admin (Dynamic Master Data CRUD & Manajemen Kampanye Pro Trial / Kode Promo)",
+      "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS & Cover Reveal",
+      "owner_role": "frontend-engineer & ui-ux-designer",
+      "status": "pending",
+      "depends_on": ["T-06"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-09",
+      "task": "Fase 5: UI-First: Super Admin Portal (CRUD Dynamic Master Categories, Banks, Gold Price, Themes & Promo Trial Management)",
       "owner_role": "frontend-engineer & backend-engineer",
       "status": "pending",
-      "depends_on": ["T-04"],
+      "depends_on": ["T-06"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-10",
+      "task": "Fase 6: Integrasi Backend Supabase, Skema Database, RLS 4-Tier, 3 Views, 4 PL/pgSQL RPCs, & 2 Storage Buckets",
+      "owner_role": "backend-engineer & security-engineer",
+      "status": "pending",
+      "depends_on": ["T-06", "T-07", "T-08", "T-09"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-11",
+      "task": "Fase 7: Pengujian E2E Playwright (Click-Through R-35), Audit Anti-Slop 4-Blok, dan Rilis dev Siap Manual Merge ke main",
+      "owner_role": "qa-engineer & tech-critic",
+      "status": "pending",
+      "depends_on": ["T-10"],
       "rework_iteration_count": 0
     }
   ],
@@ -93,6 +117,24 @@
       "id": "C-GIT",
       "category": "git_discipline",
       "constraint": "Seluruh pengembangan dilakukan di branch 'dev' dan setiap perubahan wajib langsung di-commit serta di-push ke 'origin dev'. Agen DILARANG KERAS melakukan merge ke branch 'main' (merge ke 'main' dilakukan manual oleh pemilik proyek).",
+      "locked": true
+    },
+    {
+      "id": "C-UI-FIRST-DUMMY",
+      "category": "development_strategy",
+      "constraint": "Strategi UI-First: Tampilan antarmuka dibangun terlebih dahulu secara interaktif menggunakan mock data dummy pernikahan Indonesia yang realistis sebelum penyambungan database.",
+      "locked": true
+    },
+    {
+      "id": "C-MOBILE-FIRST",
+      "category": "ui_ux_architecture",
+      "constraint": "Mobile-First Priority: Desain dan fungsionalitas UI wajib fokus ke layar ponsel terlebih dahulu (375px-430px, tap target >= 44px, bottom bar, bottom sheet, zero horizontal overflow), kemudian di-adaptasi ke tablet dan desktop.",
+      "locked": true
+    },
+    {
+      "id": "C-CUSTOM-GENERATED-ASSETS",
+      "category": "assets_media",
+      "constraint": "Pipeline Aset Ter-generate: Seluruh aset gambar (avatar pasangan, cover tema, mock QRIS merchant, ilustrasi emas) wajib diproduksi kustom (AI generated / local SVG generator), DILARANG COMOT / hotlink foto dari internet.",
       "locked": true
     },
     {
@@ -130,6 +172,6 @@
   "last_reviewer_verdict": {
     "role": "tech-critic",
     "result": "approved",
-    "note": "Arsitektur .agents, PRD-FRONTEND.md, PRD-BACKEND.md, dan alur Git branch dev/main telah selaras penuh tanpa kontradiksi."
+    "note": "Perincian plan development (PLAN-DEVELOPMENT.md), strategi UI-First dengan dummy data, Mobile-First priority, dan pipeline aset ter-generate telah terkunci rapat di session-state."
   }
 }

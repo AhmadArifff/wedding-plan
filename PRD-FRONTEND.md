@@ -337,3 +337,204 @@ Saat agen `frontend-engineer` atau `ui-ux-designer` mengeksekusi sub-tugas dari 
 5. **`skills/21st-dev/SKILL.md` & `skills/cast/SKILL.md`**: Komponen interaktif khusus pada halaman publik undangan digital (`/v/[slug]`) dan *live preview dock*.
 6. **`skills/playwright/SKILL.md`**: Pengujian klik nyata (*click-through verification* `R-35`) pada seluruh tombol, modal, inline edit, dan salin nomor rekening sebelum serah terima.
 
+---
+
+## 6. Standar Rekayasa Visual Mobile-First Priority (Mobile-to-Desktop)
+
+Sesuai instruksi pengembangan, **fokus utama pengerjaan antarmuka adalah layar ponsel (Mobile-First)** sebelum diperluas ke tampilan desktop.
+
+### 6.1. Spesifikasi Viewport & Ergonomi Jempol (Thumb Zone)
+
+| Dimensi Layar | Target Breakpoint | Perilaku Navigasi & Komponen Utama |
+| :--- | :--- | :--- |
+| **Mobile Compact (Prioritas 1)** | `375px` s.d `430px` (iPhone & Android) | **Bottom Navigation Bar** sticky di bawah, filter horizontal chip scrollable dengan scroll-snap, form edit menggunakan **Slide-Up Bottom Sheet**, tombol aksi mengambang (*Floating Action Button / Sticky Bottom Bar*), ukuran tap target $\ge 44 \times 44\text{px}$, tanpa overflow horizontal (`R-03`). |
+| **Tablet / iPad (Prioritas 2)** | `768px` s.d `1023px` | Header navigasi atas mulai aktif, KPI cards 2x2 grid, tabel anggaran menampilkan kolom volume & satuan inline, modal dialog tengah dengan backdrop blur halus. |
+| **Desktop / Laptop (Prioritas 3)** | `1024px` s.d `1440px` | Sidebar navigasi kiri sticky, KPI cards 4 kolom berjajar, tabel spreadsheet penuh dengan sticky header & footer, split-view 50:50 pada Digital Invitation Builder. |
+
+---
+
+### 6.2. ASCII Wireframe Versi Mobile (Layar 375px)
+
+#### A. Mobile Wireframe: Dashboard & Master Anggaran (`apps/web`)
+```text
++------------------------------------------+
+| [=] NikahPlan Studio        (Arif & Siti)|
++------------------------------------------+
+| [!] PRO TRIAL: Sisa 28 Hari    [Kode >]  |
++------------------------------------------+
+| EMAS HARI INI: Rp 1.420.000 /gr          |
+| Di Anggaran Anda : Rp 1.350.000 (10 gr)  |
+| Selisih          : +Rp 700.000           |
+| [  Sesuaikan ke Harga Emas Hari Ini  ]   |
++------------------------------------------+
+| RINGKASAN ANGGARAN (Swipe KPI Cards):    |
+| [ TOTAL SEMUA ]  [ TAMU & PORSI ]        |
+|   81.170.000       300 Tamu / 600 Porsi  |
++------------------------------------------+
+| Kategori: ( Semua ) ( Seserahan ) ( Gedung ) >
+| [ Cari item kebutuhan...               ] |
++------------------------------------------+
+| v 01. SESERAHAN & MAHAR (Rp 18.2M)       |
+| • Mahar Emas Logam Mulia (10 gr)         |
+|   1.420.000 /gr  ->  14.200.000  [Edit >]|
+| • Kotak Hantaran & Jasa Hias             |
+|   1 paket        ->   1.500.000  [Edit >]|
++------------------------------------------+
+| v 02. VENUE & GEDUNG (Rp 15.0M)          |
+| • Sewa Gedung Serbaguna                  |
+|   1 hari         ->  15.000.000  [Edit >]|
++------------------------------------------+
+| [Sticky Bottom Total: Rp 81.870.000]     |
+| [Tab: Anggaran] [Vendor] [Dapur] [Undang]|
++------------------------------------------+
+```
+
+#### B. Mobile Wireframe: Decision Matrix Vendor (`apps/web`)
+```text
++------------------------------------------+
+| [=] Seleksi & Komparasi Vendor           |
++------------------------------------------+
+| METRIK CEPAT:                            |
+| Total: 18  |  Deal: 5  |  Review: 6      |
++------------------------------------------+
+| Filter: [ Semua ] [ Catering ] [ MUA ] > |
++------------------------------------------+
+| CARD KANDIDAT VENDOR:                    |
+| +--------------------------------------+ |
+| | Sanggar Rias Ayu        [DEAL / HIJAU| |
+| | Kategori    : MUA & Busana Pengantin | |
+| | Penawaran   : 8.500.000              | |
+| | Selisih     : -500.000 (Di Bawah Max)| |
+| | [ Ubah Status v ]  [ Detail Catatan ]| |
+| +--------------------------------------+ |
+| | Gedung Graha Indah    [DISKUSI/KUNING| |
+| | Kategori    : Paket Venue All-In     | |
+| | Penawaran   : 45.000.000             | |
+| | Selisih     : +2.000.000 (LEWAT MAX!)| |
+| | [ Ubah Status v ]  [ Detail Catatan ]| |
+| +--------------------------------------+ |
+| [+ Tambah Kandidat Vendor Baru (Sticky)] |
++------------------------------------------+
+```
+
+#### C. Mobile Wireframe: Kalkulator Dapur Mandiri (`apps/web`)
+```text
++------------------------------------------+
+| [=] Tamu & Kalkulator Dapur Mandiri      |
++------------------------------------------+
+| TAMU UNDANGAN:                           |
+| Laki-laki  : [ - ]  150  [ + ]           |
+| Perempuan  : [ - ]  150  [ + ]           |
+| Total Tamu : 300 Tamu                    |
+|                                          |
+| PENGALI PORSI MASAK:                     |
+| [ 1.5x ]  [ 2.0x (Aktif) ]  [ Kustom ]   |
+| -> Estimasi Porsi: 600 Porsi             |
++------------------------------------------+
+| EFISIENSI BIAYA DAPUR:                   |
+| Total Belanja  : Rp 13.620.000           |
+| Biaya per Tamu : Rp 45.400 /Tamu         |
++------------------------------------------+
+| DAFTAR BELANJA BAHAN POKOK:              |
+| 1. Beras Super    : 100 kg  -> 1.500.000 |
+| 2. Daging Sapi    : 45 kg   -> 6.075.000 |
+| 3. Daging Ayam    : 60 ekor -> 2.280.000 |
+| 4. Bumbu & Sayur  : 1 paket -> 1.765.000 |
+| 5. Minyak & LPG   : 1 paket ->   600.000 |
+| 6. Buah & Es      : 1 paket ->   600.000 |
+| 7. Tukang Masak   : 1 tim   ->   800.000 |
++------------------------------------------+
+| [+ Tambah Item Belanja Bahan Dapur]      |
++------------------------------------------+
+```
+
+#### D. Mobile Wireframe: Undangan Publik & Amplop QRIS (`apps/invite` `/v/[slug]`)
+```text
++------------------------------------------+
+| (Layar Buka: Slide-Up Envelope Reveal)   |
+|                                          |
+|           WALIMATUL 'URS                 |
+|            Arif & Siti                   |
+|      Minggu, 14 November 2027            |
+|                                          |
+|      Kepada Yth. Bapak/Ibu:              |
+|         [ Budi Santoso ]                 |
+|                                          |
+|         [  BUKA UNDANGAN  ]              |
+|                                          |
+| (Setelah Dibuka: Scroll Cerita Mengalir) |
+| • Ayat Suci & Sambutan                   |
+| • Profil Mempelai & Foto Ter-generate    |
+| • Waktu Akad & Resepsi + Google Maps     |
+|                                          |
+| TANDA KASIH & AMPLOP DIGITAL:            |
+| +--------------------------------------+ |
+| | Bank BCA : 1234567890 a.n Ahmad Arif | |
+| | [ Salin Nomor Rekening (Animasi) ]   | |
+| +--------------------------------------+ |
+| | [ TAMPILKAN KODE QRIS MERCHANT ]     | |
+| | (Gambar QRIS Ter-generate Tajam)     | |
+| | [ Unduh Gambar Kode QRIS ]           | |
+| +--------------------------------------+ |
+|                                          |
+| BUKU TAMU & KONFIRMASI RSVP:             |
+| [ Masukkan Nama Anda                 ]   |
+| Kehadiran: (o) Hadir  ( ) Ragu  ( ) Tidak|
+| Jumlah Tamu: [ 2 Orang v ]               |
+| [ Tulis Doa & Ucapan Selamat...      ]   |
+| [    KIRIM KONFIRMASI KEHADIRAN      ]   |
++------------------------------------------+
+```
+
+---
+
+## 7. Dataset Dummy Realistis Pernikahan Indonesia (UI-First Mock Engine)
+
+Pengembangan tampilan UI **tidak menunggu koneksi Supabase**, melainkan menggunakan engine dataset dummy terstruktur di `packages/ui/mock/` atau `apps/web/src/shared/mock/`:
+
+1. **Identitas Pernikahan**:
+   - Judul: *"Pernikahan Arif & Siti"*
+   - Tanggal Target: `14 November 2027`
+   - Profil Mempelai: Ahmad Arif, S.Kom (Putra Bpk. H. Mahmud & Ibu Hj. Aminah) & Siti Rahmawati, S.Pd (Putri Bpk. Drs. H. Subagyo & Ibu Hj. Endang).
+2. **Master Anggaran (14 Kategori & 32 Item Riil)**:
+   - Total Akumulasi Anggaran Awal: `Rp 81.170.000`.
+   - Item Mahar Emas: Logam Mulia 10 gram, harga anggaran `Rp 1.350.000/gram` (subtotal `Rp 13.500.000`).
+   - Harga Emas Hari Ini: `Rp 1.420.000/gram` (selisih `+Rp 700.000`).
+3. **Seleksi Vendor (18 Kandidat across 5 Status)**:
+   - `DEAL`: Sanggar Rias Ayu (`Rp 8.500.000`), Gedung Graha Sakinah (`Rp 15.000.000`), Fotografi Lensa Cinta (`Rp 4.500.000`), Sewa Tenda Buana (`Rp 8.000.000`), MC Akad Ustadz Fauzan (`Rp 1.200.000`).
+   - `DISCUSSION`: Catering Ibu Hajah Dewi (`Rp 18.000.000` - plafon `Rp 16.000.000` / over-budget flag aktif).
+   - `CANDIDATE`, `REJECTED`, `ARCHIVED` terisi dengan rincian kontak dan catatan negosiasi riil.
+4. **Bahan Dapur Mandiri (7 Komponen)**:
+   - 300 Tamu (150 Laki-laki, 150 Perempuan), Pengali Porsi `2.0x` (600 Porsi).
+   - Rincian belanja: Beras (`Rp 1.500.000`), Daging Sapi (`Rp 6.075.000`), Daging Ayam (`Rp 2.280.000`), Bumbu & Sayur (`Rp 1.765.000`), Minyak & Gas (`Rp 600.000`), Buah & Es (`Rp 600.000`), Tim Masak (`Rp 800.000`) -> Total `Rp 13.620.000` (`Rp 45.400/tamu`).
+5. **Amplop Digital**:
+   - Rekening BCA: `1234567890` a.n Ahmad Arif.
+   - Rekening Bank Mandiri: `9876543210` a.n Siti Rahmawati.
+   - Kode QRIS Merchant dummy ter-generate tajam dengan nama toko *"NikahPlan - Arif & Siti Wedding"*.
+
+---
+
+## 8. Pipeline Aset Visual Ter-generate (Zero Stock Photos Protocol)
+
+> [!CAUTION]
+> **Larangan Mutlak Scraping / Hotlinking Foto Internet**:
+> Dilarang menggunakan URL eksternal dari situs luar (seperti Unsplash, Pinterest, Google Images). Seluruh aset visual wajib diproduksi secara kustom menggunakan tool generator gambar AI atau skrip generator SVG lokal.
+
+### 8.1. Spesifikasi Aset Ter-generate & Lokasi Penyimpanan
+
+Seluruh aset disimpan di direktori lokal `packages/ui/assets/generated/` dan di-serve via `public/generated/`:
+
+1. **Avatar Pasangan Mempelai (`avatar-groom.webp` & `avatar-bride.webp`)**:
+   - Format: WebP rasio 1:1 (`400x400px`).
+   - Karakter: Ilustrasi potret elegan bernuansa busana adat modern Indonesia (warna netral hangat, tanpa wajah cacat AI, resolusi tajam).
+2. **Thumbnail Tema Undangan Digital (`theme-javanese-heritage.webp`, `theme-botanical-sage.webp`, `theme-minimal-editorial.webp`)**:
+   - Format: WebP rasio 9:16 (`540x960px`).
+   - Karakter: Komposisi tata letak undangan editorial dengan ornamen dedaunan botani atau sulur motif nusantara yang berkelas.
+3. **Gambar Kode QRIS Merchant (`qris-merchant-dummy.png`)**:
+   - Format: PNG tajam (`600x750px`).
+   - Karakter: Format standar QRIS Nasional Indonesia lengkap dengan logo QRIS resmi, bingkai National Standard QR Code, nama merchant *"NikahPlan: Arif & Siti"*, dan barcode matriks yang dapat dipindai.
+4. **Ilustrasi Logam Mulia Mahar (`gold-mahar-illustration.svg`)**:
+   - Format: Vektor SVG bersih dengan gradien emas hangat `#D97706` ke `#F59E0B`.
+   - Karakter: Gambar koin / emas batangan elegan sebagai pendukung visual widget *Live Gold Price Tracker*.
+
+

@@ -9,11 +9,12 @@
 - **Nama Proyek**: **NikahPlan Studio** — Platform Perencanaan Pernikahan, Insight Finansial & Digital Invitation Builder (Monorepo)
 - **Repositori GitHub**: `https://github.com/AhmadArifff/wedding-plan.git`
 - **Cabang Aktif Development**: `dev` (Setiap perubahan wajib di-commit secara jelas & langsung di-push ke `origin dev`; **DILARANG KERAS melakukan merge ke `main` secara otomatis** karena merge ke `main` dilakukan manual oleh pemilik proyek).
-- **Empat Pilar Dokumen Spesifikasi**:
-  1. **[PRD.md](./PRD.md)**: Visi produk, 4 tingkatan peran pengguna, model berlangganan `PRO_TRIAL` 30 hari, dan arsitektur tingkat tinggi.
-  2. **[PRD-FRONTEND.md](./PRD-FRONTEND.md)**: Spesifikasi UI/UX interaktif, ASCII Wireframes, koreografi animasi (`motion`, `animate-ui`, `animejs`), tabel finansial Pure Numeric, dan filter ketat Zero AI-Slop (`R-01` s.d `R-38`).
+- **Lima Pilar Dokumen Spesifikasi & Pelacakan**:
+  1. **[PRD.md](./PRD.md)**: Visi produk, 4 tingkatan peran pengguna, model berlangganan `PRO_TRIAL` 30 hari, strategi UI-First & Mobile-First, serta arsitektur tingkat tinggi.
+  2. **[PRD-FRONTEND.md](./PRD-FRONTEND.md)**: Spesifikasi UI/UX interaktif, ASCII Wireframes Mobile-to-Desktop, dataset dummy pernikahan Indonesia riil, pipeline aset gambar kustom ter-generate, tabel finansial Pure Numeric, dan filter ketat Zero AI-Slop (`R-01` s.d `R-38`).
   3. **[PRD-BACKEND.md](./PRD-BACKEND.md)**: Spesifikasi Safe Logic Flow (Guard Clauses & Result Pattern), ERD Database Supabase lengkap, 3 Database Views (`v_...`), 4 PL/pgSQL Stored Procedures (`rpc_...`), serta keamanan berlapis RLS & pencegahan kebocoran data.
-  4. **[.agents/session-state.json](./.agents/session-state.json)**: Single Source of Truth pelacakan sub-tugas dan batasan arsitektur terkunci (`established_constraints`).
+  4. **[PLAN-DEVELOPMENT.md](./PLAN-DEVELOPMENT.md)**: Peta jalan pelacakan bertahap 8 fase (Fase 0 s.d Fase 7) dari pondasi monorepo, UI-first mobile slicing, hingga integrasi Supabase.
+  5. **[.agents/session-state.json](./.agents/session-state.json)**: Single Source of Truth pelacakan sub-tugas dan batasan arsitektur terkunci (`established_constraints`).
 
 ---
 

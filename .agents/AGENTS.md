@@ -8,10 +8,11 @@
 
 - **Nama Proyek**: `NikahPlan Studio (wedding-plan)`
 - **Arsitektur**: Turborepo Monorepo (`apps/web`, `apps/invite`, `packages/db`, `packages/ui`, `packages/invitation-blocks`)
-- **Dokumen PRD**:
+- **Dokumen PRD & Tracking**:
   - Core PRD: [`../PRD.md`](../PRD.md)
-  - Frontend PRD (UI/UX Interaktif & Zero AI-Slop): [`../PRD-FRONTEND.md`](../PRD-FRONTEND.md)
+  - Frontend PRD (UI/UX Interaktif, Mobile-First & Zero AI-Slop): [`../PRD-FRONTEND.md`](../PRD-FRONTEND.md)
   - Backend PRD (Safe Logic Flow, DB Views/RPCs & Security): [`../PRD-BACKEND.md`](../PRD-BACKEND.md)
+  - Pelan Pengembangan Bertahap (Tracking Roadmap): [`../PLAN-DEVELOPMENT.md`](../PLAN-DEVELOPMENT.md)
 - **Session State**: [`./session-state.json`](./session-state.json)
 - **Git Branching**:
   - Development: `dev` (Commit & auto-push setiap perubahan ke `origin dev`)

@@ -7,8 +7,8 @@
 | **Nama Proyek** | NikahPlan Studio — Wedding Planner & Invitation SaaS (Monorepo) |
 | **Pengembang** | Solo Developer |
 | **Tech Stack Utama** | Next.js (App Router), Turborepo, Supabase (PostgreSQL, Auth, Storage), Tailwind CSS, Shadcn UI, Vercel |
-| **Status Dokumen** | Final v1.1 (Dilengkapi Fitur Harga Emas Terkini & Manajemen Trial Marketing) |
-| **Dokumen Spesifikasi Terpecah** | [PRD-FRONTEND.md](./PRD-FRONTEND.md) (UI/UX Interaktif & Zero AI-Slop) · [PRD-BACKEND.md](./PRD-BACKEND.md) (Logic Flow, DB Optimization & Security) · [AGENTS.md](./AGENTS.md) (Tata Kelola `.agents`) |
+| **Status Dokumen** | Final v1.2 (Dilengkapi Rencana UI-First, Mobile-First Priority & Pipeline Aset Gambar Ter-generate) |
+| **Dokumen Spesifikasi Terpecah** | [PRD-FRONTEND.md](./PRD-FRONTEND.md) (UI/UX Interaktif & Zero AI-Slop) · [PRD-BACKEND.md](./PRD-BACKEND.md) (Logic Flow, DB Optimization & Security) · [PLAN-DEVELOPMENT.md](./PLAN-DEVELOPMENT.md) (Tracking Rencana Kerja) · [AGENTS.md](./AGENTS.md) (Tata Kelola `.agents`) |
 
 ## 1. Visi & Tujuan Produk
 
@@ -96,3 +96,47 @@ Karena item **Mahar Emas** (contoh: $10\text{ gram}$) sangat dipengaruhi fluktua
 ### 4.7. Modul App Builder Undangan Digital & Amplop QRIS
 
 * Editor visual berbasis blok untuk mengatur informasi mempelai, tanggal akad/resepsi, lokasi Google Maps, tema warna, serta **Amplop Digital** (daftar rekening bank dengan tombol salin otomatis & unggah gambar kode **QRIS Merchant**).
+
+---
+
+## 5. Pendekatan Pengembangan: UI-First dengan Data Dummy Realistis
+
+Untuk mempercepat validasi produk, kenyamanan interaksi (*ergonomi UX*), dan kesempurnaan desain visual sebelum integrasi database:
+
+1. **Strategi UI-First**:
+   - Seluruh modul antarmuka (`apps/web` dan `apps/invite`) dibangun terlebih dahulu dengan status interaktif penuh menggunakan mock/dummy data layer.
+   - Komponen UI tidak menunggu backend/skema database selesai, melainkan langsung dapat dicoba alur kliknya, transisi animasinya, inline editing, serta responsivitasnya.
+2. **Dataset Dummy Realistis Pernikahan Indonesia**:
+   - Data pengujian tidak menggunakan placeholder asal-asalan seperti *"Lorem Ipsum"* atau angka acak `12345`.
+   - Menggunakan rincian riil pernikahan Indonesia: 14 kategori lengkap, item seserahan, vendor riil (MUA, Fotografi, Katering, Venue), belanja 7 bahan pokok dapur, harga emas Antam harian riil (misal $\text{Rp}1.420.000/\text{gram}$), dan simulasi ucapan tamu nyata.
+
+---
+
+## 6. Standar Rekayasa Visual Mobile-First (Mobile-to-Desktop Priority)
+
+Mengingat calon pengantin dan tamu undangan mayoritas mengakses aplikasi melalui smartphone:
+
+1. **Prioritas Utama Layar Ponsel (Mobile Viewport 375px - 430px)**:
+   - Desain tata letak, komponen tabel, kartu metrik, formulir, dan navigasi wajib dirancang dan disempurnakan untuk layar smartphone terlebih dahulu.
+   - Memenuhi zona sentuh jempol (*Thumb Zone*), *Bottom Navigation Bar / Sticky Bottom Action*, dan penggunaan *Slide-Over / Bottom Sheet Drawer* alih-alih modal pop-up yang sempit di ponsel.
+   - Target sentuh minimal $44 \times 44\text{px}$ (`R-03`) dan bebas dari *horizontal scroll overflow*.
+2. **Progressive Enhancement ke Desktop**:
+   - Setelah tampilan ponsel terbukti nyaman dan intuitif, tata letak ditingkatkan (*progressive enhancement*) secara elegan ke layar tablet dan desktop monitor lebar (ekspansi kolom spreadsheet, multi-column dashboard, split-view builder undangan).
+
+---
+
+## 7. Protokol Aset Gambar Kustom Ter-generate (Zero Scraped/Stock Photos)
+
+Untuk menjamin kustomisasi penuh, konsistensi gaya visual, dan mencegah tautan gambar rusak (*broken links*) atau pelanggaran hak cipta:
+
+1. **Dilarang Mengambil / Hotlinking Gambar dari Internet**:
+   - Dilarang menggunakan URL gambar eksternal dari Unsplash, Pexels, Freepik, atau situs web lain.
+2. **Pipeline Aset Ter-generate (Custom Generated Assets)**:
+   - Seluruh aset visual (avatar mempelai, foto profil vendor, ilustrasi mahar emas, thumbnail tema undangan, dan gambar kode **QRIS Merchant**) wajib diproduksi secara kustom menggunakan tool generator gambar AI / skrip generator vektor SVG lokal.
+   - Seluruh aset tersimpan secara lokal dan mandiri di dalam repositori (`packages/ui/assets/generated/` atau `apps/web/public/generated/`) sehingga dapat dimodifikasi warnanya, disesuaikan rasionya, dan bekerja 100% secara offline.
+
+---
+
+## 8. Pelacakan & Rencana Pengembangan Bertahap (Development Plan)
+
+Rencana kerja teknis, pembagian milestone/sprint, dan acceptance criteria pelacakan didefinisikan secara rinci pada dokumen **[PLAN-DEVELOPMENT.md](./PLAN-DEVELOPMENT.md)** serta tersinkronisasi di [.agents/session-state.json](./.agents/session-state.json).
