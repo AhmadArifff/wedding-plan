@@ -344,3 +344,4 @@ export const BudgetItemModal: React.FC<BudgetItemModalProps> = ({
     </div>
   );
 };
+

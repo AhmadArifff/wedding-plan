@@ -125,3 +125,4 @@ export const WaxSealEnvelopeCover: React.FC<WaxSealEnvelopeCoverProps> = ({
     </div>
   );
 };
+
