@@ -6,7 +6,37 @@ Aplikasi web *all-in-one* yang membantu calon pengantin merencanakan anggaran pe
 
 ---
 
-## 1. Struktur Dokumentasi Spesifikasi & Arsitektur
+## 1. Menjalankan Aplikasi di Windows (1-Click Batch Scripts)
+
+Untuk kemudahan pengembangan di lingkungan Windows, telah disediakan skrip `.bat` otomatis:
+
+| File Script | Fungsi & Kegunaan |
+| :--- | :--- |
+| **`setup.bat`** | **Inisialisasi & Setup**: Memeriksa Node.js, memasang `pnpm`, menginstall seluruh dependensi monorepo, membuat aset gambar SVG kustom, dan menjalankan verifikasi TypeScript. |
+| **`start.bat`** | **Menu Launcher Interaktif**: Menu CLI dengan pilihan menjalankan Planner, Undangan Digital, Dual Server, Uji Type-Check, atau Generate Ulang Aset. |
+| **`start-all.bat`** | **Jalankan Keduanya (Dual Dev Servers)**: Otomatis membuka `apps/web` (Port 3000) dan `apps/invite` (Port 3001) di jendela CMD terpisah dan membuka browser secara otomatis. |
+| **`start-web.bat`** | **Jalankan Planner Studio**: Membuka dashboard perencana di `http://localhost:3000`. |
+| **`start-invite.bat`** | **Jalankan Undangan Tamu**: Membuka halaman undangan tamu di `http://localhost:3001/v/arif-siti`. |
+
+### Menjalankan Manual via Terminal (Alternatif)
+
+```bash
+# 1. Install seluruh dependensi workspace
+pnpm install
+
+# 2. Generate aset SVG kustom (Avatar, QRIS, Cover)
+pnpm generate:assets
+
+# 3. Jalankan Planner Studio (apps/web) di port 3000
+pnpm dev:web
+
+# 4. Jalankan Undangan Tamu (apps/invite) di port 3001
+pnpm dev:invite
+```
+
+---
+
+## 2. Struktur Dokumentasi Spesifikasi & Arsitektur
 
 | Dokumen | Fokus & Cakupan |
 | :--- | :--- |
@@ -18,7 +48,7 @@ Aplikasi web *all-in-one* yang membantu calon pengantin merencanakan anggaran pe
 
 ---
 
-## 2. Alur Kerja Cabang Git (`dev` vs `main`)
+## 3. Alur Kerja Cabang Git (`dev` vs `main`)
 
 - **`dev` (Active Development)**: Seluruh pengembangan fitur dan perubahan kode dikerjakan di branch `dev`. Setiap perubahan di-commit secara atomik dan langsung di-push ke `origin dev`.
 - **`main` (Production)**: Cabang rilis produksi. Proses *merge* dari `dev` ke `main` hanya dilakukan secara **manual** oleh pemilik proyek setelah verifikasi selesai.
