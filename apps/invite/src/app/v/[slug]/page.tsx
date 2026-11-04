@@ -28,7 +28,7 @@ import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
-  const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('invitation');
+  const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('crafting');
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
   const [senderName, setSenderName] = React.useState('');
   const [senderMessage, setSenderMessage] = React.useState('');

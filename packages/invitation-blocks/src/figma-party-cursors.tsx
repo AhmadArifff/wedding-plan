@@ -12,10 +12,8 @@ export interface VirtualGuestCursor {
 }
 
 const DEFAULT_VIRTUAL_GUESTS: VirtualGuestCursor[] = [
-  { id: '1', name: 'Windi (Mempelai)', color: '#D97706', x: 22, y: 35, message: 'Terima kasih sudah hadir ❤️' },
-  { id: '2', name: 'Arif (Mempelai)', color: '#0F766E', x: 68, y: 28, message: 'Mohon doa restunya yaa' },
-  { id: '3', name: 'Budi Santoso', color: '#7C3AED', x: 30, y: 62, message: 'Selamat ya Arif & Windi! 🎉' },
-  { id: '4', name: 'Alumni TI', color: '#2563EB', x: 75, y: 70, message: 'Barakallah Mas Arif! 💍' },
+  { id: '1', name: 'Windi (Mempelai)', color: '#D97706', x: 25, y: 32, message: 'Terima kasih sudah hadir ❤️' },
+  { id: '2', name: 'Arif (Mempelai)', color: '#0F766E', x: 65, y: 28, message: 'Mohon doa restunya yaa' },
 ];
 
 export const FigmaPartyCursors: React.FC = () => {
