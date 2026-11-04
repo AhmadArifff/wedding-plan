@@ -1,0 +1,135 @@
+{
+  "project_name": "NikahPlan Studio (wedding-plan)",
+  "repository_url": "https://github.com/AhmadArifff/wedding-plan.git",
+  "branches": {
+    "development": "dev",
+    "production": "main",
+    "auto_push_dev": true,
+    "allow_agent_merge_to_main": false
+  },
+  "primary_goal": "Membangun platform SaaS perencanaan pernikahan all-in-one (Master Anggaran 14 Kategori, Live Gold Price Tracker, Decision Matrix Vendor, Kalkulator Dapur Mandiri, Insight Tabungan, & Digital Invitation Builder QRIS) dengan arsitektur Monorepo Turborepo, UI/UX interaktif bebas AI-Slop, dan database Supabase berkeamanan tinggi.",
+  "current_stage": "ARCHITECTURE_AND_PRD_READY",
+  "git_autopush_enabled": true,
+  "database": "supabase",
+  "architecture_standard": "clean-monorepo-vertical-slice",
+  "active_subtask": {
+    "id": "T-04",
+    "task": "Setup struktur awal Turborepo Monorepo (apps/web, apps/invite, packages/db, packages/ui, packages/invitation-blocks) & Migrasi SQL Supabase",
+    "owner_role": "backend-engineer & frontend-engineer",
+    "status": "pending",
+    "rework_iteration_count": 0
+  },
+  "subtasks": [
+    {
+      "id": "T-01",
+      "task": "Inisialisasi repositori Git (branch main untuk prod & branch dev untuk development) ke GitHub",
+      "owner_role": "triage-router",
+      "status": "done",
+      "rework_iteration_count": 0,
+      "reviewed_by": ["policy-schema-enforcer"],
+      "verdict": "approved"
+    },
+    {
+      "id": "T-02",
+      "task": "Pemecahan spesifikasi PRD.md menjadi PRD-FRONTEND.md (Interactive Motion & Zero AI-Slop) dan PRD-BACKEND.md (Safe Logic Flow, Supabase Views/RPCs & RLS Security)",
+      "owner_role": "product-manager",
+      "status": "done",
+      "rework_iteration_count": 0,
+      "reviewed_by": ["qa-engineer", "tech-critic", "security-engineer"],
+      "verdict": "approved"
+    },
+    {
+      "id": "T-03",
+      "task": "Penyusunan dan pemaksimalan ekosistem .agents (rules, workflows, knowledge blueprints, nikahplan-domain skill, dan code stubs)",
+      "owner_role": "domain-retriever & policy-schema-enforcer",
+      "status": "done",
+      "rework_iteration_count": 0,
+      "reviewed_by": ["tech-critic"],
+      "verdict": "approved"
+    },
+    {
+      "id": "T-04",
+      "task": "Scaffolding Turborepo Monorepo & implementasi skema database Supabase (Master Tables, RLS 4-Tier, 3 Views, 4 PL/pgSQL RPCs)",
+      "owner_role": "backend-engineer",
+      "status": "pending",
+      "depends_on": ["T-01", "T-02", "T-03"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-05",
+      "task": "Implementasi Design System packages/ui & Dashboard Master Anggaran + Live Gold Price Tracker Widget di apps/web",
+      "owner_role": "frontend-engineer & ui-ux-designer",
+      "status": "pending",
+      "depends_on": ["T-04"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-06",
+      "task": "Implementasi Modul Decision Matrix Vendor, Kalkulator Dapur Mandiri, dan Perencanaan Tabungan (Early Warning)",
+      "owner_role": "frontend-engineer & backend-engineer",
+      "status": "pending",
+      "depends_on": ["T-05"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-07",
+      "task": "Implementasi Block-Based Digital Invitation Builder (apps/web) & Public Invitation Renderer (/v/[slug] di apps/invite) dengan Amplop QRIS",
+      "owner_role": "frontend-engineer & backend-engineer",
+      "status": "pending",
+      "depends_on": ["T-05"],
+      "rework_iteration_count": 0
+    },
+    {
+      "id": "T-08",
+      "task": "Implementasi Portal Super Admin (Dynamic Master Data CRUD & Manajemen Kampanye Pro Trial / Kode Promo)",
+      "owner_role": "frontend-engineer & backend-engineer",
+      "status": "pending",
+      "depends_on": ["T-04"],
+      "rework_iteration_count": 0
+    }
+  ],
+  "established_constraints": [
+    {
+      "id": "C-GIT",
+      "category": "git_discipline",
+      "constraint": "Seluruh pengembangan dilakukan di branch 'dev' dan setiap perubahan wajib langsung di-commit serta di-push ke 'origin dev'. Agen DILARANG KERAS melakukan merge ke branch 'main' (merge ke 'main' dilakukan manual oleh pemilik proyek).",
+      "locked": true
+    },
+    {
+      "id": "C-AUTONOMY",
+      "category": "business_logic",
+      "constraint": "Prinsip Kendali Penuh Pengguna (100% Full User Autonomy): fitur sinkronisasi harga emas mahar dan vendor Deal bersifat opsional/membantu dan dilarang mengunci atau menghapus input manual pengguna.",
+      "locked": true
+    },
+    {
+      "id": "C-MASTER-DATA",
+      "category": "architecture",
+      "constraint": "Zero Hardcoded Master Data: 14 kategori pengeluaran, daftar bank, harga emas harian, tema undangan, dan durasi Free Trial Pro (default 30 hari) wajib dikelola dinamis di database Supabase dengan dukungan filter Uncategorized.",
+      "locked": true
+    },
+    {
+      "id": "C-ANTISLOP-UI",
+      "category": "ui_ux",
+      "constraint": "Wajib mematuhi PRD-FRONTEND.md dan filter Anti-Slop (R-01..R-38): bebas karakter em-dash, Pure Numeric Typography pada sel tabel anggaran, wajib 3-State UI (Empty, Loading, Error), serta koreografi animasi bertujuan (ENERGY 2 di apps/web, ENERGY 3 di apps/invite).",
+      "locked": true
+    },
+    {
+      "id": "C-SUPABASE-SECURITY",
+      "category": "security_database",
+      "constraint": "Wajib mematuhi PRD-BACKEND.md: RLS 4-tier aktif di seluruh tabel, halaman publik /v/[slug] terisolasi via v_public_invitation_safe (0 byte kebocoran data finansial), fungsi RPC SECURITY DEFINER wajib menggunakan SET search_path = public, pg_temp dan FOR UPDATE row locking.",
+      "locked": true
+    },
+    {
+      "id": "C-NO-SELF-REVIEW",
+      "category": "governance",
+      "constraint": "Setiap sub-tugas implementasi wajib melewati evaluasi 7 pilar dan verifikasi independen oleh qa-engineer / tech-critic sebelum dinyatakan selesai.",
+      "locked": true
+    }
+  ],
+  "open_questions": [],
+  "last_reviewer_verdict": {
+    "role": "tech-critic",
+    "result": "approved",
+    "note": "Arsitektur .agents, PRD-FRONTEND.md, PRD-BACKEND.md, dan alur Git branch dev/main telah selaras penuh tanpa kontradiksi."
+  }
+}
