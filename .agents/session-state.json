@@ -13,10 +13,10 @@
   "database": "supabase",
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
-    "id": "T-04",
-    "task": "Fase 0: Pondasi Monorepo (Turborepo, apps/web, apps/invite, packages/ui, packages/db, packages/invitation-blocks) & Setup Design Tokens",
-    "owner_role": "frontend-engineer & backend-engineer",
-    "status": "pending",
+    "id": "T-07",
+    "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
+    "owner_role": "frontend-engineer & ui-ux-designer",
+    "status": "in_progress",
     "rework_iteration_count": 0
   },
   "subtasks": [
@@ -51,31 +51,37 @@
       "id": "T-04",
       "task": "Fase 0: Pondasi Monorepo (Turborepo, apps/web, apps/invite, packages/ui, packages/db, packages/invitation-blocks) & Setup Design Tokens",
       "owner_role": "frontend-engineer & backend-engineer",
-      "status": "pending",
+      "status": "done",
       "depends_on": ["T-01", "T-02", "T-03"],
-      "rework_iteration_count": 0
+      "rework_iteration_count": 0,
+      "reviewed_by": ["tech-critic", "qa-engineer"],
+      "verdict": "approved"
     },
     {
       "id": "T-05",
       "task": "Fase 1: Pipeline Aset Gambar Ter-generate Kustom (Avatar, QRIS, Cover Tema, Ikon Emas) & Mock Engine Data Dummy Realistis Pernikahan Indonesia",
       "owner_role": "frontend-engineer & ui-ux-designer",
-      "status": "pending",
+      "status": "done",
       "depends_on": ["T-04"],
-      "rework_iteration_count": 0
+      "rework_iteration_count": 0,
+      "reviewed_by": ["qa-engineer"],
+      "verdict": "approved"
     },
     {
       "id": "T-06",
       "task": "Fase 2: UI-First Mobile: Dashboard Planner, Banner Pro Trial, Widget Live Gold Price Tracker & Tabel Master Anggaran Spreadsheet (Mobile-First 375px -> Desktop)",
       "owner_role": "frontend-engineer & ui-ux-designer",
-      "status": "pending",
+      "status": "done",
       "depends_on": ["T-05"],
-      "rework_iteration_count": 0
+      "rework_iteration_count": 0,
+      "reviewed_by": ["ui-ux-designer", "tech-critic"],
+      "verdict": "approved"
     },
     {
       "id": "T-07",
       "task": "Fase 3: UI-First Mobile: Decision Matrix Vendor (5 Status), Kalkulator Tamu & Dapur Mandiri (7 Bahan Pokok), dan Simulator Tabungan Early Warning",
       "owner_role": "frontend-engineer & ui-ux-designer",
-      "status": "pending",
+      "status": "in_progress",
       "depends_on": ["T-06"],
       "rework_iteration_count": 0
     },

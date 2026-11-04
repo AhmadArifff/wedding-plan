@@ -40,14 +40,14 @@ flowchart TD
 ### 🟢 Fase 0: Pondasi Monorepo & Konfigurasi Ekosistem
 **Fokus**: Membangun kerangka kerja Turborepo yang bersih, paket bersama (`packages/ui`, `packages/db`, `packages/invitation-blocks`), dan pengaturan styling.
 
-- [ ] **M0.1 — Inisialisasi Turborepo Monorepo**:
+- [x] **M0.1 — Inisialisasi Turborepo Monorepo**:
   - Konfigurasi `turbo.json`, `package.json` root pnpm/npm workspace.
   - Setup folder `apps/web` (Next.js App Router) dan `apps/invite` (Next.js lightweight renderer).
   - Setup `packages/ui` (Design System bersama), `packages/db` (Typed contracts & DTOs), `packages/invitation-blocks` (Blok undangan).
-- [ ] **M0.2 — Setup Tailwind CSS, Token Desain & Font**:
+- [x] **M0.2 — Setup Tailwind CSS, Token Desain & Font**:
   - Konfigurasi token warna *Warm Editorial Financial Clarity* (`#FAF8F5`, `#FFFFFF`, `#1C1917`, `#0F766E`, `#B45309`, `#BE123C`).
   - Setup font Google via `next/font`: `Cormorant Garamond` (heading editorial) & `Plus Jakarta Sans` (sans & tabular-nums).
-- [ ] **M0.3 — Inisialisasi Primitif UI & Motion**:
+- [x] **M0.3 — Inisialisasi Primitif UI & Motion**:
   - Pasang dependensi `motion` (Framer Motion), `animejs`, `@animate-ui`, Radix UI / Shadcn UI primitives.
 - **Reviewer Gate**: `tech-critic` memverifikasi struktur monorepo tidak memiliki siklus dependensi (*no circular dependencies*).
 
@@ -56,7 +56,7 @@ flowchart TD
 ### 🟢 Fase 1: Pipeline Aset Gambar Ter-generate & Mock Data Engine
 **Fokus**: Menyediakan seluruh aset visual kustom (tanpa comot internet) dan dataset dummy pernikahan Indonesia yang realistis.
 
-- [ ] **M1.1 — Pembuatan Engine Data Dummy Realistis Pernikahan Indonesia**:
+- [x] **M1.1 — Pembuatan Engine Data Dummy Realistis Pernikahan Indonesia**:
   - File `packages/ui/src/mock/wedding-dummy-data.ts`:
     - Profil pasangan: Ahmad Arif, S.Kom & Siti Rahmawati, S.Pd (Target nikah: 14 Nov 2027).
     - 14 Kategori Master Anggaran & 32 item pengeluaran riil (Total: `Rp 81.170.000`).
@@ -64,7 +64,7 @@ flowchart TD
     - 18 Kandidat Vendor lintas 5 status (`DEAL`, `DISCUSSION`, `CANDIDATE`, `REJECTED`, `ARCHIVED`).
     - 7 Komponen Dapur Mandiri (300 Tamu / 600 Porsi, Total: `Rp 13.620.000` -> `Rp 45.400/tamu`).
     - Rekening Amplop BCA & Mandiri, serta simulasi ucapan buku tamu riil.
-- [ ] **M1.2 — Generasi Aset Gambar Kustom (Zero Stock Photo Internet)**:
+- [x] **M1.2 — Generasi Aset Gambar Kustom (Zero Stock Photo Internet)**:
   - Generate avatar mempelai pria & wanita berbusana adat modern (`avatar-groom.webp`, `avatar-bride.webp`).
   - Generate 3 cover tema undangan digital (`theme-javanese-heritage.webp`, `theme-botanical-sage.webp`, `theme-minimal-editorial.webp`).
   - Generate gambar kode QRIS Merchant resmi tajam (`qris-merchant-dummy.png`) atas nama *"NikahPlan - Arif & Siti Wedding"*.
@@ -77,16 +77,16 @@ flowchart TD
 ### 🟢 Fase 2: UI-First Mobile: Dashboard & Master Anggaran (`apps/web`)
 **Fokus**: Membangun tampilan utama pengantin di viewport ponsel (`375px`), lalu diadaptasi ke desktop.
 
-- [ ] **M2.1 — Mobile Shell & Bottom Navigation**:
+- [x] **M2.1 — Mobile Shell & Bottom Navigation**:
   - Header ramping dengan judul rencana, status sisa trial Pro 30 hari, dan toggle akun.
   - Bottom Navigation Bar ergonomis (Tab: Anggaran, Vendor, Dapur, Tabungan, Undangan) dengan tap target $\ge 44\text{px}$.
-- [ ] **M2.2 — Widget Pengingat Harga Emas Harian & Banner Selisih**:
+- [x] **M2.2 — Widget Pengingat Harga Emas Harian & Banner Selisih**:
   - Komponen `LiveGoldPriceWidget` di atas tabel: menampilkan harga pasar hari ini vs anggaran pengguna.
   - Notifikasi selisih emas mahar (`+Rp 700.000`) & tombol interaktif *"Sesuaikan ke Harga Emas Hari Ini"*.
   - Popover konfirmasi 1-klik dengan animasi sliding counter angka saat disetujui.
-- [ ] **M2.3 — Top KPI Metric Cards (Swipeable Carousel di Mobile -> 4 Kolom di Desktop)**:
+- [x] **M2.3 — Top KPI Metric Cards (Swipeable Carousel di Mobile -> 4 Kolom di Desktop)**:
   - Total Semua Anggaran (`Rp 81.170.000`), Tamu & Porsi (`300 / 600`), Biaya Dapur per Tamu (`Rp 45.400`), Komitmen Vendor Deal (`Rp 42.500.000`).
-- [ ] **M2.4 — Tabel Master Anggaran (Single Unified Table & Pure Numeric)**:
+- [x] **M2.4 — Tabel Master Anggaran (Single Unified Table & Pure Numeric)**:
   - Kolom kategori collapsible dengan subtotal masing-masing.
   - *Pure Numeric Typography*: Angka nominal rata kanan tabular-nums tanpa teks `"Rp "` berulang di dalam sel.
   - *Inline Editing Spreadsheet*: Mode klik / tap sel langsung berubah menjadi input dengan kontrol simpan `Enter` / batal `Escape`. Di ponsel, mendukung tap sel untuk membuka mini edit sheet.
@@ -196,3 +196,4 @@ Setiap kali sub-tugas dalam fase ini diselesaikan:
 2. Sinkronkan objek `active_subtask` dan `subtasks` di [`.agents/session-state.json`](./.agents/session-state.json).
 3. Buat Conventional Commit yang relevan (misal `feat(budget-ui): implement mobile-first spreadsheet table with dummy data`).
 4. Langsung jalankan `git push origin dev` (tanpa merge ke `main`).
+

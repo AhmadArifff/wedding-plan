@@ -1,0 +1,25 @@
+{
+  "name": "wedding-plan",
+  "version": "1.0.0",
+  "private": true,
+  "description": "NikahPlan Studio - Platform Perencanaan Pernikahan, Insight Finansial & Digital Invitation Builder",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter @nikahplan/web dev",
+    "dev:invite": "pnpm --filter @nikahplan/invite dev",
+    "build:web": "pnpm --filter @nikahplan/web build",
+    "build:invite": "pnpm --filter @nikahplan/invite build",
+    "type-check": "pnpm -r type-check",
+    "generate:assets": "node scripts/generate-assets.js"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
