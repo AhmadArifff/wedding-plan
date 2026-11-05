@@ -68,6 +68,7 @@ export type SwarmSubPhase =
   | 'typing'
   | 'inspecting'
   | 'deselecting'
+  | 'scattering'
   | 'celebrating'
   | 'finished';
 
@@ -79,4 +80,6 @@ export interface SwarmCursorLiveState {
   isDragging: boolean;
   action: string;
   visible: boolean;
+  opacity?: number;
+  scale?: number;
 }

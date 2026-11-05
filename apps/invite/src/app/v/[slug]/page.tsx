@@ -9,14 +9,10 @@ import {
   Heart,
   Send,
   CheckCircle,
-  Palette,
-  Eye,
 } from 'lucide-react';
 import {
   WaxSealEnvelopeCover,
   DigitalEnvelopeBlock,
-  FigmaPartyCursors,
-  FigmaCraftingCanvas,
   SwarmRebuild,
 } from '@nikahplan/invitation-blocks';
 import {
@@ -29,8 +25,6 @@ import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
-  const [viewMode, setViewMode] = React.useState<'invitation' | 'crafting'>('invitation');
-  const [isRebuildFinished, setIsRebuildFinished] = React.useState(false);
   const mainContainerRef = React.useRef<HTMLElement | null>(null);
 
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
@@ -96,79 +90,18 @@ export default function PublicInvitationPage() {
         onOpen={() => setIsCoverOpen(true)}
       />
 
-      {/* 2. Multiplayer Live Presence Cursors (Aktif setelah Swarm Rebuild Go Live) */}
-      {isCoverOpen && viewMode === 'invitation' && isRebuildFinished && (
-        <FigmaPartyCursors />
-      )}
-
-      {/* Floating Toggle Mode di Bagian Atas Kanan */}
+      {/* 2. Main Invitation Content dengan REA Swarm Rebuild Engine */}
       {isCoverOpen && (
-        <div className="fixed top-4 right-4 z-40 bg-white/90 backdrop-blur-md rounded-2xl p-1 shadow-lg border border-stone-200 flex items-center text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => setViewMode('invitation')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-              viewMode === 'invitation'
-                ? 'bg-stone-900 text-white shadow-xs'
-                : 'text-stone-600 hover:text-stone-900'
-            }`}
-          >
-            <Eye className="w-3.5 h-3.5" />
-            <span>Undangan Jadi</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('crafting')}
-            className={`px-3 py-1.5 rounded-xl transition-all cursor-pointer flex items-center gap-1.5 ${
-              viewMode === 'crafting'
-                ? 'bg-teal-800 text-white shadow-xs'
-                : 'text-stone-600 hover:text-stone-900'
-            }`}
-          >
-            <Palette className="w-3.5 h-3.5 text-amber-300" />
-            <span>Figma Crafting Live</span>
-          </button>
-        </div>
-      )}
-
-      {/* Mode 1: Figma Live Crafting Story */}
-      {isCoverOpen && viewMode === 'crafting' && (
-        <div className="max-w-xl mx-auto p-4 sm:p-8 pt-16 min-h-screen flex flex-col justify-center">
-          <div className="text-center mb-4">
-            <span className="text-[11px] font-mono text-teal-800 font-bold uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-200">
-              Interactive Story Mode
-            </span>
-            <h2 className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-2">
-              Proses Desain Kolaboratif Arif &amp; Windi
-            </h2>
-            <p className="text-xs text-stone-500 max-w-sm mx-auto mt-1">
-              Saksikan bagaimana setiap elemen teks, font, warna, dan komponen amplop dirakit secara langsung di atas kanvas Figma.
-            </p>
-          </div>
-
-          <FigmaCraftingCanvas
-            groomNick={DUMMY_INVITATION.groomNick}
-            brideNick={DUMMY_INVITATION.brideNick}
-            weddingDateFormatted={formatDateIndo(DUMMY_INVITATION.akadDatetime)}
-            venueName={DUMMY_INVITATION.venueName}
-            onFinishCrafting={() => setViewMode('invitation')}
-          />
-        </div>
-      )}
-
-      {/* Mode 2: Main Invitation Content dengan REA Swarm Rebuild Engine */}
-      {isCoverOpen && viewMode === 'invitation' && (
         <main
           ref={mainContainerRef}
           className={`relative max-w-md mx-auto shadow-2xl bg-white min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
             isCoverOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
-          {/* Autonomous Swarm Rebuild Engine (Reverse Engineering Anything) */}
+          {/* Autonomous Swarm Rebuild Engine (Zero Controller Noise, Scatter & Disappear upon Done) */}
           <SwarmRebuild
             targetRef={mainContainerRef}
-            enabled={isCoverOpen && viewMode === 'invitation'}
-            onComplete={() => setIsRebuildFinished(true)}
+            enabled={isCoverOpen}
           />
 
           {/* 1. Hero Section dengan Cover Tema Ter-generate */}
@@ -326,7 +259,7 @@ export default function PublicInvitationPage() {
             </div>
           </section>
 
-          {/* 5. Amplop Digital & QRIS (Komponen Bersih Tanpa Scraping State) */}
+          {/* 5. Amplop Digital & QRIS */}
           <DigitalEnvelopeBlock
             bankAccounts={bankAccountsList}
             qrisImageUrl="/generated/qris-merchant-dummy.svg"
