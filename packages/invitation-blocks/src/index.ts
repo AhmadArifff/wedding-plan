@@ -4,3 +4,4 @@ export * from './wax-seal-envelope-cover';
 export * from './figma-party-cursors';
 export * from './figma-crafting-canvas';
 export * from './invitation-live-crafting';
+export * from './swarm-rebuild';
