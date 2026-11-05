@@ -3,9 +3,11 @@ export type SwarmNodeType =
   | 'heading'
   | 'text'
   | 'image'
+  | 'icon'
   | 'button'
   | 'badge'
   | 'card'
+  | 'input'
   | 'divider';
 
 export interface BoundingBox {

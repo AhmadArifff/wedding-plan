@@ -16,7 +16,7 @@ export function scheduleSwarmWaves(
 
     slice.forEach((node, idx) => {
       const collaborator = collaborators[idx % collaborators.length];
-      const textPreview = node.text ? `"${node.text.slice(0, 24)}${node.text.length > 24 ? '...' : ''}"` : '';
+      const textPreview = node.text ? `"${node.text.slice(0, 20)}${node.text.length > 20 ? '...' : ''}"` : '';
       if (node.text && node.text.length > maxTextLen) {
         maxTextLen = node.text.length;
       }
@@ -30,14 +30,26 @@ export function scheduleSwarmWaves(
       if (node.type === 'heading') {
         dragLabel = `Tarik Frame Judul: ${node.rect.w}x${node.rect.h}px`;
         settleLabel = 'Validasi Posisi Judul';
-        clickLabel = 'Klik Mode Teks Header [T]';
+        clickLabel = 'Klik Mode Teks Header';
         inspectLabel = 'Validasi Tipografi Judul';
       } else if (node.type === 'image') {
         dragLabel = `Tarik Frame Gambar: ${node.rect.w}x${node.rect.h}px`;
-        settleLabel = 'Validasi Aspek Rasio Gambar';
+        settleLabel = 'Validasi Rasio Gambar';
         clickLabel = 'Klik Pasang Media Gambar';
         typeLabel = 'Memasang Aset Visual...';
         inspectLabel = 'Validasi Resolusi Gambar';
+      } else if (node.type === 'icon') {
+        dragLabel = `Posisikan Ikon Vektor: ${node.rect.w}x${node.rect.h}px`;
+        settleLabel = 'Validasi Posisi Ikon';
+        clickLabel = 'Klik Pasang Ikon Vektor';
+        typeLabel = 'Memasang Ikon Vektor...';
+        inspectLabel = 'Validasi Ikon';
+      } else if (node.type === 'badge') {
+        dragLabel = `Tarik Kapsul Badge: ${node.rect.w}x${node.rect.h}px`;
+        settleLabel = 'Validasi Radius Kapsul';
+        clickLabel = 'Klik Format Badge';
+        typeLabel = `Mengetik Badge ${textPreview}`;
+        inspectLabel = 'Validasi Badge';
       } else if (node.type === 'button') {
         dragLabel = `Tarik Tombol CTA: ${node.rect.w}x${node.rect.h}px`;
         settleLabel = 'Validasi Ukuran Tap Target';
@@ -50,6 +62,12 @@ export function scheduleSwarmWaves(
         clickLabel = 'Klik Format Layout Kartu';
         typeLabel = 'Merender Kontainer Kartu...';
         inspectLabel = 'Validasi Struktur Kartu';
+      } else if (node.type === 'input') {
+        dragLabel = `Tarik Form Field: ${node.rect.w}x${node.rect.h}px`;
+        settleLabel = 'Validasi Field Input';
+        clickLabel = 'Klik Konfigurasi Input';
+        typeLabel = 'Mengatur Field Input...';
+        inspectLabel = 'Validasi Input';
       }
 
       assignments.push({
@@ -63,8 +81,8 @@ export function scheduleSwarmWaves(
       });
     });
 
-    // Duration is proportional to text length (between 1000ms and 1800ms)
-    const durationMs = Math.min(1850, Math.max(1050, 1000 + maxTextLen * 12));
+    // Swift duration proportional to text length (between 500ms and 950ms base)
+    const durationMs = Math.min(950, Math.max(500, 480 + maxTextLen * 8));
 
     waves.push({
       waveIndex: waves.length,
@@ -75,4 +93,3 @@ export function scheduleSwarmWaves(
 
   return waves;
 }
-

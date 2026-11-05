@@ -25,6 +25,7 @@ import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
+  const [isRebuildFinished, setIsRebuildFinished] = React.useState(false);
   const mainContainerRef = React.useRef<HTMLElement | null>(null);
 
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
@@ -94,14 +95,45 @@ export default function PublicInvitationPage() {
       {isCoverOpen && (
         <main
           ref={mainContainerRef}
-          className={`relative max-w-md mx-auto shadow-2xl bg-white min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
+          data-swarm-active={!isRebuildFinished ? 'true' : 'false'}
+          className={`relative max-w-md mx-auto shadow-2xl bg-[#FAF8F5] min-h-screen overflow-hidden flex flex-col transition-all duration-1000 ${
             isCoverOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
           }`}
         >
+          {/* Swarm Rebuild Zero-Flash CSS Guard: Blank Frame until Built */}
+          <style jsx global>{`
+            /* 1. Blank Initial State: Mask direct sections before scanner runs */
+            [data-swarm-active="true"]:not(.swarm-scanned) > section,
+            [data-swarm-active="true"]:not(.swarm-scanned) > div:not([data-swarm-overlay="true"]) {
+              opacity: 0 !important;
+            }
+
+            /* 2. Atomic Masking: Every detected atom starts 100% invisible */
+            [data-swarm-active="true"] .swarm-node {
+              opacity: 0 !important;
+              transform: scale(0.96);
+              transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            }
+
+            /* 3. Smooth Reveal: Element pops into view when verified by cursor */
+            [data-swarm-active="true"] .swarm-node.swarm-revealed {
+              opacity: 1 !important;
+              transform: scale(1) !important;
+            }
+
+            /* 4. Parent Container Frame Guard: Container frame background/border is hidden until revealed */
+            [data-swarm-active="true"] .swarm-node-container:not(.swarm-revealed) {
+              background-color: transparent !important;
+              border-color: transparent !important;
+              box-shadow: none !important;
+            }
+          `}</style>
+
           {/* Autonomous Swarm Rebuild Engine (Zero Controller Noise, Scatter & Disappear upon Done) */}
           <SwarmRebuild
             targetRef={mainContainerRef}
             enabled={isCoverOpen}
+            onComplete={() => setIsRebuildFinished(true)}
           />
 
           {/* 1. Hero Section dengan Cover Tema Ter-generate */}

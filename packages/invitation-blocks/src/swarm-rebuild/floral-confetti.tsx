@@ -36,6 +36,7 @@ export const FloralConfettiShower: React.FC<{ active: boolean }> = ({ active }) 
 
   return (
     <div
+      data-swarm-ignore="true"
       className="fixed inset-0 pointer-events-none z-50 overflow-hidden select-none"
       aria-hidden="true"
     >

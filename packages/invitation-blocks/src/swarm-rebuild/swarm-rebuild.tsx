@@ -69,8 +69,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
 
   // Dynamic animation progress inside current wave
   const [dragProgress, setDragProgress] = React.useState<number>(0);
-  const [typingProgress, setTypingProgress] = React.useState<number>(0);
-  const [typedTexts, setTypedTexts] = React.useState<Record<string, string>>({});
+  const [, setTypingProgress] = React.useState<number>(0);
+  const [, setTypedTexts] = React.useState<Record<string, string>>({});
 
   // 4 Collaborative cursors live position (Clean, no name badges, no action text)
   const [cursorStates, setCursorStates] = React.useState<Record<string, SwarmCursorLiveState>>({
@@ -80,33 +80,20 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     siti: { x: 300, y: 15, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 1, scale: 1 },
   });
 
-  // Step 1: DOM Auto-Scanner (Reverse Engineering Anything)
+  // Step 1: Immediate DOM Auto-Scanner (Zero-flash mounting)
   React.useEffect(() => {
     if (!enabled || !targetRef.current) return;
 
-    const timer = setTimeout(() => {
-      if (!targetRef.current) return;
-      const scannedNodes = scanDOMForRebuild(targetRef.current);
-      if (scannedNodes.length > 0) {
-        // Mask all scanned nodes initially so there is NO double-text or noisy outlines
-        scannedNodes.forEach((node) => {
-          if (node.domElement) {
-            node.domElement.style.transition = 'opacity 0.28s ease-out, transform 0.28s ease-out';
-            node.domElement.style.opacity = '0';
-            node.domElement.style.transform = 'scale(0.96)';
-          }
-        });
-
-        const scheduledWaves = scheduleSwarmWaves(scannedNodes, collaborators);
-        setWaves(scheduledWaves);
-      }
-    }, 100);
-
-    return () => clearTimeout(timer);
+    // Scan immediately without artificial delay
+    const scannedNodes = scanDOMForRebuild(targetRef.current);
+    if (scannedNodes.length > 0) {
+      const scheduledWaves = scheduleSwarmWaves(scannedNodes, collaborators);
+      setWaves(scheduledWaves);
+    }
   }, [enabled, targetRef, collaborators]);
 
-  // Step 2: Scroll-Chasing Acceleration
-  // As user scrolls, the cursor swarm accelerates dynamically so it never lags behind
+  // Step 2: Dynamic Scroll Acceleration
+  // As user scrolls ahead, the cursor swarm accelerates dynamically so it never lags behind
   React.useEffect(() => {
     if (!enabled || isFinished || waves.length === 0) return;
 
@@ -124,9 +111,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       const scrollLag = viewportBottom - waveAbsoluteY;
 
       if (scrollLag > 450) {
-        setScrollBoost(3.5);
+        setScrollBoost(3.8);
       } else if (scrollLag > 200) {
-        setScrollBoost(2.0);
+        setScrollBoost(2.2);
       } else {
         setScrollBoost(1.0);
       }
@@ -138,7 +125,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
 
   const activeWave = waves[waveIndex] || null;
 
-  // Auto-scroll target into viewport smoothly (gentle nudge)
+  // Auto-scroll target into viewport smoothly
   const scrollToActiveWave = React.useCallback(
     (wave: SwarmWave) => {
       if (!targetRef.current || wave.assignments.length === 0) return;
@@ -159,20 +146,21 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     [targetRef]
   );
 
-  // Main 4-Cursor Parallel Wave Runner (3x Baseline Speed)
+  // Main 4-Cursor Parallel Wave Runner (High-Speed Execution)
   React.useEffect(() => {
     if (!enabled || isFinished || waves.length === 0) return;
 
-    // When all waves complete: SCATTER & DISAPPEAR!
+    // When all waves complete: SCATTER & CELEBRATE!
     if (waveIndex >= waves.length) {
       setSubPhase('scattering');
       setIsScattering(true);
       setShowFloralConfetti(true);
 
-      // Unmask all real DOM elements to ensure 100% complete page view
+      // Unmask all real DOM elements permanently
       waves.forEach((w) => {
         w.assignments.forEach((asg) => {
           if (asg.node.domElement) {
+            asg.node.domElement.classList.add('swarm-revealed');
             asg.node.domElement.style.opacity = '1';
             asg.node.domElement.style.transform = 'scale(1)';
           }
@@ -212,7 +200,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
 
     const assignments = currentWave.assignments;
     const speedFactor = 3 * scrollBoost;
-    const baseDuration = Math.max(240, currentWave.durationMs / speedFactor);
+    const baseDuration = Math.max(160, currentWave.durationMs / speedFactor);
 
     // Phase 1: TRAVELING (Move all 4 cursors to their target top-left corners)
     setSubPhase('traveling');
@@ -237,12 +225,12 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       return next;
     });
 
-    const travelMs = 170 / scrollBoost;
+    const travelMs = 120 / scrollBoost;
     timer = setTimeout(() => {
-      // Phase 2: DRAGGING (All 4 cursors drag diagonally in lockstep)
+      // Phase 2: DRAGGING (All 4 cursors drag diagonally in parallel lockstep)
       setSubPhase('dragging');
-      const dragDuration = 260 / scrollBoost;
-      const tickMs = 32;
+      const dragDuration = 180 / scrollBoost;
+      const tickMs = 24;
       const totalTicks = Math.max(1, Math.floor(dragDuration / tickMs));
       let tick = 0;
 
@@ -296,15 +284,15 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           return next;
         });
 
-        const settleMs = 160 / scrollBoost;
+        const settleMs = 90 / scrollBoost;
         timer = setTimeout(() => {
-          // Phase 4: CLICKING (Click inside to enter edit mode)
+          // Phase 4: CLICKING (Click inside to enter edit/render mode)
           setSubPhase('clicking');
           setCursorStates((prev) => {
             const next = { ...prev };
             assignments.forEach((asg) => {
               next[asg.collaboratorId] = {
-                x: asg.node.rect.x + Math.min(36, asg.node.rect.w * 0.25),
+                x: asg.node.rect.x + Math.min(28, asg.node.rect.w * 0.25),
                 y: asg.node.rect.y + asg.node.rect.h * 0.5,
                 isClicking: true,
                 isStill: false,
@@ -318,11 +306,11 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
             return next;
           });
 
-          const clickMs = 120 / scrollBoost;
+          const clickMs = 70 / scrollBoost;
           timer = setTimeout(() => {
-            // Phase 5: TYPING (Cursors park still while text types swiftly)
+            // Phase 5: TYPING / RENDERING
             setSubPhase('typing');
-            const typeTickMs = 36;
+            const typeTickMs = 28;
             const totalTypeTicks = Math.max(1, Math.floor(baseDuration / typeTickMs));
             let currentTypeTick = 0;
 
@@ -330,7 +318,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               const next = { ...prev };
               assignments.forEach((asg) => {
                 next[asg.collaboratorId] = {
-                  x: asg.node.rect.x + asg.node.rect.w - 6,
+                  x: asg.node.rect.x + asg.node.rect.w - 4,
                   y: asg.node.rect.y + asg.node.rect.h * 0.5,
                   isClicking: false,
                   isStill: true,
@@ -365,13 +353,13 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               clearInterval(typeInterval);
               setTypingProgress(1);
 
-              // Phase 6: INSPECTING (Fast verification pause)
+              // Phase 6: INSPECTING (Fast green validation pause)
               setSubPhase('inspecting');
               setCursorStates((prev) => {
                 const next = { ...prev };
                 assignments.forEach((asg) => {
                   next[asg.collaboratorId] = {
-                    x: asg.node.rect.x + asg.node.rect.w - 4,
+                    x: asg.node.rect.x + asg.node.rect.w - 2,
                     y: asg.node.rect.y + asg.node.rect.h * 0.5,
                     isClicking: false,
                     isStill: true,
@@ -385,12 +373,13 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                 return next;
               });
 
-              const inspectMs = 180 / scrollBoost;
+              const inspectMs = 110 / scrollBoost;
               timer = setTimeout(() => {
                 // Phase 7: DESELECTING & REVEALING REAL DOM ELEMENT
                 setSubPhase('deselecting');
                 assignments.forEach((asg) => {
                   if (asg.node.domElement) {
+                    asg.node.domElement.classList.add('swarm-revealed');
                     asg.node.domElement.style.opacity = '1';
                     asg.node.domElement.style.transform = 'scale(1)';
                   }
@@ -400,8 +389,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   const next = { ...prev };
                   assignments.forEach((asg, idx) => {
                     next[asg.collaboratorId] = {
-                      x: idx % 2 === 0 ? asg.node.rect.x + asg.node.rect.w + 14 : asg.node.rect.x - 14,
-                      y: asg.node.rect.y + asg.node.rect.h + 8,
+                      x: idx % 2 === 0 ? asg.node.rect.x + asg.node.rect.w + 12 : asg.node.rect.x - 12,
+                      y: asg.node.rect.y + asg.node.rect.h + 6,
                       isClicking: true,
                       isStill: false,
                       isDragging: false,
@@ -414,7 +403,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   return next;
                 });
 
-                const deselectMs = 90 / scrollBoost;
+                const deselectMs = 60 / scrollBoost;
                 timer = setTimeout(() => {
                   setTypedTexts({});
                   setWaveIndex((prev) => prev + 1);
@@ -452,14 +441,14 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
 
       {/* 2. Pristine Animation Overlay: Zero Toolbar, Zero Duplicate Noise */}
       {!isFinished && (
-        <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
+        <div data-swarm-overlay="true" data-swarm-ignore="true" className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
           {/* Smart Snap Center Guide Magenta Line */}
           {activeWave?.assignments.some((a) => a.node.isCenterAligned) &&
             subPhase === 'inspecting' && (
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-40 pointer-events-none opacity-85" />
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-40 pointer-events-none opacity-80" />
             )}
 
-          {/* Clean Dashed Dragging Rectangles (No bulky text labels) */}
+          {/* Clean Dashed Dragging Rectangles */}
           {subPhase === 'dragging' &&
             activeWave?.assignments.map((asg) => {
               const collab = collaborators.find((c) => c.id === asg.collaboratorId);
@@ -471,17 +460,17 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   className="absolute border-2 border-dashed pointer-events-none z-30 rounded-xl"
                   style={{
                     borderColor: color,
-                    backgroundColor: `${color}12`,
+                    backgroundColor: `${color}15`,
                     left: `${asg.node.rect.x}px`,
                     top: `${asg.node.rect.y}px`,
-                    width: `${Math.max(12, asg.node.rect.w * dragProgress)}px`,
-                    height: `${Math.max(12, asg.node.rect.h * dragProgress)}px`,
+                    width: `${Math.max(10, asg.node.rect.w * dragProgress)}px`,
+                    height: `${Math.max(10, asg.node.rect.h * dragProgress)}px`,
                   }}
                 />
               );
             })}
 
-          {/* Clean Active Bounding Boxes (Corner Knobs Only, No Text Badges) */}
+          {/* Clean Active Bounding Boxes (Corner Knobs, No Text Labels) */}
           {['settling', 'clicking', 'typing', 'inspecting'].includes(subPhase) &&
             activeWave?.assignments.map((asg) => {
               const collab = collaborators.find((c) => c.id === asg.collaboratorId);
@@ -491,8 +480,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               return (
                 <div
                   key={`box-${asg.node.id}`}
-                  className={`absolute border-2 pointer-events-none z-30 rounded-xl transition-all duration-150 ${
-                    isInspecting ? 'border-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]' : ''
+                  className={`absolute border-2 pointer-events-none z-30 rounded-xl transition-all duration-100 ${
+                    isInspecting ? 'border-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.25)]' : ''
                   }`}
                   style={{
                     borderColor: isInspecting ? '#10B981' : color,
@@ -524,7 +513,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                     ? 'transition-all duration-700 ease-in'
                     : state.isStill || state.isDragging
                     ? 'transition-none'
-                    : 'transition-all duration-200 ease-out'
+                    : 'transition-all duration-150 ease-out'
                 }`}
                 style={{
                   left: `${state.x}px`,
