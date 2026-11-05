@@ -21,6 +21,7 @@ export interface SwarmNode {
   tagName: string;
   rect: BoundingBox;
   text: string;
+  domElement?: HTMLElement;
   imgSrc?: string;
   fontFamily?: string;
   fontSize?: string;

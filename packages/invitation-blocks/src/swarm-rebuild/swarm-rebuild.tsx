@@ -15,17 +15,16 @@ import type {
   SwarmWave,
   SwarmSubPhase,
   SwarmCursorLiveState,
-  SwarmNode,
 } from './types';
 import { scanDOMForRebuild } from './dom-scanner';
 import { scheduleSwarmWaves } from './swarm-scheduler';
 import { FloralConfettiShower } from './floral-confetti';
 
-export const DEFAULT_COLLABORATORS: SwarmCollaborator[] = [
+export const DEFAULT_COLLABORATORS_4: SwarmCollaborator[] = [
   {
     id: 'arif',
     name: 'Arif (Mempelai Pria)',
-    role: 'Header, Jadwal & Lokasi',
+    role: 'Header & Jadwal',
     color: '#0F766E',
     badgeBg: 'bg-teal-700',
     accentRing: 'border-teal-500',
@@ -33,10 +32,26 @@ export const DEFAULT_COLLABORATORS: SwarmCollaborator[] = [
   {
     id: 'windi',
     name: 'Windi (Mempelai Wanita)',
-    role: 'Foto, Tipografi & Amplop QRIS',
+    role: 'Foto & Tipografi',
     color: '#D97706',
     badgeBg: 'bg-amber-600',
     accentRing: 'border-amber-500',
+  },
+  {
+    id: 'rian',
+    name: 'Rian (Layout Specialist)',
+    role: 'Frame & Grid Kartu',
+    color: '#4F46E5',
+    badgeBg: 'bg-indigo-600',
+    accentRing: 'border-indigo-500',
+  },
+  {
+    id: 'siti',
+    name: 'Siti (Visual & Badges)',
+    role: 'Ikon & Ornamen Kasih',
+    color: '#E11D48',
+    badgeBg: 'bg-rose-600',
+    accentRing: 'border-rose-500',
   },
 ];
 
@@ -49,7 +64,7 @@ export interface SwarmRebuildProps {
 
 export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
   targetRef,
-  collaborators = DEFAULT_COLLABORATORS,
+  collaborators = DEFAULT_COLLABORATORS_4,
   enabled = true,
   onComplete,
 }) => {
@@ -58,60 +73,86 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
   const [subPhase, setSubPhase] = React.useState<SwarmSubPhase>('idle');
   const [isFinished, setIsFinished] = React.useState<boolean>(false);
   const [isPlaying, setIsPlaying] = React.useState<boolean>(true);
-  const [speedMultiplier, setSpeedMultiplier] = React.useState<number>(1);
+  const [userSpeedMultiplier, setUserSpeedMultiplier] = React.useState<number>(1);
+  const [scrollBoost, setScrollBoost] = React.useState<number>(1);
   const [showFloralConfetti, setShowFloralConfetti] = React.useState<boolean>(false);
-
-  // Completed node IDs to draw on the canvas
-  const [completedNodeIds, setCompletedNodeIds] = React.useState<string[]>([]);
-  const [completedNodesMap, setCompletedNodesMap] = React.useState<Record<string, SwarmNode>>({});
 
   // Dynamic animation progress inside current wave
   const [dragProgress, setDragProgress] = React.useState<number>(0);
   const [typingProgress, setTypingProgress] = React.useState<number>(0);
   const [typedTexts, setTypedTexts] = React.useState<Record<string, string>>({});
 
-  // Collaborative cursors live position & actions
+  // 4 Collaborative cursors live position & actions
   const [cursorStates, setCursorStates] = React.useState<Record<string, SwarmCursorLiveState>>({
-    arif: {
-      x: 36,
-      y: 20,
-      isClicking: false,
-      isStill: false,
-      isDragging: false,
-      action: 'Siap Menganalisis Halaman...',
-      visible: true,
-    },
-    windi: {
-      x: 240,
-      y: 20,
-      isClicking: false,
-      isStill: false,
-      isDragging: false,
-      action: 'Siap Menganalisis Halaman...',
-      visible: true,
-    },
+    arif: { x: 30, y: 15, isClicking: false, isStill: false, isDragging: false, action: 'Siap', visible: true },
+    windi: { x: 120, y: 15, isClicking: false, isStill: false, isDragging: false, action: 'Siap', visible: true },
+    rian: { x: 210, y: 15, isClicking: false, isStill: false, isDragging: false, action: 'Siap', visible: true },
+    siti: { x: 300, y: 15, isClicking: false, isStill: false, isDragging: false, action: 'Siap', visible: true },
   });
 
   // Step 1: DOM Auto-Scanner (Reverse Engineering Anything)
+  // Mask initial elements smoothly to avoid duplicate/ghosting noise
   React.useEffect(() => {
     if (!enabled || !targetRef.current) return;
 
-    // Small delay to let page mount and lay out its real dimensions
     const timer = setTimeout(() => {
       if (!targetRef.current) return;
       const scannedNodes = scanDOMForRebuild(targetRef.current);
       if (scannedNodes.length > 0) {
+        // Mask all scanned nodes initially so there is NO double-text or noisy outlines
+        scannedNodes.forEach((node) => {
+          if (node.domElement) {
+            node.domElement.style.transition = 'opacity 0.28s ease-out, transform 0.28s ease-out';
+            node.domElement.style.opacity = '0';
+            node.domElement.style.transform = 'scale(0.96)';
+          }
+        });
+
         const scheduledWaves = scheduleSwarmWaves(scannedNodes, collaborators);
         setWaves(scheduledWaves);
       }
-    }, 120);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [enabled, targetRef, collaborators]);
 
+  // Step 2: Scroll-Chasing Acceleration
+  // As user scrolls, the cursor swarm accelerates dynamically so it never lags behind
+  React.useEffect(() => {
+    if (!enabled || isFinished || waves.length === 0) return;
+
+    const handleScroll = () => {
+      if (!targetRef.current) return;
+      const containerRect = targetRef.current.getBoundingClientRect();
+      const currentWave = waves[waveIndex];
+      if (!currentWave || currentWave.assignments.length === 0) return;
+
+      const activeY = currentWave.assignments[0].node.rect.y;
+      const waveAbsoluteY = containerRect.top + activeY;
+      const viewportBottom = window.innerHeight;
+
+      // How far ahead user has scrolled past the active wave
+      const scrollLag = viewportBottom - waveAbsoluteY;
+
+      if (scrollLag > 480) {
+        // User scrolled far ahead: Super Boost 3.5x to catch up immediately!
+        setScrollBoost(3.5);
+      } else if (scrollLag > 220) {
+        // User scrolled ahead: Boost 2x
+        setScrollBoost(2.0);
+      } else {
+        // Normal pace
+        setScrollBoost(1.0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [enabled, isFinished, waves, waveIndex, targetRef]);
+
   const activeWave = waves[waveIndex] || null;
 
-  // Auto-scroll target into viewport smoothly
+  // Auto-scroll target into viewport smoothly (gentle nudge)
   const scrollToActiveWave = React.useCallback(
     (wave: SwarmWave) => {
       if (!targetRef.current || wave.assignments.length === 0) return;
@@ -119,15 +160,21 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       const containerRect = targetRef.current.getBoundingClientRect();
       const targetAbsoluteY = window.scrollY + containerRect.top + firstNode.rect.y;
 
-      window.scrollTo({
-        top: Math.max(0, targetAbsoluteY - window.innerHeight * 0.45),
-        behavior: 'smooth',
-      });
+      // Only auto-scroll if user has not manually scrolled far ahead
+      const currentScroll = window.scrollY;
+      const targetScroll = targetAbsoluteY - window.innerHeight * 0.42;
+
+      if (Math.abs(currentScroll - targetScroll) < window.innerHeight * 0.9) {
+        window.scrollTo({
+          top: Math.max(0, targetScroll),
+          behavior: 'smooth',
+        });
+      }
     },
     [targetRef]
   );
 
-  // Main Wave Step Runner
+  // Main 4-Cursor Parallel Wave Runner (3x Baseline Speed)
   React.useEffect(() => {
     if (!enabled || isFinished || !isPlaying || waves.length === 0) return;
 
@@ -135,6 +182,17 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       setIsFinished(true);
       setSubPhase('celebrating');
       setShowFloralConfetti(true);
+
+      // Unmask all remaining DOM elements to ensure 100% complete page view
+      waves.forEach((w) => {
+        w.assignments.forEach((asg) => {
+          if (asg.node.domElement) {
+            asg.node.domElement.style.opacity = '1';
+            asg.node.domElement.style.transform = 'scale(1)';
+          }
+        });
+      });
+
       onComplete?.();
       return;
     }
@@ -147,9 +205,11 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     let typeInterval: ReturnType<typeof setInterval>;
 
     const assignments = currentWave.assignments;
-    const baseDuration = currentWave.durationMs / speedMultiplier;
+    // Base 3x speed * scrollBoost * user multiplier
+    const speedFactor = 3 * userSpeedMultiplier * scrollBoost;
+    const baseDuration = Math.max(260, currentWave.durationMs / speedFactor);
 
-    // Phase 1: TRAVELING (Move both cursors to their target top-left corners)
+    // Phase 1: TRAVELING (Move all 4 cursors to their target top-left corners)
     setSubPhase('traveling');
     setDragProgress(0);
     setTypingProgress(0);
@@ -163,19 +223,19 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           isClicking: false,
           isStill: false,
           isDragging: false,
-          action: `Menuju: ${asg.node.type} (${asg.node.rect.w}x${asg.node.rect.h})`,
+          action: `${asg.node.type} (${asg.node.rect.w}x${asg.node.rect.h})`,
           visible: true,
         };
       });
       return next;
     });
 
-    const travelMs = 520 / speedMultiplier;
+    const travelMs = 180 / (userSpeedMultiplier * scrollBoost);
     timer = setTimeout(() => {
-      // Phase 2: DRAGGING (Both cursors drag diagonally from (x, y) to (x+w, y+h))
+      // Phase 2: DRAGGING (All 4 cursors drag diagonally in lockstep)
       setSubPhase('dragging');
-      const dragDuration = 860 / speedMultiplier;
-      const tickMs = 38;
+      const dragDuration = 280 / (userSpeedMultiplier * scrollBoost);
+      const tickMs = 32;
       const totalTicks = Math.max(1, Math.floor(dragDuration / tickMs));
       let tick = 0;
 
@@ -187,15 +247,15 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         setCursorStates((prev) => {
           const next = { ...prev };
           assignments.forEach((asg) => {
+            const collab = collaborators.find((c) => c.id === asg.collaboratorId);
+            const prefix = collab ? collab.name.split(' ')[0] : asg.collaboratorId;
             next[asg.collaboratorId] = {
               x: asg.node.rect.x + asg.node.rect.w * p,
               y: asg.node.rect.y + asg.node.rect.h * p,
               isClicking: true,
               isStill: false,
               isDragging: true,
-              action: `${asg.actionDragLabel} (${Math.round(asg.node.rect.w * p)}x${Math.round(
-                asg.node.rect.h * p
-              )}px)`,
+              action: `${prefix}: ${Math.round(asg.node.rect.w * p)}x${Math.round(asg.node.rect.h * p)}px`,
               visible: true,
             };
           });
@@ -209,7 +269,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         clearInterval(dragInterval);
         setDragProgress(1);
 
-        // Phase 3: SETTLING (Mouse release, Settle Pause with blue badge)
+        // Phase 3: SETTLING (Mouse release, Settle Pause)
         setSubPhase('settling');
         setCursorStates((prev) => {
           const next = { ...prev };
@@ -227,15 +287,15 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           return next;
         });
 
-        const settleMs = 780 / speedMultiplier;
+        const settleMs = 180 / (userSpeedMultiplier * scrollBoost);
         timer = setTimeout(() => {
-          // Phase 4: CLICKING (Click inside the newly formed box)
+          // Phase 4: CLICKING (Click inside to enter edit mode)
           setSubPhase('clicking');
           setCursorStates((prev) => {
             const next = { ...prev };
             assignments.forEach((asg) => {
               next[asg.collaboratorId] = {
-                x: asg.node.rect.x + Math.min(42, asg.node.rect.w * 0.25),
+                x: asg.node.rect.x + Math.min(36, asg.node.rect.w * 0.25),
                 y: asg.node.rect.y + asg.node.rect.h * 0.5,
                 isClicking: true,
                 isStill: false,
@@ -247,11 +307,11 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
             return next;
           });
 
-          const clickMs = 520 / speedMultiplier;
+          const clickMs = 140 / (userSpeedMultiplier * scrollBoost);
           timer = setTimeout(() => {
-            // Phase 5: TYPING (Cursors park still while text types smoothly)
+            // Phase 5: TYPING (Cursors park still while text types swiftly)
             setSubPhase('typing');
-            const typeTickMs = 45;
+            const typeTickMs = 36;
             const totalTypeTicks = Math.max(1, Math.floor(baseDuration / typeTickMs));
             let currentTypeTick = 0;
 
@@ -292,7 +352,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               clearInterval(typeInterval);
               setTypingProgress(1);
 
-              // Phase 6: INSPECTING (Verification pause with emerald badge)
+              // Phase 6: INSPECTING (Fast verification pause)
               setSubPhase('inspecting');
               setCursorStates((prev) => {
                 const next = { ...prev };
@@ -310,37 +370,35 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                 return next;
               });
 
-              const inspectMs = 950 / speedMultiplier;
+              const inspectMs = 200 / (userSpeedMultiplier * scrollBoost);
               timer = setTimeout(() => {
-                // Phase 7: DESELECTING (Click outside to lock elements cleanly)
+                // Phase 7: DESELECTING
+                // REVEAL THE ACTUAL REAL DOM ELEMENT SMOOTHLY! (ZERO GHOSTING / ZERO NOISE!)
                 setSubPhase('deselecting');
-                const newIds = assignments.map((a) => a.node.id);
-                setCompletedNodeIds((prev) => [...prev, ...newIds]);
-                setCompletedNodesMap((prev) => {
-                  const next = { ...prev };
-                  assignments.forEach((a) => {
-                    next[a.node.id] = a.node;
-                  });
-                  return next;
+                assignments.forEach((asg) => {
+                  if (asg.node.domElement) {
+                    asg.node.domElement.style.opacity = '1';
+                    asg.node.domElement.style.transform = 'scale(1)';
+                  }
                 });
 
                 setCursorStates((prev) => {
                   const next = { ...prev };
                   assignments.forEach((asg, idx) => {
                     next[asg.collaboratorId] = {
-                      x: idx === 0 ? asg.node.rect.x + asg.node.rect.w + 16 : asg.node.rect.x - 16,
-                      y: asg.node.rect.y + asg.node.rect.h + 10,
+                      x: idx % 2 === 0 ? asg.node.rect.x + asg.node.rect.w + 14 : asg.node.rect.x - 14,
+                      y: asg.node.rect.y + asg.node.rect.h + 8,
                       isClicking: true,
                       isStill: false,
                       isDragging: false,
-                      action: 'Klik Luar: Kunci Elemen',
+                      action: 'Kunci Elemen',
                       visible: true,
                     };
                   });
                   return next;
                 });
 
-                const deselectMs = 420 / speedMultiplier;
+                const deselectMs = 120 / (userSpeedMultiplier * scrollBoost);
                 timer = setTimeout(() => {
                   setTypedTexts({});
                   setWaveIndex((prev) => prev + 1);
@@ -363,7 +421,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     isPlaying,
     waves,
     waveIndex,
-    speedMultiplier,
+    userSpeedMultiplier,
+    scrollBoost,
+    collaborators,
     scrollToActiveWave,
     onComplete,
   ]);
@@ -372,13 +432,32 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     setIsFinished(true);
     setSubPhase('celebrating');
     setShowFloralConfetti(true);
+
+    // Immediately unmask all DOM elements
+    waves.forEach((w) => {
+      w.assignments.forEach((asg) => {
+        if (asg.node.domElement) {
+          asg.node.domElement.style.opacity = '1';
+          asg.node.domElement.style.transform = 'scale(1)';
+        }
+      });
+    });
+
     onComplete?.();
   };
 
   const handleReplay = () => {
+    // Re-mask elements for replay
+    waves.forEach((w) => {
+      w.assignments.forEach((asg) => {
+        if (asg.node.domElement) {
+          asg.node.domElement.style.opacity = '0';
+          asg.node.domElement.style.transform = 'scale(0.96)';
+        }
+      });
+    });
+
     setWaveIndex(0);
-    setCompletedNodeIds([]);
-    setCompletedNodesMap({});
     setIsFinished(false);
     setIsPlaying(true);
     setShowFloralConfetti(false);
@@ -398,7 +477,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       <div className="fixed top-3 left-1/2 -translate-x-1/2 z-50 bg-[#161616]/95 backdrop-blur-md text-white border border-stone-800 rounded-2xl px-3 py-1.5 shadow-2xl flex items-center gap-2 sm:gap-3 text-xs select-none">
         <div className="flex items-center gap-1.5 font-mono text-[10px] text-teal-400 font-bold uppercase tracking-wider">
           <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-300" />
-          <span>Swarm Rebuild · REA</span>
+          <span>Swarm Rebuild · 4 Cursors</span>
         </div>
 
         <div className="hidden sm:flex items-center gap-1.5 bg-stone-900 px-2 py-0.5 rounded-lg border border-stone-800 text-[10px] font-mono">
@@ -409,17 +488,23 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           <span className="text-stone-500">({progressPercent}%)</span>
         </div>
 
+        {scrollBoost > 1.2 && !isFinished && (
+          <span className="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded-full text-[9px] font-mono font-semibold animate-pulse">
+            Scroll Chasing {scrollBoost.toFixed(1)}x
+          </span>
+        )}
+
         <div className="flex items-center gap-1">
           {/* Speed Toggle */}
           <button
             type="button"
             onClick={() =>
-              setSpeedMultiplier((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1))
+              setUserSpeedMultiplier((prev) => (prev === 1 ? 1.5 : prev === 1.5 ? 2 : 1))
             }
             className="px-2 py-0.5 rounded-md bg-stone-800 hover:bg-stone-700 text-[10px] font-mono text-stone-300 transition-colors cursor-pointer"
-            title="Ubah Kecepatan Rekonstruksi"
+            title="Kecepatan Manual"
           >
-            {speedMultiplier}x
+            {userSpeedMultiplier}x
           </button>
 
           {/* Play/Pause */}
@@ -488,18 +573,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         </div>
       </div>
 
-      {/* Full Overlay Canvas (Placed directly on top of the target page) */}
+      {/* Clean Overlay Canvas: NO DUPLICATE REPLICA BOXES, NO GHOSTING TEXT! */}
       {!isFinished && (
-        <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden bg-[#FAF8F5]/85 backdrop-blur-[1px]">
-          {/* Subtle Blueprint Dot Grid */}
-          <div
-            className="absolute inset-0 opacity-25 pointer-events-none"
-            style={{
-              backgroundImage: 'radial-gradient(#78716C 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
-
+        <div className="absolute inset-0 z-30 pointer-events-none overflow-hidden">
           {/* Center Vertical Smart Guide Magenta Line */}
           {activeWave?.assignments.some((a) => a.node.isCenterAligned) &&
             subPhase === 'inspecting' && (
@@ -510,55 +586,20 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               </div>
             )}
 
-          {/* Render All Completed Nodes (Blueprint Skeleton Solidified) */}
-          {completedNodeIds.map((id) => {
-            const node = completedNodesMap[id];
-            if (!node) return null;
-            return (
-              <div
-                key={id}
-                className="absolute border border-stone-300/80 bg-white/70 rounded-xl pointer-events-none overflow-hidden transition-all duration-300"
-                style={{
-                  left: `${node.rect.x}px`,
-                  top: `${node.rect.y}px`,
-                  width: `${node.rect.w}px`,
-                  height: `${node.rect.h}px`,
-                }}
-              >
-                {node.imgSrc ? (
-                  <img
-                    src={node.imgSrc}
-                    alt=""
-                    className="w-full h-full object-cover opacity-90"
-                  />
-                ) : node.text ? (
-                  <div
-                    className="w-full h-full p-2 flex items-center justify-center text-stone-800 text-xs text-center"
-                    style={{
-                      fontFamily: node.fontFamily || 'inherit',
-                      fontSize: node.fontSize || 'inherit',
-                    }}
-                  >
-                    {node.text}
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-
-          {/* Dynamic Dragging Rectangles (Lockstep with Cursors) */}
+          {/* Dynamic Dragging Rectangles (Dashed lines expand in lockstep with 4 Cursors) */}
           {subPhase === 'dragging' &&
             activeWave?.assignments.map((asg) => {
-              const isArif = asg.collaboratorId === 'arif';
+              const collab = collaborators.find((c) => c.id === asg.collaboratorId);
+              const color = collab?.color || '#0F766E';
+              const name = collab?.name.split(' ')[0] || asg.collaboratorId;
+
               return (
                 <div
                   key={`drag-${asg.node.id}`}
-                  className={`absolute border-2 border-dashed pointer-events-none z-30 rounded-xl ${
-                    isArif
-                      ? 'border-teal-500 bg-teal-500/10'
-                      : 'border-amber-500 bg-amber-500/10'
-                  }`}
+                  className="absolute border-2 border-dashed pointer-events-none z-30 rounded-xl"
                   style={{
+                    borderColor: color,
+                    backgroundColor: `${color}15`,
                     left: `${asg.node.rect.x}px`,
                     top: `${asg.node.rect.y}px`,
                     width: `${Math.max(12, asg.node.rect.w * dragProgress)}px`,
@@ -566,48 +607,46 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   }}
                 >
                   <div
-                    className={`absolute -bottom-5 right-0 text-white text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-xs shadow-xs whitespace-nowrap ${
-                      isArif ? 'bg-teal-700' : 'bg-amber-600'
-                    }`}
+                    className="absolute -bottom-5 right-0 text-white text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-xs shadow-xs whitespace-nowrap"
+                    style={{ backgroundColor: color }}
                   >
-                    {isArif ? 'Arif' : 'Windi'}: {Math.round(asg.node.rect.w * dragProgress)} x{' '}
+                    {name}: {Math.round(asg.node.rect.w * dragProgress)} x{' '}
                     {Math.round(asg.node.rect.h * dragProgress)}px
                   </div>
                 </div>
               );
             })}
 
-          {/* Selection Bounding Boxes with Badges during Settling, Clicking, Typing, Inspecting */}
+          {/* Active Selection Bounding Boxes with Labels & Validation (Only for active 4 nodes) */}
           {['settling', 'clicking', 'typing', 'inspecting'].includes(subPhase) &&
             activeWave?.assignments.map((asg) => {
-              const isArif = asg.collaboratorId === 'arif';
+              const collab = collaborators.find((c) => c.id === asg.collaboratorId);
+              const color = collab?.color || '#0F766E';
               const isInspecting = subPhase === 'inspecting';
               const isSettling = subPhase === 'settling';
 
               return (
                 <div
                   key={`box-${asg.node.id}`}
-                  className={`absolute border-2 pointer-events-none z-30 rounded-xl transition-all duration-200 ${
+                  className={`absolute border-2 pointer-events-none z-30 rounded-xl transition-all duration-150 ${
                     isInspecting
-                      ? 'border-emerald-500 bg-emerald-500/5 shadow-[0_0_0_3px_rgba(16,185,129,0.15)]'
-                      : isArif
-                      ? 'border-teal-600'
-                      : 'border-amber-500'
+                      ? 'border-emerald-500 bg-emerald-500/5 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]'
+                      : ''
                   }`}
                   style={{
-                    left: `${asg.node.rect.x - 3}px`,
-                    top: `${asg.node.rect.y - 3}px`,
-                    width: `${asg.node.rect.w + 6}px`,
-                    height: `${asg.node.rect.h + 6}px`,
+                    borderColor: isInspecting ? '#10B981' : color,
+                    left: `${asg.node.rect.x - 2}px`,
+                    top: `${asg.node.rect.y - 2}px`,
+                    width: `${asg.node.rect.w + 4}px`,
+                    height: `${asg.node.rect.h + 4}px`,
                   }}
                 >
                   {/* Collaborator Badge */}
                   <div
-                    className={`absolute -top-4 left-1 text-[8px] font-bold text-white px-1.5 py-0.5 rounded-xs font-mono shadow-xs flex items-center gap-1 whitespace-nowrap ${
-                      isInspecting ? 'bg-emerald-700' : isArif ? 'bg-teal-700' : 'bg-amber-600'
-                    }`}
+                    className="absolute -top-4 left-1 text-[8px] font-bold text-white px-1.5 py-0.5 rounded-xs font-mono shadow-xs flex items-center gap-1 whitespace-nowrap"
+                    style={{ backgroundColor: isInspecting ? '#059669' : color }}
                   >
-                    <span>{isArif ? 'Arif · Designer' : 'Windi · Designer'}</span>
+                    <span>{collab?.name || asg.collaboratorId}</span>
                     {subPhase === 'typing' && (
                       <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                     )}
@@ -616,9 +655,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   {/* Settle Badge */}
                   {isSettling && (
                     <div className="absolute -top-4 right-1 bg-sky-700 text-white text-[8px] font-mono font-bold px-1.5 py-0.5 rounded-xs shadow-xs whitespace-nowrap animate-in zoom-in-95">
-                      <span>
-                        ✓ Posisi Valid ({asg.node.rect.w}x{asg.node.rect.h})
-                      </span>
+                      <span>✓ Posisi Valid</span>
                     </div>
                   )}
 
@@ -629,14 +666,13 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                     </div>
                   )}
 
-                  {/* Content Preview inside Box while Typing */}
+                  {/* Typing Caret Feedback (Rendered cleanly inside the active bounding box) */}
                   {subPhase === 'typing' && asg.node.text && (
                     <div className="w-full h-full p-2 flex items-center justify-center text-stone-800 text-xs text-center font-mono select-none">
                       <span>{typedTexts[asg.node.id] || ''}</span>
                       <span
-                        className={`inline-block w-1.5 h-3.5 ml-0.5 animate-pulse ${
-                          isArif ? 'bg-teal-700' : 'bg-amber-600'
-                        }`}
+                        className="inline-block w-1.5 h-3.5 ml-0.5 animate-pulse"
+                        style={{ backgroundColor: color }}
                       />
                     </div>
                   )}
@@ -650,11 +686,10 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               );
             })}
 
-          {/* Multiplayer Presence Cursors (Simultaneous Workers) */}
+          {/* 4 Multiplayer Presence Cursors (Simultaneous Workers) */}
           {collaborators.map((c) => {
             const state = cursorStates[c.id];
             if (!state || !state.visible) return null;
-            const isArif = c.id === 'arif';
 
             return (
               <div
@@ -662,7 +697,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                 className={`absolute z-40 pointer-events-none flex flex-col items-start ${
                   state.isStill || state.isDragging
                     ? 'transition-none'
-                    : 'transition-all duration-500 ease-out'
+                    : 'transition-all duration-300 ease-out'
                 }`}
                 style={{
                   left: `${state.x}px`,
@@ -671,11 +706,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               >
                 {state.isClicking && (
                   <div
-                    className={`absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 animate-ping pointer-events-none ${
-                      isArif
-                        ? 'border-teal-400 bg-teal-400/20'
-                        : 'border-amber-400 bg-amber-400/20'
-                    }`}
+                    className="absolute -top-2 -left-2 w-7 h-7 rounded-full border-2 animate-ping pointer-events-none"
+                    style={{ borderColor: c.color, backgroundColor: `${c.color}25` }}
                   />
                 )}
 

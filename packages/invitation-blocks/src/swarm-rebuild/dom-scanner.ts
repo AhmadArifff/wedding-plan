@@ -11,7 +11,7 @@ export function scanDOMForRebuild(
 ): SwarmNode[] {
   const { minWidth = 16, minHeight = 12 } = options;
   const rootRect = rootEl.getBoundingClientRect();
-  const nodes: SwarmNode[] = [];
+  const rawNodes: SwarmNode[] = [];
   let counter = 0;
 
   const getRelativeRect = (el: HTMLElement): BoundingBox => {
@@ -37,7 +37,9 @@ export function scanDOMForRebuild(
     tag: string,
     style: CSSStyleDeclaration
   ): SwarmNodeType => {
-    if (tag === 'img' || el.querySelector('img')) return 'image';
+    if (tag === 'img' || (el.children.length === 1 && el.firstElementChild?.tagName.toLowerCase() === 'img')) {
+      return 'image';
+    }
     if (/^h[1-6]$/.test(tag)) return 'heading';
     if (tag === 'button' || tag === 'a' || style.cursor === 'pointer') return 'button';
     if (
@@ -63,16 +65,14 @@ export function scanDOMForRebuild(
     return 'container';
   };
 
-  // Collect candidate elements
   const candidates: Array<{ el: HTMLElement; depth: number }> = [];
 
   const walk = (node: HTMLElement, depth: number) => {
     const children = Array.from(node.children) as HTMLElement[];
     for (const child of children) {
-      // Ignore svgs, scripts, styles, or hidden overlays
       const tag = child.tagName.toLowerCase();
       if (['script', 'style', 'svg', 'path', 'noscript'].includes(tag)) continue;
-      if (child.hasAttribute('data-swarm-ignore')) continue;
+      if (child.hasAttribute('data-swarm-ignore') || child.classList.contains('swarm-ignore')) continue;
 
       candidates.push({ el: child, depth });
       walk(child, depth + 1);
@@ -100,14 +100,6 @@ export function scanDOMForRebuild(
     let text = '';
     if (['heading', 'text', 'button', 'badge'].includes(type)) {
       text = (el.textContent || '').trim().replace(/\s+/g, ' ');
-    } else if (type === 'container' || type === 'card') {
-      // If container has few words directly inside
-      const directText = Array.from(el.childNodes)
-        .filter((n) => n.nodeType === Node.TEXT_NODE)
-        .map((n) => n.textContent?.trim())
-        .filter(Boolean)
-        .join(' ');
-      if (directText) text = directText;
     }
 
     let imgSrc: string | undefined;
@@ -115,10 +107,10 @@ export function scanDOMForRebuild(
       imgSrc = (el as HTMLImageElement).src;
     } else {
       const childImg = el.querySelector('img');
-      if (childImg) imgSrc = childImg.src;
+      if (childImg && el.children.length <= 2) imgSrc = childImg.src;
     }
 
-    // Skip redundant container with no text, no image, no border, no background
+    // Skip redundant container with no direct text and no visual frame
     if (
       type === 'container' &&
       !text &&
@@ -136,12 +128,13 @@ export function scanDOMForRebuild(
       Math.abs(rect.x + rect.w / 2 - rootRect.width / 2) < 14;
 
     counter += 1;
-    nodes.push({
+    rawNodes.push({
       id: el.getAttribute('data-craft-id') || el.id || `node-${counter}-${tag}`,
       type,
       tagName: tag,
       rect,
       text,
+      domElement: el,
       imgSrc,
       fontFamily: style.fontFamily,
       fontSize: style.fontSize,
@@ -155,6 +148,22 @@ export function scanDOMForRebuild(
     });
   }
 
-  // Sort nodes by visual vertical reading order (top to bottom)
-  return nodes.sort((a, b) => a.order - b.order);
+  // Deduplication: remove parent containers that have virtually identical bounding rect to an inner child
+  const cleanNodes: SwarmNode[] = [];
+  for (const node of rawNodes) {
+    const isRedundantWrapper = rawNodes.some(
+      (other) =>
+        other !== node &&
+        other.depth > node.depth &&
+        Math.abs(other.rect.x - node.rect.x) < 4 &&
+        Math.abs(other.rect.y - node.rect.y) < 4 &&
+        Math.abs(other.rect.w - node.rect.w) < 8 &&
+        Math.abs(other.rect.h - node.rect.h) < 8
+    );
+    if (!isRedundantWrapper) {
+      cleanNodes.push(node);
+    }
+  }
+
+  return cleanNodes.sort((a, b) => a.order - b.order);
 }
