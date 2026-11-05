@@ -102,6 +102,33 @@ export default function PublicInvitationPage() {
         >
           {/* Swarm Rebuild Zero-Flash CSS Guard: Blank Frame until Built */}
           <style jsx global>{`
+            /* Keyframe Entrance Animation: Spring Pop + Fade In */
+            @keyframes swarmPopEntrance {
+              0% {
+                opacity: 0;
+                transform: translateY(8px) scale(0.96);
+              }
+              65% {
+                opacity: 1;
+                transform: translateY(-1.5px) scale(1.015);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+              }
+            }
+
+            @keyframes swarmCardEntrance {
+              0% {
+                opacity: 0;
+                transform: scale(0.975);
+              }
+              100% {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+
             /* 1. Blank Initial State: Mask direct sections before scanner runs */
             [data-swarm-active="true"]:not(.swarm-scanned) > section,
             [data-swarm-active="true"]:not(.swarm-scanned) > div:not([data-swarm-overlay="true"]) {
@@ -112,13 +139,13 @@ export default function PublicInvitationPage() {
             [data-swarm-active="true"] .swarm-node {
               opacity: 0 !important;
               transform: scale(0.96);
-              transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+              transition: opacity 0.24s cubic-bezier(0.16, 1, 0.3, 1), transform 0.24s cubic-bezier(0.16, 1, 0.3, 1) !important;
             }
 
-            /* 3. Smooth Reveal: Element pops into view when verified by cursor */
+            /* 3. Smooth Pop Entrance: Element pops into view with spring physics when built */
             [data-swarm-active="true"] .swarm-node.swarm-revealed {
               opacity: 1 !important;
-              transform: scale(1) !important;
+              animation: swarmPopEntrance 0.36s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
             }
 
             /* 4. Parent Container Frame Guard: Container frame background/border is hidden until revealed */
@@ -126,6 +153,11 @@ export default function PublicInvitationPage() {
               background-color: transparent !important;
               border-color: transparent !important;
               box-shadow: none !important;
+            }
+
+            [data-swarm-active="true"] .swarm-node-container.swarm-revealed {
+              opacity: 1 !important;
+              animation: swarmCardEntrance 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
             }
           `}</style>
 

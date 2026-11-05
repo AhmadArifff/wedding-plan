@@ -6,6 +6,7 @@ import type {
   SwarmWave,
   SwarmSubPhase,
   SwarmCursorLiveState,
+  SwarmNode,
 } from './types';
 import { scanDOMForRebuild } from './dom-scanner';
 import { scheduleSwarmWaves } from './swarm-scheduler';
@@ -46,6 +47,21 @@ export const DEFAULT_COLLABORATORS_4: SwarmCollaborator[] = [
   },
 ];
 
+function cleanFontName(fontFamily?: string): string {
+  if (!fontFamily) return 'Serif';
+  const primary = fontFamily.split(',')[0].replace(/['"]/g, '').trim();
+  if (primary.toLowerCase().includes('serif') && !primary.toLowerCase().includes('sans')) {
+    return 'Playfair / Serif';
+  }
+  if (primary.toLowerCase().includes('sans')) {
+    return 'Sans';
+  }
+  if (primary.toLowerCase().includes('mono')) {
+    return 'Mono';
+  }
+  return primary.length > 15 ? `${primary.slice(0, 13)}..` : primary;
+}
+
 export interface SwarmRebuildProps {
   targetRef: React.RefObject<HTMLElement | null>;
   collaborators?: SwarmCollaborator[];
@@ -69,8 +85,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
 
   // Dynamic animation progress inside current wave
   const [dragProgress, setDragProgress] = React.useState<number>(0);
-  const [, setTypingProgress] = React.useState<number>(0);
-  const [, setTypedTexts] = React.useState<Record<string, string>>({});
+  const [typingProgress, setTypingProgress] = React.useState<number>(0);
+  const [typedTexts, setTypedTexts] = React.useState<Record<string, string>>({});
 
   // 4 Collaborative cursors live position (Clean, no name badges, no action text)
   const [cursorStates, setCursorStates] = React.useState<Record<string, SwarmCursorLiveState>>({
@@ -111,9 +127,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       const scrollLag = viewportBottom - waveAbsoluteY;
 
       if (scrollLag > 450) {
-        setScrollBoost(3.8);
+        setScrollBoost(2.4);
       } else if (scrollLag > 200) {
-        setScrollBoost(2.2);
+        setScrollBoost(1.7);
       } else {
         setScrollBoost(1.0);
       }
@@ -146,7 +162,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     [targetRef]
   );
 
-  // Main 4-Cursor Parallel Wave Runner (High-Speed Execution)
+  // Main 4-Cursor Parallel Wave Runner with Rich Perceptible Crafting Actions
   React.useEffect(() => {
     if (!enabled || isFinished || waves.length === 0) return;
 
@@ -186,7 +202,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           return next;
         });
         onComplete?.();
-      }, 720);
+      }, 750);
 
       return () => clearTimeout(finishTimer);
     }
@@ -199,8 +215,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     let typeInterval: ReturnType<typeof setInterval>;
 
     const assignments = currentWave.assignments;
-    const speedFactor = 3 * scrollBoost;
-    const baseDuration = Math.max(160, currentWave.durationMs / speedFactor);
+    // Pacing: calibrated so each craft action is clearly perceptible to the human eye
+    const baseDuration = Math.max(340, currentWave.durationMs / (1.5 * scrollBoost));
 
     // Phase 1: TRAVELING (Move all 4 cursors to their target top-left corners)
     setSubPhase('traveling');
@@ -225,12 +241,12 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       return next;
     });
 
-    const travelMs = 120 / scrollBoost;
+    const travelMs = 180 / scrollBoost;
     timer = setTimeout(() => {
-      // Phase 2: DRAGGING (All 4 cursors drag diagonally in parallel lockstep)
+      // Phase 2: DRAGGING (All 4 cursors drag diagonally in parallel lockstep with live dimension tag)
       setSubPhase('dragging');
-      const dragDuration = 180 / scrollBoost;
-      const tickMs = 24;
+      const dragDuration = 320 / scrollBoost;
+      const tickMs = 28;
       const totalTicks = Math.max(1, Math.floor(dragDuration / tickMs));
       let tick = 0;
 
@@ -284,7 +300,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           return next;
         });
 
-        const settleMs = 90 / scrollBoost;
+        const settleMs = 100 / scrollBoost;
         timer = setTimeout(() => {
           // Phase 4: CLICKING (Click inside to enter edit/render mode)
           setSubPhase('clicking');
@@ -306,11 +322,11 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
             return next;
           });
 
-          const clickMs = 70 / scrollBoost;
+          const clickMs = 90 / scrollBoost;
           timer = setTimeout(() => {
-            // Phase 5: TYPING / RENDERING
+            // Phase 5: TYPING / ASSET UPLOAD / RENDERING
             setSubPhase('typing');
-            const typeTickMs = 28;
+            const typeTickMs = 32;
             const totalTypeTicks = Math.max(1, Math.floor(baseDuration / typeTickMs));
             let currentTypeTick = 0;
 
@@ -353,7 +369,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
               clearInterval(typeInterval);
               setTypingProgress(1);
 
-              // Phase 6: INSPECTING (Fast green validation pause)
+              // Phase 6: INSPECTING (Emerald check validation indicator)
               setSubPhase('inspecting');
               setCursorStates((prev) => {
                 const next = { ...prev };
@@ -373,9 +389,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                 return next;
               });
 
-              const inspectMs = 110 / scrollBoost;
+              const inspectMs = 140 / scrollBoost;
               timer = setTimeout(() => {
-                // Phase 7: DESELECTING & REVEALING REAL DOM ELEMENT
+                // Phase 7: DESELECTING & POP ENTRANCE REVEAL
                 setSubPhase('deselecting');
                 assignments.forEach((asg) => {
                   if (asg.node.domElement) {
@@ -403,7 +419,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   return next;
                 });
 
-                const deselectMs = 60 / scrollBoost;
+                const deselectMs = 90 / scrollBoost;
                 timer = setTimeout(() => {
                   setTypedTexts({});
                   setWaveIndex((prev) => prev + 1);
@@ -432,6 +448,88 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
     targetRef,
   ]);
 
+  const renderActiveNodeCraftPreview = (node: SwarmNode, color: string) => {
+    if (['heading', 'text', 'badge', 'button'].includes(node.type) && node.text) {
+      return (
+        <div
+          className="absolute inset-0 flex items-center overflow-hidden px-1.5 pointer-events-none"
+          style={{
+            fontFamily: node.fontFamily,
+            fontSize: node.fontSize || '13px',
+            fontWeight: node.fontWeight || 'normal',
+            color: node.color || '#1C1917',
+            justifyContent: node.isCenterAligned ? 'center' : 'flex-start',
+          }}
+        >
+          <span className="truncate">
+            {typedTexts[node.id] ?? node.text.slice(0, 4)}
+          </span>
+          <span
+            className="inline-block w-[2px] h-3.5 animate-pulse ml-0.5 shrink-0"
+            style={{ backgroundColor: color }}
+          />
+        </div>
+      );
+    }
+
+    if (node.type === 'image') {
+      return (
+        <div className="absolute inset-0 rounded-xl overflow-hidden flex items-center justify-center bg-stone-100/90 pointer-events-none">
+          {node.imgSrc ? (
+            <img
+              src={node.imgSrc}
+              alt="Live Preview"
+              className="w-full h-full object-cover transition-opacity duration-200"
+              style={{ opacity: Math.max(0.3, typingProgress) }}
+            />
+          ) : (
+            <div className="flex items-center gap-1.5 text-[10px] text-stone-500 font-mono animate-pulse">
+              <span>Photo Asset</span>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (node.type === 'icon') {
+      return (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            className="w-3.5 h-3.5 rounded-full border border-dashed transition-transform duration-150"
+            style={{
+              borderColor: color,
+              transform: `scale(${typingProgress >= 0.5 ? 1 : 0.6})`,
+            }}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const getNodeToolLabel = (node: SwarmNode): string => {
+    if (node.type === 'heading' || node.type === 'text') {
+      return `T: ${cleanFontName(node.fontFamily)} ${node.fontSize || ''}`;
+    }
+    if (node.type === 'image') {
+      return 'IMG: Media Upload';
+    }
+    if (node.type === 'icon') {
+      return 'SVG: Vector Icon';
+    }
+    if (node.type === 'button') {
+      return 'BTN: CTA Button';
+    }
+    if (node.type === 'badge') {
+      return 'BADGE: Pill Tag';
+    }
+    if (node.type === 'card') {
+      return 'FRAME: Card Layout';
+    }
+    return `${node.type.toUpperCase()}: Element`;
+  };
+
   if (!enabled || (isFinished && !showFloralConfetti)) return null;
 
   return (
@@ -445,14 +543,16 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           {/* Smart Snap Center Guide Magenta Line */}
           {activeWave?.assignments.some((a) => a.node.isCenterAligned) &&
             subPhase === 'inspecting' && (
-              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-40 pointer-events-none opacity-80" />
+              <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-[1px] bg-pink-500 z-40 pointer-events-none opacity-85" />
             )}
 
-          {/* Clean Dashed Dragging Rectangles */}
+          {/* Clean Dashed Dragging Rectangles with Live Dimension Tag */}
           {subPhase === 'dragging' &&
             activeWave?.assignments.map((asg) => {
               const collab = collaborators.find((c) => c.id === asg.collaboratorId);
               const color = collab?.color || '#0F766E';
+              const currentW = Math.max(10, Math.round(asg.node.rect.w * dragProgress));
+              const currentH = Math.max(10, Math.round(asg.node.rect.h * dragProgress));
 
               return (
                 <div
@@ -460,17 +560,25 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   className="absolute border-2 border-dashed pointer-events-none z-30 rounded-xl"
                   style={{
                     borderColor: color,
-                    backgroundColor: `${color}15`,
+                    backgroundColor: `${color}16`,
                     left: `${asg.node.rect.x}px`,
                     top: `${asg.node.rect.y}px`,
-                    width: `${Math.max(10, asg.node.rect.w * dragProgress)}px`,
-                    height: `${Math.max(10, asg.node.rect.h * dragProgress)}px`,
+                    width: `${currentW}px`,
+                    height: `${currentH}px`,
                   }}
-                />
+                >
+                  {/* Live Dimension Pill Tag during Drag */}
+                  <div
+                    className="absolute -bottom-5 right-0 px-1.5 py-0.5 rounded text-[9px] font-mono shadow-xs select-none"
+                    style={{ backgroundColor: color, color: '#FFFFFF' }}
+                  >
+                    {currentW} × {currentH}px
+                  </div>
+                </div>
               );
             })}
 
-          {/* Clean Active Bounding Boxes (Corner Knobs, No Text Labels) */}
+          {/* Clean Active Bounding Boxes (Corner Knobs, Tool & Font Badge, Live Content Preview) */}
           {['settling', 'clicking', 'typing', 'inspecting'].includes(subPhase) &&
             activeWave?.assignments.map((asg) => {
               const collab = collaborators.find((c) => c.id === asg.collaboratorId);
@@ -496,6 +604,20 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
                   <div className="absolute -top-1 -right-1 w-2 h-2 bg-white border border-stone-800" />
                   <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-white border border-stone-800" />
                   <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-white border border-stone-800" />
+
+                  {/* Tool, Font & Component Pill Badge */}
+                  <div
+                    className="absolute -top-5 left-0 flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-mono shadow-xs font-semibold whitespace-nowrap select-none"
+                    style={{
+                      backgroundColor: isInspecting ? '#10B981' : color,
+                      color: '#FFFFFF',
+                    }}
+                  >
+                    <span>{isInspecting ? '✓ Validated' : getNodeToolLabel(asg.node)}</span>
+                  </div>
+
+                  {/* Live Crafting Preview inside Box (Typed Text, Image Shimmer, Icon Snap) */}
+                  {renderActiveNodeCraftPreview(asg.node, color)}
                 </div>
               );
             })}
