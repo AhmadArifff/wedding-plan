@@ -14,6 +14,7 @@ import {
   WaxSealEnvelopeCover,
   DigitalEnvelopeBlock,
   SwarmRebuild,
+  type FloralTheme,
 } from '@nikahplan/invitation-blocks';
 import {
   DUMMY_INVITATION,
@@ -26,7 +27,32 @@ import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
   const [isRebuildFinished, setIsRebuildFinished] = React.useState(false);
+  const [speedMultiplier, setSpeedMultiplier] = React.useState<number>(1.0);
+  const [confettiTheme, setConfettiTheme] = React.useState<FloralTheme>('botanical-sage');
   const mainContainerRef = React.useRef<HTMLElement | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const speedParam = params.get('speed');
+    if (speedParam) {
+      const parsedSpeed = parseFloat(speedParam);
+      if (!isNaN(parsedSpeed) && parsedSpeed > 0) {
+        setSpeedMultiplier(parsedSpeed);
+      }
+    }
+    const confettiParam = params.get('confetti');
+    if (
+      confettiParam &&
+      ['botanical-sage', 'crimson-gold', 'lavender-lilac', 'golden-sunflower', 'sakura-pastel'].includes(confettiParam)
+    ) {
+      setConfettiTheme(confettiParam as FloralTheme);
+    }
+    const coverParam = params.get('cover');
+    if (coverParam === '0' || coverParam === 'false') {
+      setIsCoverOpen(true);
+    }
+  }, []);
 
   const [wishes, setWishes] = React.useState<RsvpWish[]>(DUMMY_RSVP_WISHES);
   const [senderName, setSenderName] = React.useState('');
@@ -166,6 +192,8 @@ export default function PublicInvitationPage() {
           <SwarmRebuild
             targetRef={mainContainerRef}
             enabled={isCoverOpen}
+            speedMultiplier={speedMultiplier}
+            confettiTheme={confettiTheme}
             onComplete={() => setIsRebuildFinished(true)}
           />
 

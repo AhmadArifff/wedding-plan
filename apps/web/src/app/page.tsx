@@ -11,6 +11,7 @@ import {
   Sparkles,
   Plus,
   Crown,
+  Mail,
 } from 'lucide-react';
 import {
   KpiCard,
@@ -26,15 +27,17 @@ import {
   getDummyFinancialSummary,
 } from '@nikahplan/ui';
 import type { BudgetCategory, BudgetItem, Vendor, VendorStatus } from '@nikahplan/db';
-import { Sidebar, type SidebarTab } from '../components/sidebar';
+import { TopNavbar, type DashboardTab, type DashboardTheme } from '../components/top-navbar';
 import { TrialBanner } from '../features/trial/trial-banner';
 import { BudgetTable } from '../features/budget/budget-table';
 import { BudgetItemModal } from '../features/budget/budget-item-modal';
 import { KitchenCalculator } from '../features/kitchen/kitchen-calculator';
 import { VendorMatrix } from '../features/vendor/vendor-matrix';
+import { InvitationStudio } from '../features/invitation/invitation-studio';
 
 export default function PlannerDashboardPage() {
-  const [activeTab, setActiveTab] = React.useState<SidebarTab>('budget');
+  const [activeTab, setActiveTab] = React.useState<DashboardTab>('budget');
+  const [dashboardTheme, setDashboardTheme] = React.useState<DashboardTheme>('classic');
   const [categories, setCategories] = React.useState<BudgetCategory[]>(DUMMY_BUDGET_CATEGORIES);
   const [budgetItems, setBudgetItems] = React.useState<BudgetItem[]>(DUMMY_BUDGET_ITEMS);
   const [vendors, setVendors] = React.useState<Vendor[]>(DUMMY_VENDORS);
@@ -149,41 +152,40 @@ export default function PlannerDashboardPage() {
     );
   };
 
+  const themeClasses = {
+    classic: 'bg-[#FAF8F5] text-stone-900',
+    sage: 'bg-[#F2F7F4] text-stone-900',
+    terracotta: 'bg-[#FAF4F0] text-stone-900',
+    dark: 'bg-stone-950 text-stone-100',
+  }[dashboardTheme];
+
   return (
-    <div className="min-h-screen bg-[#FAF8F5] flex flex-col lg:flex-row">
-      {/* 1. Sidebar Navigasi Admin Dashboard */}
-      <Sidebar
+    <div className={`min-h-screen flex flex-col transition-colors duration-300 ${themeClasses}`}>
+      {/* 1. Modern Top Navbar (Tanpa Sidebar, Menu Mode/Tema di Sisi Kiri) */}
+      <TopNavbar
         activeTab={activeTab}
-        onTabChange={(tab) => {
-          if (tab === 'invite') {
-            window.open('http://localhost:3001/v/arif-windi', '_blank');
-          } else {
-            setActiveTab(tab);
-          }
-        }}
+        onTabChange={(tab) => setActiveTab(tab)}
+        currentTheme={dashboardTheme}
+        onThemeChange={(th) => setDashboardTheme(th)}
         trialDaysRemaining={summary.trialDaysRemaining}
       />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-8">
-        {/* Top Navbar Header Dashboard */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-stone-200 px-4 sm:px-8 py-3.5 sticky top-0 z-20 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-xl font-bold font-serif text-stone-900 tracking-tight">
-                {activeTab === 'overview' && 'Ringkasan Eksekutif & Finansial'}
-                {activeTab === 'budget' && 'Master Lembar Anggaran 14 Kategori'}
-                {activeTab === 'kitchen' && 'Kalkulator Belanja Dapur Mandiri'}
-                {activeTab === 'vendors' && 'Decision Matrix Vendor Pernikahan'}
-                {activeTab === 'gold' && 'Live Gold Price Tracker (Antam)'}
-              </h1>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 font-semibold uppercase">
-                Aktif
-              </span>
-            </div>
-            <p className="text-xs text-stone-500 hidden sm:block mt-0.5">
-              Kelola pernikahan Anda secara terukur, objektif, dan hemat biaya bersama NikahPlan Studio.
-            </p>
+      <div className="flex-1 flex flex-col min-w-0 pb-20 lg:pb-12">
+        {/* Sub-header Context Bar */}
+        <div className="border-b border-stone-200/70 bg-white/50 backdrop-blur-xs px-4 sm:px-8 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <h1 className="text-sm sm:text-base font-bold font-serif text-stone-900 tracking-tight">
+              {activeTab === 'overview' && 'Ringkasan Eksekutif & Finansial'}
+              {activeTab === 'budget' && 'Master Lembar Anggaran 14 Kategori'}
+              {activeTab === 'kitchen' && 'Kalkulator Belanja Dapur Mandiri'}
+              {activeTab === 'vendors' && 'Decision Matrix Vendor Pernikahan'}
+              {activeTab === 'gold' && 'Live Gold Price Tracker (Antam)'}
+              {activeTab === 'invite' && 'Studio Undangan Digital & Swarm Engine'}
+            </h1>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 border border-teal-200 font-semibold uppercase">
+              Aktif
+            </span>
           </div>
 
           <div className="flex items-center gap-2.5">
@@ -191,7 +193,7 @@ export default function PlannerDashboardPage() {
               <button
                 type="button"
                 onClick={() => handleOpenAddModal()}
-                className="min-h-[38px] inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
+                className="min-h-[36px] inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-teal-800 hover:bg-teal-900 text-white text-xs font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>+ Item / Kategori</span>
@@ -204,11 +206,11 @@ export default function PlannerDashboardPage() {
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-stone-800 transition-colors cursor-pointer"
             >
-              <span className="hidden sm:inline">Pratinjau Tamu</span>
+              <span className="hidden sm:inline">Buka Undangan Tamu</span>
               <ExternalLink className="w-3.5 h-3.5 text-stone-500" />
             </a>
           </div>
-        </header>
+        </div>
 
         {/* Content Container */}
         <main className="p-4 sm:p-8 max-w-7xl w-full mx-auto space-y-6">
@@ -219,36 +221,42 @@ export default function PlannerDashboardPage() {
             planName="NikahPlan Pro Trial (30 Hari)"
           />
 
-          {/* 4 Top KPI Summary Cards */}
-          <section aria-label="Ringkasan Finansial Utama" className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <KpiCard
-              title="Total Estimasi Anggaran"
-              amount={totalEstimated}
-              subtitle="Plafon 14 Kategori"
-              accent="default"
-            />
-            <KpiCard
-              title="Dapur 600 Porsi"
-              amount={summary.totalKitchenCost}
-              subtitle={`${formatRupiah(summary.kitchenCostPerGuest)} / tamu (300 Tamu)`}
-              accent="teal"
-            />
-            <KpiCard
-              title="Vendor Deal Terikat"
-              amount={totalDealAmount}
-              subtitle={`${dealVendors.length} dari ${vendors.length} Vendor Terpilih`}
-              accent="amber"
-            />
-            <KpiCard
-              title="Target Tabungan Sisa"
-              amount={summary.savingsDeficitAmount}
-              subtitle={`Estimasi ${summary.estimatedSavingMonths} bulan menabung`}
-              accent="rose"
-            />
-          </section>
+          {/* 4 Top KPI Summary Cards (Tampil pada modul finansial & overview) */}
+          {activeTab !== 'invite' && (
+            <section aria-label="Ringkasan Finansial Utama" className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <KpiCard
+                title="Total Estimasi Anggaran"
+                amount={totalEstimated}
+                subtitle="Plafon 14 Kategori"
+                accent="default"
+              />
+              <KpiCard
+                title="Dapur 600 Porsi"
+                amount={summary.totalKitchenCost}
+                subtitle={`${formatRupiah(summary.kitchenCostPerGuest)} / tamu (300 Tamu)`}
+                accent="teal"
+              />
+              <KpiCard
+                title="Vendor Deal Terikat"
+                amount={totalDealAmount}
+                subtitle={`${dealVendors.length} dari ${vendors.length} Vendor Terpilih`}
+                accent="amber"
+              />
+              <KpiCard
+                title="Target Tabungan Sisa"
+                amount={summary.savingsDeficitAmount}
+                subtitle={`Estimasi ${summary.estimatedSavingMonths} bulan menabung`}
+                accent="rose"
+              />
+            </section>
+          )}
 
           {/* Tab Content Display */}
           <section aria-label="Konten Modul Terpilih">
+            {/* TAB UNDANGAN DIGITAL STUDIO */}
+            {activeTab === 'invite' && <InvitationStudio />}
+
+            {/* TAB MASTER ANGGARAN */}
             {activeTab === 'budget' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -284,6 +292,7 @@ export default function PlannerDashboardPage() {
               </div>
             )}
 
+            {/* TAB RINGKASAN EKSEKUTIF */}
             {activeTab === 'overview' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -317,6 +326,7 @@ export default function PlannerDashboardPage() {
               </div>
             )}
 
+            {/* TAB KALKULATOR DAPUR MANDIRI */}
             {activeTab === 'kitchen' && (
               <KitchenCalculator
                 initialGuestCount={300}
@@ -326,6 +336,7 @@ export default function PlannerDashboardPage() {
               />
             )}
 
+            {/* TAB DECISION MATRIX VENDOR */}
             {activeTab === 'vendors' && (
               <VendorMatrix
                 vendors={vendors}
@@ -334,6 +345,7 @@ export default function PlannerDashboardPage() {
               />
             )}
 
+            {/* TAB LIVE GOLD TRACKER */}
             {activeTab === 'gold' && (
               <div className="max-w-xl mx-auto">
                 <GoldTrackerWidget
@@ -367,7 +379,7 @@ export default function PlannerDashboardPage() {
           activeTab={activeTab === 'overview' ? 'budget' : (activeTab as any)}
           onTabChange={(tab) => {
             if (tab === 'invitation') {
-              window.open('http://localhost:3001/v/arif-windi', '_blank');
+              setActiveTab('invite');
             } else {
               setActiveTab(tab as any);
             }

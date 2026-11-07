@@ -7,7 +7,7 @@ import type {
   AutonomousWorkerState,
 } from './types';
 import { scanDOMForRebuild } from './dom-scanner';
-import { FloralConfettiShower } from './floral-confetti';
+import { FloralConfettiShower, type FloralTheme } from './floral-confetti';
 
 export const DEFAULT_COLLABORATORS_4: SwarmCollaborator[] = [
   {
@@ -84,6 +84,8 @@ export interface SwarmRebuildProps {
   collaborators?: SwarmCollaborator[];
   enabled?: boolean;
   onComplete?: () => void;
+  speedMultiplier?: number;
+  confettiTheme?: FloralTheme;
 }
 
 export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
@@ -91,6 +93,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
   collaborators = DEFAULT_COLLABORATORS_4,
   enabled = true,
   onComplete,
+  speedMultiplier = 1,
+  confettiTheme = 'botanical-sage',
 }) => {
   const [workers, setWorkers] = React.useState<Record<string, AutonomousWorkerState>>({
     arif: initialWorker('arif', 30, 20),
@@ -191,8 +195,11 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         const dy = targetY - currentPos.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
+        const currentSpeed = Math.max(0.3, Math.min(4.0, speedMultiplier));
+        const effectiveSpeed = scrollBoostRef.current * currentSpeed;
+
         // 1. TRAVEL PHASE: Natural human easing travel (relaxed, deliberate pacing)
-        const travelMs = Math.max(160, Math.min(350, 130 + dist * 0.24)) / scrollBoostRef.current;
+        const travelMs = Math.max(160, Math.min(350, 130 + dist * 0.24)) / effectiveSpeed;
 
         updateWorker(workerId, {
           node,
@@ -214,7 +221,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         updateCameraScroll(targetY);
 
         // 2. DRAGGING PHASE: Pull size rectangle with live dimension pill
-        const dragMs = Math.max(260, Math.min(420, 210 + node.rect.w * 0.32)) / scrollBoostRef.current;
+        const dragMs = Math.max(260, Math.min(420, 210 + node.rect.w * 0.32)) / effectiveSpeed;
         updateWorker(workerId, {
           phase: 'dragging',
           isClicking: true,
@@ -241,7 +248,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         };
 
         // 3. SETTLE & CLICK: Tool pill badge activates
-        const clickMs = 95 / scrollBoostRef.current;
+        const clickMs = 95 / effectiveSpeed;
         updateWorker(workerId, {
           phase: 'clicking',
           dragProgress: 1,
@@ -262,7 +269,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         const isTextNode = ['heading', 'text', 'badge', 'button'].includes(node.type) && Boolean(node.text);
         if (isTextNode && node.text) {
           const text = node.text;
-          const typeMs = Math.max(260, Math.min(540, 200 + text.length * 12)) / scrollBoostRef.current;
+          const typeMs = Math.max(260, Math.min(540, 200 + text.length * 12)) / effectiveSpeed;
           const charsCount = text.length;
           const stepCount = Math.max(4, Math.min(16, charsCount));
           const stepMs = typeMs / stepCount;
@@ -279,7 +286,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
             });
           }
         } else if (node.type === 'image') {
-          const imgMs = 320 / scrollBoostRef.current;
+          const imgMs = 320 / effectiveSpeed;
           await sleep(imgMs * 0.5);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 0.6 });
@@ -287,7 +294,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 1 });
         } else if (node.type === 'icon') {
-          const iconMs = 240 / scrollBoostRef.current;
+          const iconMs = 240 / effectiveSpeed;
           await sleep(iconMs * 0.5);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 0.7 });
@@ -296,7 +303,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           updateWorker(workerId, { craftProgress: 1 });
         } else {
           // Card / Container frame
-          const cardMs = 240 / scrollBoostRef.current;
+          const cardMs = 240 / effectiveSpeed;
           await sleep(cardMs);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 1 });
@@ -304,7 +311,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         if (!isMountedRef.current) break;
 
         // 5. INSPECTING: Emerald validation border ✓
-        const inspectMs = 130 / scrollBoostRef.current;
+        const inspectMs = 130 / effectiveSpeed;
         updateWorker(workerId, {
           phase: 'inspecting',
         });
@@ -336,7 +343,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         });
 
         // Micro-pause before immediately pulling next task from queue
-        await sleep(60 / scrollBoostRef.current);
+        await sleep(60 / effectiveSpeed);
       }
 
       // Decrement active workers when queue is empty
@@ -391,7 +398,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         }, 1100);
       }
     },
-    [onComplete, targetRef, updateCameraScroll, updateWorker]
+    [onComplete, speedMultiplier, targetRef, updateCameraScroll, updateWorker]
   );
 
   // Initial Staggered Launch of the 4 Workers
@@ -519,7 +526,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
   return (
     <>
       {/* 1. Celebratory Floral Confetti Shower */}
-      <FloralConfettiShower active={showFloralConfetti} />
+      <FloralConfettiShower active={showFloralConfetti} theme={confettiTheme} />
 
       {/* 2. Pristine Animation Overlay: 4 Independent Autonomous Workers */}
       {!isFinished && (
