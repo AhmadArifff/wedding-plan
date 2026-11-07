@@ -87,9 +87,10 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
     if (!el) return;
 
     const checkRevealed = () => {
-      // Periksa apakah kartu-kartu foto memories sudah menerima kelas swarm-revealed
-      const revealedNodes = el.querySelectorAll('.swarm-revealed');
-      if (revealedNodes.length >= 2) {
+      // Periksa apakah seluruh 4 kartu foto memories primer sudah selesai di-build oleh Swarm
+      const primaryCards = el.querySelectorAll('[data-memory-card="primary"]');
+      const revealedCards = el.querySelectorAll('[data-memory-card="primary"].swarm-revealed');
+      if (primaryCards.length > 0 && revealedCards.length >= primaryCards.length) {
         setIsAnimationRunning(true);
       }
     };
@@ -164,9 +165,11 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
             >
               {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
               <div className="flex flex-col gap-3">
-                {COLUMN_LEFT_PHOTOS.map((photo) => (
+                {COLUMN_LEFT_PHOTOS.map((photo, idx) => (
                   <div
                     key={photo.id}
+                    data-memory-card={idx < 2 ? 'primary' : undefined}
+                    data-swarm-ignore={idx >= 2 ? 'true' : undefined}
                     onClick={() => setSelectedPhoto(photo)}
                     className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
                   >
@@ -235,9 +238,11 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
             >
               {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
               <div className="flex flex-col gap-3">
-                {COLUMN_RIGHT_PHOTOS.map((photo) => (
+                {COLUMN_RIGHT_PHOTOS.map((photo, idx) => (
                   <div
                     key={photo.id}
+                    data-memory-card={idx < 2 ? 'primary' : undefined}
+                    data-swarm-ignore={idx >= 2 ? 'true' : undefined}
                     onClick={() => setSelectedPhoto(photo)}
                     className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
                   >

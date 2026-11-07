@@ -24,6 +24,35 @@ export function scanDOMForRebuild(
     };
   };
 
+  const isClippedByAncestorOverflow = (el: Element): boolean => {
+    const elRect = el.getBoundingClientRect();
+    let current: Element | null = el.parentElement;
+
+    while (current && current !== rootEl) {
+      if (current instanceof HTMLElement) {
+        const win = current.ownerDocument.defaultView || window;
+        const style = win.getComputedStyle(current);
+        const overflowY = style.overflowY;
+        const overflowX = style.overflowX;
+        const isHiddenY = overflowY === 'hidden' || overflowY === 'clip';
+        const isHiddenX = overflowX === 'hidden' || overflowX === 'clip';
+
+        if (isHiddenY || isHiddenX) {
+          const parentRect = current.getBoundingClientRect();
+          // Buffer of 4px to avoid subpixel rounding false positives
+          if (isHiddenY && (elRect.top >= parentRect.bottom - 4 || elRect.bottom <= parentRect.top + 4)) {
+            return true;
+          }
+          if (isHiddenX && (elRect.left >= parentRect.right - 4 || elRect.right <= parentRect.left + 4)) {
+            return true;
+          }
+        }
+      }
+      current = current.parentElement;
+    }
+    return false;
+  };
+
   const isElementVisible = (el: Element): boolean => {
     // We do NOT check opacity or visibility here so elements masked with opacity: 0
     // on initial render are still accurately measured via getBoundingClientRect!
@@ -31,7 +60,13 @@ export function scanDOMForRebuild(
       return false;
     }
     const r = el.getBoundingClientRect();
-    return r.width >= minWidth && r.height >= minHeight;
+    if (r.width < minWidth || r.height < minHeight) {
+      return false;
+    }
+    if (isClippedByAncestorOverflow(el)) {
+      return false;
+    }
+    return true;
   };
 
   const determineType = (
