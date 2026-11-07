@@ -46,6 +46,10 @@ import { BudgetItemModal } from '../features/budget/budget-item-modal';
 import { KitchenCalculator } from '../features/kitchen/kitchen-calculator';
 import { VendorMatrix } from '../features/vendor/vendor-matrix';
 import { InvitationStudio } from '../features/invitation/invitation-studio';
+import { ThemeClassicView } from '../features/themes/theme-classic-view';
+import { ThemeRoyalView } from '../features/themes/theme-royal-view';
+import { ThemeKoreanView } from '../features/themes/theme-korean-view';
+import { ThemeMidnightView } from '../features/themes/theme-midnight-view';
 
 export default function PlannerDashboardPage() {
   const [activeTab, setActiveTab] = React.useState<DashboardTab>('overview');
@@ -361,220 +365,46 @@ export default function PlannerDashboardPage() {
 
           {/* MAIN CONTENT BENTO AREA BERDASARKAN TAB AKTIF */}
           <main className="space-y-6">
-            {/* 1. TAB RINGKASAN EKSEKUTIF (OVERVIEW) : BENTO SPLIT MIRIP GAMBAR MURMURA */}
+            {/* 1. TAB RINGKASAN EKSEKUTIF (OVERVIEW) : DEDICATED SLICING PER TEMA */}
             {activeTab === 'overview' && (
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                {/* Kolom Kiri Bento (7 Kolom Desktop: Featured Action + Rekap Anggaran) */}
-                <div className="lg:col-span-7 space-y-6">
-                  {/* Featured Card dengan Foto/Preview + Live Status (Mirip Featured Card 19 h 34 min di Referensi) */}
-                  <div
-                    className="relative overflow-hidden rounded-3xl p-6 border shadow-md text-white space-y-4"
-                    style={{
-                      background: 'linear-gradient(135deg, #1C1917 0%, #292524 60%, #44403C 100%)',
-                      borderColor: currentTheme.cardBorder,
-                    }}
-                  >
-                    {/* Decorative Background Image / Graphic */}
-                    <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-25 pointer-events-none">
-                      <img
-                        src="/generated/theme-botanical-sage.svg"
-                        alt="Aksen Pernikahan"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    <div className="relative z-10 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-mono uppercase tracking-widest text-amber-300 font-semibold flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>Status Rencana Utama</span>
-                        </span>
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-400 text-stone-950 font-mono">
-                          SIAP MENUJU HARI H
-                        </span>
-                      </div>
-
-                      <h2
-                        className="text-2xl sm:text-3xl font-bold tracking-tight"
-                        style={{ fontFamily: currentTheme.fontHeadingInline }}
-                      >
-                        Resepsi Pendopo Dalem Ngabean
-                      </h2>
-
-                      <p className="text-xs text-stone-300 max-w-md leading-relaxed">
-                        Plafon anggaran {formatRupiah(totalEstimated)} untuk 300 tamu (600 porsi dapur mandiri). Seluruh pos pengeluaran mahar emas, katering, dan busana terikat dalam status aman terkendali.
-                      </p>
-
-                      <div className="pt-2 flex flex-wrap items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setActiveTab('budget')}
-                          className="px-4 py-2 rounded-xl bg-white text-stone-900 text-xs font-bold shadow-md hover:bg-stone-100 transition-all cursor-pointer flex items-center gap-1.5"
-                        >
-                          <span>Buka Master Anggaran</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => setActiveTab('invite')}
-                          className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold transition-all cursor-pointer flex items-center gap-1.5"
-                        >
-                          <Mail className="w-3.5 h-3.5 text-amber-300" />
-                          <span>Pratinjau Undangan</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Tabel Anggaran Ringkas */}
-                  <div
-                    className="p-5 rounded-3xl border shadow-xs"
-                    style={{
-                      backgroundColor: currentTheme.cardBg,
-                      borderColor: currentTheme.cardBorder,
-                    }}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <h3 className="font-bold text-base" style={{ color: currentTheme.textHeading }}>
-                          Pos Anggaran Prioritas
-                        </h3>
-                        <p className="text-xs" style={{ color: currentTheme.textMuted }}>
-                          14 Kategori pengeluaran pernikahan terencana
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('budget')}
-                        className="text-xs font-semibold text-teal-800 hover:underline flex items-center gap-1 cursor-pointer"
-                      >
-                        <span>Lihat Semua</span>
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    <div className="space-y-2.5">
-                      {budgetItems.slice(0, 5).map((item) => (
-                        <div
-                          key={item.id}
-                          className="p-3 rounded-2xl border flex items-center justify-between gap-3 hover:bg-stone-50/70 transition-colors"
-                          style={{ borderColor: currentTheme.cardBorder }}
-                        >
-                          <div className="min-w-0">
-                            <div className="text-xs font-bold truncate" style={{ color: currentTheme.textHeading }}>
-                              {item.itemName}
-                            </div>
-                            <div className="text-[10px] font-mono text-stone-500">
-                              {item.quantity} {item.unitLabel} · {item.priceSource}
-                            </div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <div className="text-xs font-mono font-bold" style={{ color: currentTheme.textHeading }}>
-                              {formatRupiah(item.totalPrice)}
-                            </div>
-                            <span className="text-[9px] px-1.5 py-0.2 rounded-full font-semibold bg-emerald-100 text-emerald-800">
-                              Terkunci
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Kolom Kanan Bento (5 Kolom Desktop: Needs You / Keputusan & Gold Tracker) */}
-                <div className="lg:col-span-5 space-y-6">
-                  {/* Live Gold Tracker Widget */}
-                  <GoldTrackerWidget
-                    marketPricePerGram={DUMMY_GOLD_PRICE.pricePerGram}
-                    userUnitPrice={1350000}
-                    goldWeightGrams={10}
-                    lastUpdatedDate={DUMMY_GOLD_PRICE.effectiveDate}
-                    sourceNote={DUMMY_GOLD_PRICE.sourceNote}
-                    onSyncPrice={handleSyncGold}
+              <>
+                {dashboardTheme === 'classic-sacred' && (
+                  <ThemeClassicView
+                    themeConfig={currentTheme}
+                    budgetItems={budgetItems}
+                    totalEstimated={totalEstimated}
+                    onNavigateTab={(t) => setActiveTab(t)}
+                    onSyncGold={handleSyncGold}
                   />
-
-                  {/* Panel "Butuh Keputusan Anda" (Sesuai "Needs You" pada Referensi Murmura) */}
-                  <div
-                    className="p-5 rounded-3xl border shadow-xs space-y-4"
-                    style={{
-                      backgroundColor: currentTheme.cardBg,
-                      borderColor: currentTheme.cardBorder,
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-xl bg-amber-100 text-amber-900 font-bold flex items-center justify-center text-xs">
-                          !
-                        </div>
-                        <h3 className="font-bold text-sm" style={{ color: currentTheme.textHeading }}>
-                          Keputusan Menanti Anda
-                        </h3>
-                      </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-bold bg-amber-100 text-amber-900">
-                        2 Vendor
-                      </span>
-                    </div>
-
-                    <div className="space-y-3">
-                      {/* Kartu Vendor 1: Katering */}
-                      <div className="p-3.5 rounded-2xl bg-stone-50/80 border border-stone-200/80 space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-stone-900">Katering Barokah Jogja</span>
-                          <span className="text-xs font-mono font-bold text-stone-900">Rp 18.500.000</span>
-                        </div>
-                        <p className="text-[11px] text-stone-600 leading-tight">
-                          Paket buffet 600 porsi siap diikat deal. Bandingkan dengan kalkulator dapur mandiri untuk hemat 53%.
-                        </p>
-                        <div className="flex items-center gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setActiveTab('vendors')}
-                            className="px-3 py-1.5 rounded-xl bg-teal-800 text-white text-[11px] font-bold shadow-2xs hover:bg-teal-900 transition-colors cursor-pointer"
-                          >
-                            Setujui Deal
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setActiveTab('kitchen')}
-                            className="px-3 py-1.5 rounded-xl bg-white border border-stone-200 text-stone-700 text-[11px] font-semibold hover:bg-stone-50 transition-colors cursor-pointer"
-                          >
-                            Uji Dapur Mandiri
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Kartu Vendor 2: Fotografi */}
-                      <div className="p-3.5 rounded-2xl bg-stone-50/80 border border-stone-200/80 space-y-2.5">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-bold text-stone-900">Lensa Kenangan Wedding</span>
-                          <span className="text-xs font-mono font-bold text-stone-900">Rp 5.500.000</span>
-                        </div>
-                        <p className="text-[11px] text-stone-600 leading-tight">
-                          Mencakup foto akad, resepsi, album eksklusif 20 halaman, dan teaser video 60 detik.
-                        </p>
-                        <div className="flex items-center gap-2 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => setActiveTab('vendors')}
-                            className="px-3 py-1.5 rounded-xl bg-teal-800 text-white text-[11px] font-bold shadow-2xs hover:bg-teal-900 transition-colors cursor-pointer"
-                          >
-                            Setujui Deal
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setActiveTab('vendors')}
-                            className="px-3 py-1.5 rounded-xl bg-white border border-stone-200 text-stone-700 text-[11px] font-semibold hover:bg-stone-50 transition-colors cursor-pointer"
-                          >
-                            Lihat Opsi Lain
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                )}
+                {dashboardTheme === 'royal-editorial' && (
+                  <ThemeRoyalView
+                    themeConfig={currentTheme}
+                    budgetItems={budgetItems}
+                    totalEstimated={totalEstimated}
+                    onNavigateTab={(t) => setActiveTab(t)}
+                    onSyncGold={handleSyncGold}
+                  />
+                )}
+                {dashboardTheme === 'korean-atelier' && (
+                  <ThemeKoreanView
+                    themeConfig={currentTheme}
+                    budgetItems={budgetItems}
+                    totalEstimated={totalEstimated}
+                    onNavigateTab={(t) => setActiveTab(t)}
+                    onSyncGold={handleSyncGold}
+                  />
+                )}
+                {dashboardTheme === 'midnight-celestial' && (
+                  <ThemeMidnightView
+                    themeConfig={currentTheme}
+                    budgetItems={budgetItems}
+                    totalEstimated={totalEstimated}
+                    onNavigateTab={(t) => setActiveTab(t)}
+                    onSyncGold={handleSyncGold}
+                  />
+                )}
+              </>
             )}
 
             {/* 2. TAB MASTER ANGGARAN (BUDGET) */}
