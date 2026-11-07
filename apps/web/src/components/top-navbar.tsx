@@ -5,6 +5,8 @@ import {
   Sparkles,
   ExternalLink,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Menu,
   X,
   Crown,
@@ -36,6 +38,10 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const themeDropdownRef = React.useRef<HTMLDivElement>(null);
+  const navRef = React.useRef<HTMLElement>(null);
+
+  const [canScrollLeft, setCanScrollLeft] = React.useState(false);
+  const [canScrollRight, setCanScrollRight] = React.useState(false);
 
   const themeConfig = DASHBOARD_THEMES[currentTheme];
 
@@ -52,6 +58,38 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
     { id: 'gold', label: 'Live Gold', shortLabel: 'Emas', badge: 'Sync' },
     { id: 'invite', label: 'Undangan Digital', shortLabel: 'Undangan', badge: 'Live' },
   ];
+
+  const checkScroll = React.useCallback(() => {
+    if (navRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = navRef.current;
+      setCanScrollLeft(scrollLeft > 6);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    checkScroll();
+    window.addEventListener('resize', checkScroll);
+    return () => window.removeEventListener('resize', checkScroll);
+  }, [checkScroll]);
+
+  // Support mouse wheel horizontal scrolling
+  const handleNavWheel = (e: React.WheelEvent<HTMLElement>) => {
+    if (e.deltaY !== 0 && navRef.current) {
+      navRef.current.scrollLeft += e.deltaY;
+      checkScroll();
+    }
+  };
+
+  const scrollNav = (direction: 'left' | 'right') => {
+    if (navRef.current) {
+      navRef.current.scrollBy({
+        left: direction === 'left' ? -130 : 130,
+        behavior: 'smooth',
+      });
+      setTimeout(checkScroll, 220);
+    }
+  };
 
   // Close dropdown on outside click
   React.useEffect(() => {
@@ -78,7 +116,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
   return (
     <header className="w-full pb-2">
-      <div className="flex items-center justify-between gap-2 lg:gap-3 w-full min-w-0">
+      <div className="flex items-center justify-between gap-2 sm:gap-3 w-full min-w-0">
         {/* SISI KIRI: Brand Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
           {/* Tombol Hamburger Mobile */}
@@ -124,44 +162,76 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           </div>
         </div>
 
-        {/* SISI TENGAH: Menu Navigasi Pills Horizontal (Presisi Murmura) */}
-        <nav
-          className={`hidden md:flex items-center gap-1 p-1 rounded-full border backdrop-blur-md shadow-2xs min-w-0 max-w-full overflow-x-auto no-scrollbar mx-auto ${navContainerThemeClass}`}
-          aria-label="Navigasi Menu Utama"
-        >
-          {navItems.map((item) => {
-            const isActive = activeTab === item.id;
+        {/* SISI TENGAH: Menu Navigasi Pills Horizontal dengan Dukungan Scroll Samping & Arrow Buttons */}
+        <div className="hidden md:flex items-center relative min-w-0 max-w-full mx-auto px-1">
+          {/* Tombol Scroll Kiri */}
+          {canScrollLeft && (
+            <button
+              type="button"
+              onClick={() => scrollNav('left')}
+              className="absolute -left-2 z-20 w-6 h-6 rounded-full bg-white/95 border border-stone-200/90 shadow-md flex items-center justify-center text-stone-700 hover:bg-stone-50 cursor-pointer transition-transform hover:scale-105 active:scale-95"
+              title="Geser menu ke kiri"
+              aria-label="Geser navigasi ke kiri"
+            >
+              <ChevronLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+            </button>
+          )}
 
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onTabChange(item.id)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
-                  isActive
-                    ? themeConfig.activePillBg
-                    : `${themeConfig.inactivePillText} ${themeConfig.inactivePillHover}`
-                }`}
-              >
-                <span className="hidden xl:inline">{item.label}</span>
-                <span className="xl:hidden">{item.shortLabel}</span>
-                {item.badge && (
-                  <span
-                    className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono font-bold leading-none ${
-                      isActive
-                        ? 'bg-amber-400 text-stone-950'
-                        : currentTheme === 'midnight-celestial'
-                        ? 'bg-stone-800 text-amber-300/90'
-                        : 'bg-stone-200 text-stone-600'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+          <nav
+            ref={navRef}
+            onScroll={checkScroll}
+            onWheel={handleNavWheel}
+            className={`flex items-center gap-1 p-1 rounded-full border backdrop-blur-md shadow-2xs min-w-0 max-w-full overflow-x-auto no-scrollbar scroll-smooth ${navContainerThemeClass}`}
+            aria-label="Navigasi Menu Utama"
+          >
+            {navItems.map((item) => {
+              const isActive = activeTab === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onTabChange(item.id)}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                    isActive
+                      ? themeConfig.activePillBg
+                      : `${themeConfig.inactivePillText} ${themeConfig.inactivePillHover}`
+                  }`}
+                >
+                  {/* Gunakan short label di bawah layar 2xl (1536px) agar muat sempurna tanpa overflow */}
+                  <span className="hidden 2xl:inline">{item.label}</span>
+                  <span className="2xl:hidden">{item.shortLabel}</span>
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono font-bold leading-none ${
+                        isActive
+                          ? 'bg-amber-400 text-stone-950'
+                          : currentTheme === 'midnight-celestial'
+                          ? 'bg-stone-800 text-amber-300/90'
+                          : 'bg-stone-200 text-stone-600'
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Tombol Scroll Kanan */}
+          {canScrollRight && (
+            <button
+              type="button"
+              onClick={() => scrollNav('right')}
+              className="absolute -right-2 z-20 w-6 h-6 rounded-full bg-white/95 border border-stone-200/90 shadow-md flex items-center justify-center text-stone-700 hover:bg-stone-50 cursor-pointer transition-transform hover:scale-105 active:scale-95"
+              title="Geser menu ke kanan"
+              aria-label="Geser navigasi ke kanan"
+            >
+              <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            </button>
+          )}
+        </div>
 
         {/* SISI KANAN: Theme Pill Selector + Avatar + Pratinjau */}
         <div className="flex items-center gap-2 shrink-0">
