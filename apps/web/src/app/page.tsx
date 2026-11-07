@@ -171,14 +171,14 @@ export default function PlannerDashboardPage() {
 
   return (
     <div
-      className="min-h-screen p-2 sm:p-4 lg:p-6 transition-colors duration-500 flex flex-col justify-start"
+      className="min-h-screen p-2 sm:p-4 lg:p-6 transition-colors duration-500 flex flex-col justify-start overflow-x-hidden w-full max-w-full"
       style={{
         backgroundColor: currentTheme.pageBg,
         backgroundImage: currentTheme.pageBackgroundCss,
       }}
     >
       {/* Outer Shell: Left Floating Dock + Main Application Bento Canvas */}
-      <div className="max-w-[1440px] w-full mx-auto flex gap-4 lg:gap-6 items-start">
+      <div className="max-w-[1440px] w-full mx-auto flex gap-3 sm:gap-4 lg:gap-6 items-start min-w-0">
         {/* 1. Left Floating Capsule Dock Bar (Sesuai Referensi Gambar Murmura) */}
         <FloatingDock
           activeTab={activeTab}
@@ -191,7 +191,7 @@ export default function PlannerDashboardPage() {
 
         {/* 2. Main Bento Application Canvas Container */}
         <div
-          className="flex-1 min-w-0 rounded-[32px] sm:rounded-[36px] border p-4 sm:p-6 lg:p-8 transition-all duration-300 shadow-xl"
+          className="flex-1 min-w-0 w-full rounded-[32px] sm:rounded-[36px] border p-4 sm:p-6 lg:p-8 transition-all duration-300 shadow-xl overflow-hidden"
           style={{
             backgroundColor: currentTheme.containerBg,
             borderColor: currentTheme.containerBorder,

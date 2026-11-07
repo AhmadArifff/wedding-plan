@@ -2,26 +2,17 @@
 
 import * as React from 'react';
 import {
-  LayoutDashboard,
-  DollarSign,
-  Utensils,
-  Store,
-  Coins,
-  Mail,
   Sparkles,
-  Palette,
   ExternalLink,
   ChevronDown,
   Menu,
   X,
   Crown,
   Check,
-  Plus,
 } from 'lucide-react';
 import {
   DASHBOARD_THEMES,
   type DashboardThemeId,
-  type DashboardThemeConfig,
 } from '../config/themes';
 import type { DashboardTab } from './floating-dock';
 
@@ -51,15 +42,15 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   const navItems: {
     id: DashboardTab;
     label: string;
-    icon: React.FC<{ className?: string }>;
+    shortLabel: string;
     badge?: string;
   }[] = [
-    { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-    { id: 'budget', label: 'Master Anggaran', icon: DollarSign, badge: '14' },
-    { id: 'kitchen', label: 'Kalkulator Dapur', icon: Utensils, badge: '7' },
-    { id: 'vendors', label: 'Decision Matrix', icon: Store, badge: '18' },
-    { id: 'gold', label: 'Live Gold', icon: Coins, badge: 'Sync' },
-    { id: 'invite', label: 'Undangan Digital', icon: Mail, badge: 'Live' },
+    { id: 'overview', label: 'Overview', shortLabel: 'Overview' },
+    { id: 'budget', label: 'Master Anggaran', shortLabel: 'Anggaran', badge: '14' },
+    { id: 'kitchen', label: 'Kalkulator Dapur', shortLabel: 'Dapur', badge: '7' },
+    { id: 'vendors', label: 'Decision Matrix', shortLabel: 'Vendor', badge: '18' },
+    { id: 'gold', label: 'Live Gold', shortLabel: 'Emas', badge: 'Sync' },
+    { id: 'invite', label: 'Undangan Digital', shortLabel: 'Undangan', badge: 'Live' },
   ];
 
   // Close dropdown on outside click
@@ -76,62 +67,69 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const navContainerThemeClass =
+    currentTheme === 'midnight-celestial'
+      ? 'bg-[#030712]/90 border-amber-500/30 shadow-md shadow-black/40'
+      : currentTheme === 'royal-editorial'
+      ? 'bg-[#2A171D]/10 border-[#E8D399]/60'
+      : currentTheme === 'korean-atelier'
+      ? 'bg-[#FFF0F3]/80 border-[#F7D1D9]'
+      : 'bg-stone-100/90 border-stone-200/80';
+
   return (
     <header className="w-full pb-2">
-      <div className="flex items-center justify-between gap-3 flex-wrap lg:flex-nowrap">
+      <div className="flex items-center justify-between gap-2 lg:gap-3 w-full min-w-0">
         {/* SISI KIRI: Brand Logo */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2.5 shrink-0">
           {/* Tombol Hamburger Mobile */}
           <button
             type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2 rounded-2xl bg-white/70 border border-stone-200/80 text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+            className="md:hidden p-2 rounded-2xl border text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer"
+            style={{
+              borderColor: themeConfig.cardBorder,
+              backgroundColor: currentTheme === 'midnight-celestial' ? '#182234' : 'rgba(255, 255, 255, 0.9)',
+              color: themeConfig.textHeading,
+            }}
             aria-label="Buka Menu Navigasi"
           >
             {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
 
           {/* Logo NikahPlan Studio */}
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             <div
-              className="w-10 h-10 rounded-2xl shadow-xs border flex items-center justify-center transition-colors"
+              className="w-9 h-9 rounded-2xl shadow-xs border flex items-center justify-center transition-colors shrink-0"
               style={{
                 backgroundColor: themeConfig.dockBg.includes('bg-') ? undefined : themeConfig.primaryAccent,
                 borderColor: themeConfig.cardBorder,
               }}
             >
-              <Sparkles className="w-5 h-5 text-amber-300" />
+              <Sparkles className="w-4 h-4 text-amber-300" />
             </div>
-            <div>
-              <div
-                className="font-bold text-base leading-tight tracking-tight flex items-center gap-1.5"
+            <div className="flex items-center gap-1.5">
+              <span
+                className="font-bold text-sm sm:text-base leading-tight tracking-tight"
                 style={{
                   fontFamily: themeConfig.fontHeadingInline,
                   color: themeConfig.textHeading,
                 }}
               >
-                <span>NikahPlan</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold bg-amber-400 text-stone-950">
-                  STUDIO
-                </span>
-              </div>
-              <div
-                className="text-[10px] uppercase tracking-wider font-semibold"
-                style={{ color: themeConfig.textMuted }}
-              >
-                {themeConfig.tagline}
-              </div>
+                NikahPlan
+              </span>
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full font-mono font-bold bg-amber-400 text-stone-950">
+                STUDIO
+              </span>
             </div>
           </div>
         </div>
 
-        {/* SISI TENGAH: Menu Navigasi Pills Horizontal (Seperti Murmura di Gambar Referensi) */}
+        {/* SISI TENGAH: Menu Navigasi Pills Horizontal (Presisi Murmura) */}
         <nav
-          className="hidden md:flex items-center gap-1 p-1 rounded-full bg-stone-100/90 border border-stone-200/80 backdrop-blur-md shadow-2xs mx-auto"
+          className={`hidden md:flex items-center gap-1 p-1 rounded-full border backdrop-blur-md shadow-2xs min-w-0 max-w-full overflow-x-auto no-scrollbar mx-auto ${navContainerThemeClass}`}
           aria-label="Navigasi Menu Utama"
         >
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = activeTab === item.id;
 
             return (
@@ -139,19 +137,21 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                 key={item.id}
                 type="button"
                 onClick={() => onTabChange(item.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                   isActive
                     ? themeConfig.activePillBg
                     : `${themeConfig.inactivePillText} ${themeConfig.inactivePillHover}`
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
-                <span>{item.label}</span>
+                <span className="hidden xl:inline">{item.label}</span>
+                <span className="xl:hidden">{item.shortLabel}</span>
                 {item.badge && (
                   <span
-                    className={`text-[10px] px-2 py-0.2 rounded-full font-mono font-bold ${
+                    className={`text-[9px] px-1.5 py-0.2 rounded-full font-mono font-bold leading-none ${
                       isActive
                         ? 'bg-amber-400 text-stone-950'
+                        : currentTheme === 'midnight-celestial'
+                        ? 'bg-stone-800 text-amber-300/90'
                         : 'bg-stone-200 text-stone-600'
                     }`}
                   >
@@ -163,29 +163,33 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           })}
         </nav>
 
-        {/* SISI KANAN: Theme Pill Selector + Avatar + Tombol Aksi */}
-        <div className="flex items-center gap-2.5 shrink-0">
+        {/* SISI KANAN: Theme Pill Selector + Avatar + Pratinjau */}
+        <div className="flex items-center gap-2 shrink-0">
           {/* Dropdown Pemilih Tema & Mode Suasana */}
           <div className="relative" ref={themeDropdownRef}>
             <button
               type="button"
               onClick={() => setIsThemeDropdownOpen(!isThemeDropdownOpen)}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full border bg-white/90 hover:bg-white text-xs font-semibold transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-semibold transition-all cursor-pointer shadow-2xs backdrop-blur-md"
               style={{
                 borderColor: themeConfig.cardBorder,
+                backgroundColor: currentTheme === 'midnight-celestial' ? '#182234' : 'rgba(255, 255, 255, 0.9)',
                 color: themeConfig.textHeading,
               }}
               title="Ganti Tema & Suasana Emosional"
             >
               <div
-                className="w-4 h-4 rounded-full border shadow-2xs shrink-0 flex items-center justify-center"
+                className="w-3.5 h-3.5 rounded-full border shadow-2xs shrink-0 flex items-center justify-center"
                 style={{ backgroundColor: themeConfig.swatchPrimary }}
               >
-                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: themeConfig.swatchAccent }} />
+                <div className="w-1 h-1 rounded-full" style={{ backgroundColor: themeConfig.swatchAccent }} />
               </div>
-              <span className="hidden sm:inline">{themeConfig.name}</span>
-              <span className="sm:hidden">Tema</span>
-              <ChevronDown className={`w-3 h-3 text-stone-400 transition-transform ${isThemeDropdownOpen ? 'rotate-180' : ''}`} />
+              <span className="hidden xl:inline">{themeConfig.name}</span>
+              <span className="xl:hidden">{themeConfig.name.split(' ')[0]}</span>
+              <ChevronDown
+                className={`w-3 h-3 transition-transform ${isThemeDropdownOpen ? 'rotate-180' : ''}`}
+                style={{ color: themeConfig.textMuted }}
+              />
             </button>
 
             {/* Popover Menu Pilihan Tema */}
@@ -248,53 +252,49 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
           </div>
 
           {/* Profil Mempelai & Pro Trial Badge */}
-          <div className="hidden sm:flex items-center gap-2 p-1.5 pr-3 rounded-full bg-white/90 border border-stone-200/80 shadow-2xs">
+          <div
+            className="hidden sm:flex items-center gap-2 p-1 pr-2.5 rounded-full border shadow-2xs"
+            style={{
+              borderColor: themeConfig.cardBorder,
+              backgroundColor: currentTheme === 'midnight-celestial' ? '#182234' : 'rgba(255, 255, 255, 0.9)',
+            }}
+          >
             <div className="relative">
               <img
                 src="/generated/avatar-groom.svg"
                 alt="Avatar Pengantin"
-                className="w-7 h-7 rounded-full border border-amber-500/80 object-cover"
+                className="w-6 h-6 rounded-full border border-amber-500/80 object-cover"
               />
-              <span className="absolute bottom-0 right-0 w-2 h-2 rounded-full bg-emerald-500 border border-white" />
+              <span className="absolute bottom-0 right-0 w-1.5 h-1.5 rounded-full bg-emerald-500 border border-white" />
             </div>
-            <div className="leading-tight text-left">
+            <div className="leading-none text-left hidden 2xl:block">
               <span
-                className="font-bold text-xs block truncate max-w-[90px]"
+                className="font-bold text-[11px] block truncate max-w-[80px]"
                 style={{ color: themeConfig.textHeading }}
               >
                 Arif &amp; Windi
               </span>
-              <span className="text-[9px] text-amber-700 font-mono font-bold flex items-center gap-0.5">
-                <Crown className="w-2.5 h-2.5" />
+              <span className="text-[8px] text-amber-500 font-mono font-bold flex items-center gap-0.5 mt-0.5">
+                <Crown className="w-2 h-2" />
                 {trialDaysRemaining}h
               </span>
             </div>
           </div>
 
-          {/* Tombol Utama: + Tambah Item atau Pratinjau */}
-          <button
-            type="button"
-            onClick={onOpenAddModal}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold shadow-xs transition-all active:scale-95 cursor-pointer"
-            style={{
-              backgroundColor: themeConfig.primaryAccent,
-              color: themeConfig.primaryText,
-            }}
-            title="Tambah Item Anggaran Baru"
-          >
-            <Plus className="w-3.5 h-3.5 stroke-[2.8]" />
-            <span>+ Item</span>
-          </button>
-
           <a
             href="http://localhost:3001/v/arif-windi"
             target="_blank"
             rel="noreferrer"
-            className="p-2 sm:px-3 sm:py-2 rounded-full bg-white hover:bg-stone-50 border border-stone-200/90 text-stone-800 text-xs font-semibold shadow-2xs transition-all cursor-pointer flex items-center gap-1.5"
+            className="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full border text-xs font-semibold shadow-2xs transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+            style={{
+              borderColor: themeConfig.cardBorder,
+              backgroundColor: currentTheme === 'midnight-celestial' ? '#182234' : 'rgba(255, 255, 255, 0.9)',
+              color: themeConfig.textHeading,
+            }}
             title="Buka Undangan Tamu Publik"
           >
-            <span className="hidden sm:inline">Pratinjau</span>
-            <ExternalLink className="w-3.5 h-3.5 text-stone-500" />
+            <span className="hidden sm:inline text-xs">Pratinjau</span>
+            <ExternalLink className="w-3.5 h-3.5" style={{ color: themeConfig.textMuted }} />
           </a>
         </div>
       </div>
@@ -306,7 +306,6 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             Navigasi Halaman
           </div>
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = activeTab === item.id;
 
             return (
@@ -323,10 +322,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                     : 'text-stone-700 hover:bg-stone-100'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Icon className="w-4 h-4" />
-                  <span>{item.label}</span>
-                </div>
+                <span>{item.label}</span>
                 {item.badge && (
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
