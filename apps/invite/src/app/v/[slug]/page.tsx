@@ -746,7 +746,7 @@ export default function PublicInvitationPage() {
 
             {/* Vertical Dual-Column Infinite Marquee (21st.dev / Magic UI Style) */}
             <div className="relative z-10">
-              <VerticalPhotoMarquee />
+              <VerticalPhotoMarquee isSwarmActive={!isRebuildFinished} />
             </div>
           </section>
 

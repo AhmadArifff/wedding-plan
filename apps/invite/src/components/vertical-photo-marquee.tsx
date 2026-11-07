@@ -64,15 +64,53 @@ const COLUMN_RIGHT_PHOTOS: PhotoItem[] = [
   },
 ];
 
-export const VerticalPhotoMarquee: React.FC = () => {
-  const [selectedPhoto, setSelectedPhoto] = React.useState<PhotoItem | null>(null);
+export interface VerticalPhotoMarqueeProps {
+  isSwarmActive?: boolean;
+}
 
-  // Duplikasi foto untuk infinite seamless loop
-  const leftLoop = React.useMemo(() => [...COLUMN_LEFT_PHOTOS, ...COLUMN_LEFT_PHOTOS], []);
-  const rightLoop = React.useMemo(() => [...COLUMN_RIGHT_PHOTOS, ...COLUMN_RIGHT_PHOTOS], []);
+export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
+  isSwarmActive = false,
+}) => {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [selectedPhoto, setSelectedPhoto] = React.useState<PhotoItem | null>(null);
+  const [isAnimationRunning, setIsAnimationRunning] = React.useState(!isSwarmActive);
+
+  // Monitor Swarm Rebuild: Ketika elemen memories selesai di-build oleh Swarm,
+  // aktifkan animasi vertikal marquee dan biarkan swarm bergerak ke seksi berikutnya.
+  React.useEffect(() => {
+    if (!isSwarmActive) {
+      setIsAnimationRunning(true);
+      return;
+    }
+
+    const el = containerRef.current;
+    if (!el) return;
+
+    const checkRevealed = () => {
+      // Periksa apakah kartu-kartu foto memories sudah menerima kelas swarm-revealed
+      const revealedNodes = el.querySelectorAll('.swarm-revealed');
+      if (revealedNodes.length >= 2) {
+        setIsAnimationRunning(true);
+      }
+    };
+
+    checkRevealed();
+
+    const observer = new MutationObserver(() => {
+      checkRevealed();
+    });
+
+    observer.observe(el, {
+      attributes: true,
+      attributeFilter: ['class'],
+      subtree: true,
+    });
+
+    return () => observer.disconnect();
+  }, [isSwarmActive]);
 
   return (
-    <div className="relative w-full">
+    <div ref={containerRef} className="relative w-full">
       {/* Keyframe Animasi Vertikal Berlawanan Arah (Vertical Marquee) */}
       <style jsx global>{`
         @keyframes verticalScrollUp {
@@ -119,63 +157,143 @@ export const VerticalPhotoMarquee: React.FC = () => {
         <div className="grid grid-cols-2 gap-3 h-full">
           {/* KOLOM KIRI: Bergerak Mengalir ke Atas (Vertical Marquee Up) */}
           <div className="overflow-hidden h-full">
-            <div className="animate-vertical-up pause-on-hover flex flex-col gap-3">
-              {leftLoop.map((photo, idx) => (
-                <div
-                  key={`${photo.id}-${idx}`}
-                  onClick={() => setSelectedPhoto(photo)}
-                  className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
-                >
-                  <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
-                    <img
-                      src={photo.src}
-                      alt={photo.caption}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
-                        <Sparkles className="w-2.5 h-2.5" />
-                        {photo.category}
-                      </span>
-                      <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
-                        {photo.caption}
-                      </p>
+            <div
+              className={`flex flex-col gap-3 ${
+                isAnimationRunning ? 'animate-vertical-up pause-on-hover' : ''
+              }`}
+            >
+              {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
+              <div className="flex flex-col gap-3">
+                {COLUMN_LEFT_PHOTOS.map((photo) => (
+                  <div
+                    key={photo.id}
+                    onClick={() => setSelectedPhoto(photo)}
+                    className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
+                  >
+                    <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
+                      <img
+                        src={photo.src}
+                        alt={photo.caption}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
+                        <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" />
+                          {photo.category}
+                        </span>
+                        <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
+                          {photo.caption}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* 2. Kumpulan Kartu Loop Pengulang (Diabaikan oleh Swarm Scanner agar tidak memicu interleave Y di bawah) */}
+              <div
+                data-swarm-ignore="true"
+                aria-hidden="true"
+                className="flex flex-col gap-3"
+              >
+                {COLUMN_LEFT_PHOTOS.map((photo, idx) => (
+                  <div
+                    key={`loop-left-${photo.id}-${idx}`}
+                    onClick={() => setSelectedPhoto(photo)}
+                    className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
+                  >
+                    <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
+                      <img
+                        src={photo.src}
+                        alt={photo.caption}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
+                        <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" />
+                          {photo.category}
+                        </span>
+                        <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
+                          {photo.caption}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* KOLOM KANAN: Bergerak Mengalir Berlawanan ke Bawah (Vertical Marquee Down) */}
           <div className="overflow-hidden h-full">
-            <div className="animate-vertical-down pause-on-hover flex flex-col gap-3">
-              {rightLoop.map((photo, idx) => (
-                <div
-                  key={`${photo.id}-${idx}`}
-                  onClick={() => setSelectedPhoto(photo)}
-                  className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
-                >
-                  <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
-                    <img
-                      src={photo.src}
-                      alt={photo.caption}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
-                      <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
-                        <Sparkles className="w-2.5 h-2.5" />
-                        {photo.category}
-                      </span>
-                      <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
-                        {photo.caption}
-                      </p>
+            <div
+              className={`flex flex-col gap-3 ${
+                isAnimationRunning ? 'animate-vertical-down pause-on-hover' : ''
+              }`}
+            >
+              {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
+              <div className="flex flex-col gap-3">
+                {COLUMN_RIGHT_PHOTOS.map((photo) => (
+                  <div
+                    key={photo.id}
+                    onClick={() => setSelectedPhoto(photo)}
+                    className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
+                  >
+                    <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
+                      <img
+                        src={photo.src}
+                        alt={photo.caption}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
+                        <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" />
+                          {photo.category}
+                        </span>
+                        <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
+                          {photo.caption}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* 2. Kumpulan Kartu Loop Pengulang (Diabaikan oleh Swarm Scanner) */}
+              <div
+                data-swarm-ignore="true"
+                aria-hidden="true"
+                className="flex flex-col gap-3"
+              >
+                {COLUMN_RIGHT_PHOTOS.map((photo, idx) => (
+                  <div
+                    key={`loop-right-${photo.id}-${idx}`}
+                    onClick={() => setSelectedPhoto(photo)}
+                    className="group relative rounded-2xl sm:rounded-3xl border-2 border-amber-300/80 bg-white/90 p-1.5 shadow-md overflow-hidden cursor-pointer transition-transform duration-300 hover:scale-[1.02] hover:border-amber-400"
+                  >
+                    <div className="relative w-full h-48 sm:h-56 rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
+                      <img
+                        src={photo.src}
+                        alt={photo.caption}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2.5 text-white">
+                        <span className="text-[9px] font-mono uppercase tracking-wider text-amber-300 font-semibold flex items-center gap-1">
+                          <Sparkles className="w-2.5 h-2.5" />
+                          {photo.category}
+                        </span>
+                        <p className="text-[10px] leading-tight font-serif italic truncate mt-0.5">
+                          {photo.caption}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
