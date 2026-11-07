@@ -149,15 +149,12 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       const containerRect = targetRef.current.getBoundingClientRect();
       const targetAbsoluteY = window.scrollY + containerRect.top + firstNode.rect.y;
 
-      const currentScroll = window.scrollY;
-      const targetScroll = targetAbsoluteY - window.innerHeight * 0.42;
+      const targetScroll = Math.max(0, targetAbsoluteY - window.innerHeight * 0.38);
 
-      if (Math.abs(currentScroll - targetScroll) < window.innerHeight * 0.9) {
-        window.scrollTo({
-          top: Math.max(0, targetScroll),
-          behavior: 'smooth',
-        });
-      }
+      window.scrollTo({
+        top: targetScroll,
+        behavior: 'smooth',
+      });
     },
     [targetRef]
   );
@@ -183,13 +180,14 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         });
       });
 
-      // Scatter 4 cursors outward away from container, then completely vanish!
-      const containerHeight = targetRef.current?.clientHeight || 800;
+      // Scatter 4 cursors outward away from container at footer level, then completely vanish!
+      const lastWave = waves[waves.length - 1];
+      const finalY = lastWave?.assignments[0]?.node?.rect?.y ?? (targetRef.current?.clientHeight || 800);
       setCursorStates({
-        arif: { x: -160, y: -120, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
-        windi: { x: 540, y: -120, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
-        rian: { x: -160, y: containerHeight + 120, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
-        siti: { x: 540, y: containerHeight + 120, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
+        arif: { x: -160, y: finalY - 40, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
+        windi: { x: 540, y: finalY - 40, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
+        rian: { x: -160, y: finalY + 140, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
+        siti: { x: 540, y: finalY + 140, isClicking: false, isStill: false, isDragging: false, action: '', visible: true, opacity: 0, scale: 0.2 },
       });
 
       const finishTimer = setTimeout(() => {
@@ -509,6 +507,12 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
   };
 
   const getNodeToolLabel = (node: SwarmNode): string => {
+    if (node.tagName === 'footer') {
+      return 'FRAME: Dark Footer';
+    }
+    if (node.text && node.text.toLowerCase().includes('powered by')) {
+      return 'TAG: Brand Watermark';
+    }
     if (node.type === 'heading' || node.type === 'text') {
       return `T: ${cleanFontName(node.fontFamily)} ${node.fontSize || ''}`;
     }

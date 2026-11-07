@@ -129,8 +129,9 @@ export default function PublicInvitationPage() {
               }
             }
 
-            /* 1. Blank Initial State: Mask direct sections before scanner runs */
+            /* 1. Blank Initial State: Mask direct sections, footer, and containers before scanner runs */
             [data-swarm-active="true"]:not(.swarm-scanned) > section,
+            [data-swarm-active="true"]:not(.swarm-scanned) > footer,
             [data-swarm-active="true"]:not(.swarm-scanned) > div:not([data-swarm-overlay="true"]) {
               opacity: 0 !important;
             }

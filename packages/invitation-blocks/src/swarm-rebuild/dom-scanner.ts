@@ -70,6 +70,11 @@ export function scanDOMForRebuild(
       return 'button';
     }
 
+    // 6. Footer container
+    if (tag === 'footer') {
+      return 'card';
+    }
+
     // Computed style based detections
     if (style) {
       // 6. Badges & Pills (small rounded capsules)
