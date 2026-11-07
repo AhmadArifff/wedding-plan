@@ -32,6 +32,7 @@ import {
   formatDateIndo,
 } from '@nikahplan/ui';
 import type { RsvpWish, InvitationEnvelope } from '@nikahplan/db';
+import { VerticalPhotoMarquee } from '../../../components/vertical-photo-marquee';
 
 export default function PublicInvitationPage() {
   const [isCoverOpen, setIsCoverOpen] = React.useState(false);
@@ -726,7 +727,7 @@ export default function PublicInvitationPage() {
             </div>
           </section>
 
-          {/* 8. SEKSI GALERI FOTO KENANGAN (OUR MEMORIES) */}
+          {/* 8. SEKSI GALERI FOTO KENANGAN (OUR MEMORIES - DUAL-COLUMN VERTICAL REVERSE MARQUEE) */}
           <section className="relative p-6 space-y-5 border-b border-amber-200/40 bg-[#FCF8ED] overflow-hidden">
             <div className="text-center space-y-1 relative z-10">
               <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-amber-700 font-semibold block">
@@ -738,57 +739,14 @@ export default function PublicInvitationPage() {
               >
                 Our Memories
               </h2>
+              <p className="text-xs text-stone-600 max-w-xs mx-auto leading-relaxed pt-0.5">
+                Rangkaian momen indah yang terukir sepanjang perjalanan cinta menuju ikrar suci
+              </p>
             </div>
 
-            {/* Grid Galeri Estetik Arch (Diadopsi dari Referensi) */}
-            <div className="grid grid-cols-2 gap-3 relative z-10">
-              <div className="space-y-3">
-                <div className="rounded-t-[36px] rounded-b-2xl overflow-hidden border-2 border-amber-200 shadow-md h-48 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-D7vomq3BEn.jpg"
-                    alt="Galeri 1"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="rounded-2xl overflow-hidden border-2 border-amber-200 shadow-md h-36 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-COX9fLRlKg.jpg"
-                    alt="Galeri 2"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="rounded-2xl rounded-b-[36px] overflow-hidden border-2 border-amber-200 shadow-md h-44 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-cI1oF5BtRz.jpg"
-                    alt="Galeri 3"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-3 pt-4">
-                <div className="rounded-2xl overflow-hidden border-2 border-amber-200 shadow-md h-36 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-jMqU8nYexf.jpg"
-                    alt="Galeri 4"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="rounded-t-[36px] rounded-b-2xl overflow-hidden border-2 border-amber-200 shadow-md h-48 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-Lhimda0fph.jpg"
-                    alt="Galeri 5"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="rounded-2xl overflow-hidden border-2 border-amber-200 shadow-md h-40 bg-stone-100">
-                  <img
-                    src="/referensi/797207-gallery-DXpEkLolkN.jpg"
-                    alt="Galeri 6"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-              </div>
+            {/* Vertical Dual-Column Infinite Marquee (21st.dev / Magic UI Style) */}
+            <div className="relative z-10">
+              <VerticalPhotoMarquee />
             </div>
           </section>
 
