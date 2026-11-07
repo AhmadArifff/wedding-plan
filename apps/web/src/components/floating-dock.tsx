@@ -222,3 +222,4 @@ export const FloatingDock: React.FC<FloatingDockProps> = ({
     </aside>
   );
 };
+
