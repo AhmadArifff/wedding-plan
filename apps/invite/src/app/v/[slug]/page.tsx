@@ -321,8 +321,21 @@ export default function PublicInvitationPage() {
               className="absolute bottom-0 left-0 w-32 sm:w-40 pointer-events-none z-10 opacity-90"
             />
 
-            {/* Gradien Latar Belakang Hijau Zamrud Mewah */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1C2C24]/90 via-[#24392E]/80 to-[#1C2C24]/95 pointer-events-none" />
+            {/* Foto Latar Belakang Artistik (Tampil Konsisten Sejak Awal Buka Undangan) */}
+            <div
+              data-swarm-ignore="true"
+              className="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none"
+            >
+              <img
+                src="/referensi/797207-gallery-D7vomq3BEn.jpg"
+                alt="Background Prewedding"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div
+              data-swarm-ignore="true"
+              className="absolute inset-0 bg-gradient-to-b from-[#1C2C24]/80 via-[#24392E]/70 to-[#1C2C24]/95 pointer-events-none"
+            />
 
             {/* Konten Atas Cover */}
             <div className="relative z-10 text-center pt-8 space-y-2">
