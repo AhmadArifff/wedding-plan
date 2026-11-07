@@ -309,25 +309,20 @@ export default function PublicInvitationPage() {
           <section className="relative min-h-[540px] w-full overflow-hidden bg-[#2D4539] text-white flex flex-col justify-between p-6">
             {/* Sudut Ornamen Floral Tradisional */}
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-tr.webp"
               alt="Ornamen Sudut Kanan Atas"
               className="absolute top-0 right-0 w-32 sm:w-40 pointer-events-none z-10 opacity-90"
             />
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-bl.webp"
               alt="Ornamen Sudut Kiri Bawah"
               className="absolute bottom-0 left-0 w-32 sm:w-40 pointer-events-none z-10 opacity-90"
             />
 
-            {/* Foto Latar Belakang Artistik */}
-            <div className="absolute inset-0 opacity-40 mix-blend-overlay pointer-events-none">
-              <img
-                src="/referensi/797207-gallery-D7vomq3BEn.jpg"
-                alt="Background Prewedding"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1C2C24]/80 via-[#24392E]/70 to-[#1C2C24]/95 pointer-events-none" />
+            {/* Gradien Latar Belakang Hijau Zamrud Mewah */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#1C2C24]/90 via-[#24392E]/80 to-[#1C2C24]/95 pointer-events-none" />
 
             {/* Konten Atas Cover */}
             <div className="relative z-10 text-center pt-8 space-y-2">
@@ -365,11 +360,13 @@ export default function PublicInvitationPage() {
           <section className="relative p-6 text-center space-y-6 border-b border-amber-200/40 bg-[#FAF5E6] overflow-hidden">
             {/* Sudut Ornamen Floral */}
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-tr.webp"
               alt="Ornamen Sudut"
               className="absolute top-0 right-0 w-28 pointer-events-none opacity-80"
             />
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-bl.webp"
               alt="Ornamen Sudut"
               className="absolute bottom-0 left-0 w-28 pointer-events-none opacity-80"
@@ -1075,11 +1072,13 @@ export default function PublicInvitationPage() {
           <footer className="relative p-8 bg-[#1C2C24] text-white text-center space-y-4 overflow-hidden mt-auto">
             {/* Sudut Ornamen Floral */}
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-tr.webp"
               alt="Ornamen Sudut"
               className="absolute top-0 right-0 w-28 pointer-events-none opacity-60"
             />
             <img
+              data-swarm-ignore="true"
               src="/referensi/frame-bl.webp"
               alt="Ornamen Sudut"
               className="absolute bottom-0 left-0 w-28 pointer-events-none opacity-60"
