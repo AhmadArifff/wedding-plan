@@ -85,3 +85,30 @@ export interface SwarmCursorLiveState {
   opacity?: number;
   scale?: number;
 }
+
+export type WorkerCraftPhase =
+  | 'idle'
+  | 'traveling'
+  | 'dragging'
+  | 'clicking'
+  | 'crafting'
+  | 'inspecting'
+  | 'scattering';
+
+export interface AutonomousWorkerState {
+  id: string;
+  node: SwarmNode | null;
+  phase: WorkerCraftPhase;
+  currentX: number;
+  currentY: number;
+  targetX: number;
+  targetY: number;
+  dragProgress: number;
+  craftProgress: number;
+  typedText: string;
+  isClicking: boolean;
+  isDragging: boolean;
+  visible: boolean;
+  opacity: number;
+  scale: number;
+}
