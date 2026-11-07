@@ -218,3 +218,4 @@ export const ThemeRoyalView: React.FC<ThemeRoyalViewProps> = ({
     </div>
   );
 };
+

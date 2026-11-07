@@ -207,3 +207,4 @@ export const ThemeKoreanView: React.FC<ThemeKoreanViewProps> = ({
     </div>
   );
 };
+

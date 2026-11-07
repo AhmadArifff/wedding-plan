@@ -275,3 +275,4 @@ export const ThemeClassicView: React.FC<ThemeClassicViewProps> = ({
     </div>
   );
 };
+
