@@ -146,10 +146,10 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       const viewportBottom = currentScroll + window.innerHeight;
 
       const scrollLag = viewportBottom - activeAbsoluteY;
-      if (scrollLag > 450) {
-        scrollBoostRef.current = 2.4;
-      } else if (scrollLag > 200) {
-        scrollBoostRef.current = 1.6;
+      if (scrollLag > 500) {
+        scrollBoostRef.current = 1.9;
+      } else if (scrollLag > 250) {
+        scrollBoostRef.current = 1.4;
       } else {
         scrollBoostRef.current = 1.0;
       }
@@ -191,8 +191,8 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         const dy = targetY - currentPos.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // 1. TRAVEL PHASE: Natural human easing travel
-        const travelMs = Math.max(130, Math.min(300, 110 + dist * 0.2)) / scrollBoostRef.current;
+        // 1. TRAVEL PHASE: Natural human easing travel (relaxed, deliberate pacing)
+        const travelMs = Math.max(160, Math.min(350, 130 + dist * 0.24)) / scrollBoostRef.current;
 
         updateWorker(workerId, {
           node,
@@ -214,14 +214,14 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         updateCameraScroll(targetY);
 
         // 2. DRAGGING PHASE: Pull size rectangle with live dimension pill
-        const dragMs = Math.max(220, Math.min(360, 180 + node.rect.w * 0.28)) / scrollBoostRef.current;
+        const dragMs = Math.max(260, Math.min(420, 210 + node.rect.w * 0.32)) / scrollBoostRef.current;
         updateWorker(workerId, {
           phase: 'dragging',
           isClicking: true,
           isDragging: true,
         });
 
-        const dragTicks = 8;
+        const dragTicks = 10;
         const dragTickMs = dragMs / dragTicks;
         for (let t = 1; t <= dragTicks; t++) {
           await sleep(dragTickMs);
@@ -241,7 +241,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         };
 
         // 3. SETTLE & CLICK: Tool pill badge activates
-        const clickMs = 80 / scrollBoostRef.current;
+        const clickMs = 95 / scrollBoostRef.current;
         updateWorker(workerId, {
           phase: 'clicking',
           dragProgress: 1,
@@ -262,9 +262,9 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         const isTextNode = ['heading', 'text', 'badge', 'button'].includes(node.type) && Boolean(node.text);
         if (isTextNode && node.text) {
           const text = node.text;
-          const typeMs = Math.max(220, Math.min(460, 160 + text.length * 10)) / scrollBoostRef.current;
+          const typeMs = Math.max(260, Math.min(540, 200 + text.length * 12)) / scrollBoostRef.current;
           const charsCount = text.length;
-          const stepCount = Math.max(3, Math.min(14, charsCount));
+          const stepCount = Math.max(4, Math.min(16, charsCount));
           const stepMs = typeMs / stepCount;
 
           for (let s = 1; s <= stepCount; s++) {
@@ -279,7 +279,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
             });
           }
         } else if (node.type === 'image') {
-          const imgMs = 260 / scrollBoostRef.current;
+          const imgMs = 320 / scrollBoostRef.current;
           await sleep(imgMs * 0.5);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 0.6 });
@@ -287,7 +287,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 1 });
         } else if (node.type === 'icon') {
-          const iconMs = 200 / scrollBoostRef.current;
+          const iconMs = 240 / scrollBoostRef.current;
           await sleep(iconMs * 0.5);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 0.7 });
@@ -296,7 +296,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           updateWorker(workerId, { craftProgress: 1 });
         } else {
           // Card / Container frame
-          const cardMs = 200 / scrollBoostRef.current;
+          const cardMs = 240 / scrollBoostRef.current;
           await sleep(cardMs);
           if (!isMountedRef.current) break;
           updateWorker(workerId, { craftProgress: 1 });
@@ -304,7 +304,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         if (!isMountedRef.current) break;
 
         // 5. INSPECTING: Emerald validation border ✓
-        const inspectMs = 110 / scrollBoostRef.current;
+        const inspectMs = 130 / scrollBoostRef.current;
         updateWorker(workerId, {
           phase: 'inspecting',
         });
@@ -336,7 +336,7 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
         });
 
         // Micro-pause before immediately pulling next task from queue
-        await sleep(40 / scrollBoostRef.current);
+        await sleep(60 / scrollBoostRef.current);
       }
 
       // Decrement active workers when queue is empty
@@ -345,7 +345,6 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
       // When all 4 workers have completed all tasks: grand finale!
       if (activeWorkersCountRef.current <= 0 && isMountedRef.current) {
         setIsScattering(true);
-        setShowFloralConfetti(true);
 
         allScannedNodesRef.current.forEach((n) => {
           if (n.domElement) {
@@ -365,18 +364,31 @@ export const SwarmRebuild: React.FC<SwarmRebuildProps> = ({
           siti: { ...prev.siti, currentX: 540, currentY: finalY + 140, opacity: 0, scale: 0.2 },
         }));
 
+        // Grand Finale Sequence:
+        // 1. Smoothly scroll back to the top of the invitation first!
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth',
+        });
+
+        // 2. Wait until view smoothly glides back to the top (~1100ms), THEN burst floral confetti!
         setTimeout(() => {
           if (!isMountedRef.current) return;
-          setIsFinished(true);
-          setWorkers((prev) => {
-            const next = { ...prev };
-            Object.keys(next).forEach((k) => {
-              next[k] = { ...next[k], visible: false };
+          setShowFloralConfetti(true);
+
+          setTimeout(() => {
+            if (!isMountedRef.current) return;
+            setIsFinished(true);
+            setWorkers((prev) => {
+              const next = { ...prev };
+              Object.keys(next).forEach((k) => {
+                next[k] = { ...next[k], visible: false };
+              });
+              return next;
             });
-            return next;
-          });
-          onComplete?.();
-        }, 750);
+            onComplete?.();
+          }, 4800);
+        }, 1100);
       }
     },
     [onComplete, targetRef, updateCameraScroll, updateWorker]
