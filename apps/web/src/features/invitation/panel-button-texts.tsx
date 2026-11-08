@@ -329,3 +329,4 @@ export const PanelButtonTexts: React.FC<PanelButtonTextsProps> = ({ config, onCh
     </div>
   );
 };
+

@@ -239,3 +239,4 @@ export const PanelIconsPicker: React.FC<PanelIconsPickerProps> = ({ config, onCh
     </div>
   );
 };
+

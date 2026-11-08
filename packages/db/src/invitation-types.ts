@@ -376,3 +376,4 @@ export const DEFAULT_FULL_INVITATION_CONFIG: FullInvitationConfig = {
     'https://assets.satumomen.com/musics/nadhif-basalamah-kota-ini-tak-sama-tanpamu-official-lyric-video-grp6fcniomm-00-01-02-00-04-28-part.mp3',
   updatedAt: new Date().toISOString(),
 };
+

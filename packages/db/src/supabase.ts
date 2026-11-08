@@ -2,9 +2,6 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { FullInvitationConfig } from './invitation-types';
 import { DEFAULT_FULL_INVITATION_CONFIG } from './invitation-types';
 
-declare const process: { env: Record<string, string | undefined> } | undefined;
-declare const Buffer: { from: (data: any) => { toString: (encoding: string) => string } } | undefined;
-
 let cachedSupabaseClient: SupabaseClient | null = null;
 
 export function getSupabaseClient(): SupabaseClient | null {
@@ -167,8 +164,9 @@ export async function uploadAssetToSupabaseBucket(
   for (let i = 0; i < bytes.byteLength; i++) {
     binary += String.fromCharCode(bytes[i]);
   }
-  const base64 = typeof btoa !== 'undefined' ? btoa(binary) : (Buffer ? Buffer.from(bytes).toString('base64') : '');
+  const base64 = typeof btoa !== 'undefined' ? btoa(binary) : Buffer.from(bytes).toString('base64');
   const dataUrl = `data:${contentType};base64,${base64}`;
 
   return { url: dataUrl, path: storagePath };
 }
+

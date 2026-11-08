@@ -100,3 +100,4 @@ CREATE POLICY "Authenticated Delete Invitation Assets"
 -- DROP TABLE IF EXISTS public.invitations CASCADE;
 -- DELETE FROM storage.buckets WHERE id = 'invitation-assets';
 -- ==============================================================================
+
