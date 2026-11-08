@@ -66,14 +66,28 @@ const COLUMN_RIGHT_PHOTOS: PhotoItem[] = [
 
 export interface VerticalPhotoMarqueeProps {
   isSwarmActive?: boolean;
+  photos?: PhotoItem[];
 }
 
 export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
   isSwarmActive = false,
+  photos,
 }) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [selectedPhoto, setSelectedPhoto] = React.useState<PhotoItem | null>(null);
   const [isAnimationRunning, setIsAnimationRunning] = React.useState(!isSwarmActive);
+
+  const leftPhotos = React.useMemo(() => {
+    if (!photos || photos.length === 0) return COLUMN_LEFT_PHOTOS;
+    const l = photos.filter((p) => (p as any).column === 'left');
+    return l.length > 0 ? l : photos.slice(0, Math.ceil(photos.length / 2));
+  }, [photos]);
+
+  const rightPhotos = React.useMemo(() => {
+    if (!photos || photos.length === 0) return COLUMN_RIGHT_PHOTOS;
+    const r = photos.filter((p) => (p as any).column === 'right');
+    return r.length > 0 ? r : photos.slice(Math.ceil(photos.length / 2));
+  }, [photos]);
 
   // Monitor Swarm Rebuild: Ketika elemen memories selesai di-build oleh Swarm,
   // aktifkan animasi vertikal marquee dan biarkan swarm bergerak ke seksi berikutnya.
@@ -165,7 +179,7 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
             >
               {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
               <div className="flex flex-col gap-3">
-                {COLUMN_LEFT_PHOTOS.map((photo, idx) => (
+                {leftPhotos.map((photo, idx) => (
                   <div
                     key={photo.id}
                     data-memory-card={idx < 2 ? 'primary' : undefined}
@@ -200,7 +214,7 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
                 aria-hidden="true"
                 className="flex flex-col gap-3"
               >
-                {COLUMN_LEFT_PHOTOS.map((photo, idx) => (
+                {leftPhotos.map((photo, idx) => (
                   <div
                     key={`loop-left-${photo.id}-${idx}`}
                     onClick={() => setSelectedPhoto(photo)}
@@ -238,7 +252,7 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
             >
               {/* 1. Kumpulan Kartu Foto Primer (Dideteksi & Dibangun oleh Swarm Rebuild di Seksi Ini) */}
               <div className="flex flex-col gap-3">
-                {COLUMN_RIGHT_PHOTOS.map((photo, idx) => (
+                {rightPhotos.map((photo, idx) => (
                   <div
                     key={photo.id}
                     data-memory-card={idx < 2 ? 'primary' : undefined}
@@ -273,7 +287,7 @@ export const VerticalPhotoMarquee: React.FC<VerticalPhotoMarqueeProps> = ({
                 aria-hidden="true"
                 className="flex flex-col gap-3"
               >
-                {COLUMN_RIGHT_PHOTOS.map((photo, idx) => (
+                {rightPhotos.map((photo, idx) => (
                   <div
                     key={`loop-right-${photo.id}-${idx}`}
                     onClick={() => setSelectedPhoto(photo)}

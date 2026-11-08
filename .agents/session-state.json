@@ -13,9 +13,9 @@
   "database": "supabase",
   "architecture_standard": "clean-monorepo-vertical-slice",
   "active_subtask": {
-    "id": "T-08",
-    "task": "Fase 4: UI-First Mobile: Block-Based Digital Invitation Builder (apps/web) & Public Renderer (/v/[slug] apps/invite) dengan Amplop QRIS, Cover Reveal, Standalone REA Swarm Rebuild Engine (Autonomous DOM Scanner, Dual Cursors, Lockstep Drag, Kinetic Typewriter & Go Live)",
-    "owner_role": "frontend-engineer & ui-ux-designer",
+    "id": "T-08B",
+    "task": "Fase 4B: Editor Konten Undangan Digital Komprehensif (5 Tab Studio: Teks & Konten Acara, Foto & Storage Bucket, Teks Tombol & Rekening, Kustomisasi Ikon Lucide, Swarm & Bunga) dengan persistensi database Supabase & Storage Bucket invitation-assets",
+    "owner_role": "frontend-engineer & backend-engineer",
     "status": "done",
     "rework_iteration_count": 0
   },
@@ -123,6 +123,21 @@
       "depends_on": [
         "T-06",
         "T-07"
+      ],
+      "rework_iteration_count": 0,
+      "reviewed_by": [
+        "tech-critic",
+        "qa-engineer"
+      ],
+      "verdict": "approved"
+    },
+    {
+      "id": "T-08B",
+      "task": "Fase 4B: Editor Konten Undangan Digital Komprehensif (5 Tab Studio: Teks & Konten Acara, Foto & Storage Bucket, Teks Tombol & Rekening, Kustomisasi Ikon Lucide, Swarm & Bunga) dengan persistensi database Supabase & Storage Bucket invitation-assets",
+      "owner_role": "frontend-engineer & backend-engineer",
+      "status": "done",
+      "depends_on": [
+        "T-08"
       ],
       "rework_iteration_count": 0,
       "reviewed_by": [
